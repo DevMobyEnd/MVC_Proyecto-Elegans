@@ -8,7 +8,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <nav class="navbar-nav navigation">
-                <a class="nav-link" href="seccion1.php">Inicio</a>
+                <a class="nav-link" href="/./Views/Index.php">Inicio</a>
                 <a class="nav-link" href="#">Acerca de</a>
                 <a class="nav-link" href="#">Servicios</a>
                 <a class="nav-link" href="#">Contacto</a>
