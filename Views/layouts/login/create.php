@@ -6,35 +6,35 @@
                 <span class="icon">
                     <ion-icon name="person"></ion-icon>
                 </span>
-                <input class="input" name="nombres" type="text" required>
+                <input class="input" name="Nombres" type="text" required>
                 <label>Nombres</label>
             </div>
             <div class="input-box">
                 <span class="icon">
                     <ion-icon name="people"></ion-icon>
                 </span>
-                <input class="input" name="apellidos" type="text" required>
+                <input class="input" name="Apellidos" type="text" required>
                 <label>Apellidos</label>
             </div>
             <div class="input-box">
                 <span class="icon">
                     <ion-icon name="card"></ion-icon>
                 </span>
-                <input class="input" name="documento" type="text" required>
+                <input class="input" name="NumeroDocumento" type="text" required>
                 <label>Número de Documento</label>
             </div>
             <div class="input-box">
                 <span class="icon">
                     <ion-icon name="person-circle"></ion-icon>
                 </span>
-                <input class="input" name="usuario" type="text" required>
+                <input class="input" name="Usuario" type="text" required>
                 <label>Usuario</label>
             </div>
             <div class="input-box">
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
-                <input class="input" name="correo" type="email" required>
+                <input class="input" name="Gmail" type="email" required>
                 <label>Correo Electrónico</label>
             </div>
             <div class="input-box">

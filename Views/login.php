@@ -10,25 +10,22 @@ require_once '../Config/Conexion.php';
 require_once '../Controller/UsuarioController.php';
 require_once '../Models/UsuarioModel.php';
 
-
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btningresar'])) {
     $email = $_POST['Gmail']; // Captura el email del formulario
     $password = $_POST['password']; // Captura la contraseña del formulario
 
     $usuarioModel = new UsuarioModel(); // Crea una instancia de UsuarioModel
-    $usuario = $usuarioModel->verificarUsuario($email, $password); // Verifica las credenciales del usuario
+    $usuario = $usuarioModel->verificarUsuario($email); // Ahora solo pasamos el email
 
-    if ($usuario) {
-        // Si las credenciales son correctas, establece las variables de sesión
+    if ($usuario && password_verify($password, $usuario['password'])) {
+        // Si la contraseña es correcta, establece las variables de sesión
         $_SESSION['usuario_id'] = $usuario['id'];
         // Redirige al usuario a una página segura (dashboard, por ejemplo)
         header("Location: ../Views/Index.php");
         exit();
     } else {
         // Si las credenciales son incorrectas, muestra un mensaje de error
-        $error = "El correo electrónico o la contraseña son incorrectos.";
-        // Aquí podrías incluir el código para mostrar el mensaje de error en tu formulario de login
         echo "<script>
             Swal.fire({
                 icon: 'error',

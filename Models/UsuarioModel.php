@@ -9,18 +9,14 @@ class UsuarioModel {
         $this->conexion = $conexion->obtenerConexion(); // Método para obtener la instancia de mysqli
     }
 
-    public function verificarUsuario($email, $password) {
+    public function verificarUsuario($email) {
         $email = $this->conexion->real_escape_string($email);
-        $sql = "SELECT id,Gmail, password FROM tb_usuarios WHERE Gmail = '$email' LIMIT 1;";
+        $sql = "SELECT id, Gmail, password FROM tb_usuarios WHERE Gmail = '$email' LIMIT 1;";
         $resultado = $this->conexion->query($sql);
 
         if ($resultado && $resultado->num_rows > 0) {
-            $usuario = $resultado->fetch_assoc();
-            // Verifica si la contraseña coincide
-            if ($password === $usuario['password']) {
-                return $usuario; // Retorna el usuario si la contraseña es correcta
-            }
+            return $resultado->fetch_assoc(); // Retorna el usuario si se encuentra
         }
-        return false; // Retorna falso si no encuentra el usuario o si la contraseña no coincide
+        return false; // Retorna falso si no encuentra el usuario
     }
 }
