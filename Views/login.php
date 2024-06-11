@@ -1,4 +1,3 @@
-
 <?php
 require_once "./layouts/head.php";
 require_once "./layouts/header.php";
@@ -30,8 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btningresar'])) {
         // Si las credenciales son incorrectas, muestra un mensaje de error
         $error = "El correo electrónico o la contraseña son incorrectos.";
         // Aquí podrías incluir el código para mostrar el mensaje de error en tu formulario de login
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'El correo electrónico o la contraseña son incorrectos.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+          </script>";
     }
 }
 ?>
-
-
