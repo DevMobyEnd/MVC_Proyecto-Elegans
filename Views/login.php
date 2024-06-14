@@ -1,11 +1,14 @@
 <?php
+// Inicia la sesión si aún no ha sido iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+
 require_once "./layouts/head.php";
 require_once "./layouts/header.php";
 require_once "./layouts/login/index.php";
-?>
 
-<?php
-session_start(); // Inicia una nueva sesión o reanuda la existente
 require_once '../Config/Conexion.php';
 require_once '../Controller/UsuarioController.php';
 require_once '../Models/UsuarioModel.php';
@@ -16,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btningresar'])) {
     $password = $_POST['password']; // Captura la contraseña del formulario
 
     $usuarioModel = new UsuarioModel(); // Crea una instancia de UsuarioModel
-    $usuario = $usuarioModel->verificarUsuario($email); // Ahora solo pasamos el email
+    $usuario = $usuarioModel->verificarUsuario($email); // Verifica el usuario por email
 
     if ($usuario && password_verify($password, $usuario['password'])) {
         // Si la contraseña es correcta, establece las variables de sesión

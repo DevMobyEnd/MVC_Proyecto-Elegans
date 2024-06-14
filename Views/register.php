@@ -1,5 +1,9 @@
 <?php
-session_start(); // Mueve session_start() al principio del archivo para evitar el error
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
+verificarNoAutenticado(); // Asegúrate de que solo los usuarios no autenticados puedan ver esta página
 
 // Define el título de la página
 $tituloPagina = "Registro - Elegans";
