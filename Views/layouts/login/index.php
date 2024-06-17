@@ -6,9 +6,6 @@
         <h2>iniciar sesión</h2>
         <form method="post" action="login.php"> <!-- Cambio aquí -->
             <div class="input-box">
-                <span class="icon-close">
-                     <ion-icon name="close"></ion-icon>
-                </span>
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
@@ -26,10 +23,9 @@
                 <label for=""><input type="checkbox">Remember me</label>
                 <a href="#">Forgot Password?</a>
             </div>
-            <button name="btningresar" type="submit" class="btn">Login</button>
+            <button name="btningresar" type="submit" class="btn2">Login</button>
             <div class="login-register">
-                <p>Don't have an account?<a href="seccion3.php" class="register-link">Register</a></p>
-            </div>
+            <p>Don't have an account?<a href="/./Views/register.php" class="register-link">Register</a></p>
         </form>
     </div>
 </div>

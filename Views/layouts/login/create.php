@@ -46,7 +46,7 @@
             </div>
             <button  name="btnregistrar" type="submit" class="btn2">Registrar</button>
             <div class="login-register">
-                <p>¿Ya tienes una cuenta?<a href="login.php" class="login-link">Iniciar sesión</a></p>
+                <p>¿Ya tienes una cuenta?<a href="/./Views/login.php" class="login-link">Iniciar sesión</a></p>
             </div>
         </form>
     </div>

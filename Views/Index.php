@@ -13,6 +13,8 @@ require_once "./layouts/head.php";
 require_once '../Middleware/auth.php';
 ?>
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Inicia la sesión si aún no ha sido iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -24,12 +26,12 @@ if (!isset($_SESSION['usuario_id'])) {
     echo "<script>
             Swal.fire({
                 icon: 'error',
-                title: 'No estás autenticado.',
+                title: 'No estás autentificado.',
                 text: 'Por favor, inicia sesión para continuar.',
                 showConfirmButton: false,
                 timer: 1500
             }).then(function() {
-                window.location = 'login.php';
+                window.location = '../Views/login.php';
             });
           </script>";
     exit();

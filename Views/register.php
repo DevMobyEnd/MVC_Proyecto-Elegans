@@ -2,8 +2,8 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
-verificarNoAutenticado(); // Asegúrate de que solo los usuarios no autenticados puedan ver esta página
+ require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
+ 
 
 // Define el título de la página
 $tituloPagina = "Registro - Elegans";
@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btnregistrar'])) {
                     timer: 1500
                 });
                 setTimeout(function(){
-                    window.location.href = 'login.php';
+                    window.location.href = '../Views/login.php';
                 }, 1500);
               </script>";
     } else {

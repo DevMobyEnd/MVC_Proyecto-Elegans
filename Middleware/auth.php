@@ -4,35 +4,22 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Definir constantes para las rutas
+define('RUTA_LOGIN', '../Views/login.php');
+define('RUTA_INICIO', '../Views/Index.php');
+define('RUTA_ACCESO_NO_AUTORIZADO', './Views/layouts/errors/accesoNoAutorizado.php');
+
 /**
- * Verifica si el usuario está autenticado. Si no lo está, redirige a la página de error de acceso no autorizado.
+ * Redirige al usuario basado en su estado de autenticación.
  */
-function verificarSesion() {
-    if (!isset($_SESSION['usuario_id'])) {
-        // Si no hay usuario_id en la sesión, consideramos que el acceso no está autorizado
-        define('ACCESO_NO_AUTORIZADO', true);
-        // Asegúrate de que la ruta sea relativa al punto donde se ejecuta este script
-        header("Location: ./Views/layouts/errors/accesoNoAutorizado.php");
+function redirigirBasadoEnAutenticacion() {
+    if (isset($_SESSION['usuario_id'])) {
+        // Si el usuario está autenticado, redirige a la página de inicio.
+        header("Location: " . RUTA_INICIO);
         exit();
-    }
-}
-
-/**
- * Lanza una excepción si el usuario ya está autenticado.
- * Útil para páginas como login y registro, donde el usuario autenticado no debería tener acceso.
- */
-function verificarNoAutenticado() {
-    if (isset($_SESSION['usuario_id'])) {
-        throw new Exception("Ya estás autenticado.");
-    }
-}
-
-/**
- * Redirige al usuario a la página principal si ya está autenticado.
- */
-function redirigirSiAutenticado() {
-    if (isset($_SESSION['usuario_id'])) {
-        header("Location: ../Views/Index.php");
+    } else {
+        // Si el usuario no está autenticado, redirige a la página de error de acceso no autorizado.
+        header("Location: " . RUTA_ACCESO_NO_AUTORIZADO);
         exit();
     }
 }
@@ -42,7 +29,18 @@ function redirigirSiAutenticado() {
  */
 function redirigirSiNoAutenticado() {
     if (!isset($_SESSION['usuario_id'])) {
-        header("Location: ../Views/login.php");
+        header("Location: " . RUTA_LOGIN);
+        exit();
+    }
+}
+
+/**
+ * Redirige al usuario a la página principal si ya está autenticado.
+ * Útil para páginas como login y registro, donde el usuario autenticado no debería tener acceso.
+ */
+function redirigirSiAutenticado() {
+    if (isset($_SESSION['usuario_id'])) {
+        header("Location: " . RUTA_INICIO);
         exit();
     }
 }

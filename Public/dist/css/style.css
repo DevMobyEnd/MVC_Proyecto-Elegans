@@ -11,7 +11,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('../img/zorro.jpg') no-repeat;
+    background: url('../img/pais.jpg') no-repeat;
     background-size: cover;
     background-position: center;
 
@@ -288,15 +288,17 @@ header {
     font-size: 1em;
     color: #fff;
     font-weight: 500;
-    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; /* Elimina el padding si vas a usar flexbox para el centrado */
 }
-.btn:hover {
-    background-color: #0056b3; /* Color de fondo del botón al pasar el mouse */
-}
+
+
 .btn2{ position: relative;
     width: 100%;
     height: 55px;
-    background: #162938;
+    background: #ff8000;
     border: none;
     outline: none;
     border-radius: 5px;
@@ -308,7 +310,7 @@ header {
     top: 18px;
 }
 .btn2:hover:hover {
-    background-color: #0056b3; /* Color de fondo del botón al pasar el mouse */
+    background-color: #fdb01c; /* Color de fondo del botón al pasar el mouse */
 }
 .login-register{
     font-size: .9em;
@@ -318,7 +320,7 @@ header {
     margin: 25px 0 10px;
 }
 .login-register p a{
-    color: #0e94fa;
+    color: #FFA500 ;
     text-decoration: none;
     font-weight: 600;
 }
