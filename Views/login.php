@@ -3,7 +3,11 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
+// Verifica si el usuario ya está autenticado y redirígelo
+if (isset($_SESSION['usuario_id'])) {
+    header("Location: ../Views/Index.php");
+    exit();
+}
 
 require_once "./layouts/head.php";
 require_once "./layouts/header.php";

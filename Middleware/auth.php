@@ -26,11 +26,20 @@ function redirigirBasadoEnAutenticacion() {
 
 /**
  * Redirige al usuario a la página de login si no está autenticado.
+ *//**
+ * Redirige al usuario a la página de login si no está autenticado y está intentando acceder a una página protegida.
+ * No redirige si el usuario está accediendo a la página de inicio.
  */
-function redirigirSiNoAutenticado() {
+function redirigirSiNoAutenticado($paginaActual = '') {
     if (!isset($_SESSION['usuario_id'])) {
-        header("Location: " . RUTA_LOGIN);
-        exit();
+        // Lista de páginas que no requieren autenticación para ser accedidas.
+        $paginasPermitidasSinAutenticacion = ['../Views/Index.php', '../Views/login.php', '../Views/register.php'];
+
+        // Si la página actual no está en la lista de permitidas y el usuario no está autenticado, redirige a login.
+        if (!in_array($paginaActual, $paginasPermitidasSinAutenticacion)) {
+            header("Location: " . RUTA_LOGIN);
+            exit();
+        }
     }
 }
 
@@ -44,3 +53,4 @@ function redirigirSiAutenticado() {
         exit();
     }
 }
+

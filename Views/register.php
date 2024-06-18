@@ -2,7 +2,9 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
- require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
+
+
+//  require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
  
 
 // Define el título de la página

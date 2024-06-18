@@ -4,7 +4,7 @@ class UsuarioController
 {
     public function index()
     {
-        verificarSesion();
+        $this->verificarSesion();
     }
     private $modelo;
 
