@@ -53,4 +53,27 @@ class UsuarioController
         }
         // Si el usuario está autenticado, simplemente continúa la ejecución del script
     }
+    public function loginConDocumento() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['documento']) && isset($_POST['contraseña'])) {
+            $documento = $_POST['documento'];
+            $contraseña = $_POST['contraseña'];
+    
+            // Consulta la base de datos a través del modelo para obtener el usuario por documento
+            $resultado = $this->modelo->verificarUsuario2($documento);
+    
+            if ($resultado && password_verify($contraseña, $resultado['password'])) {
+                // Iniciar sesión y redirigir al usuario
+                session_start();
+                $_SESSION['usuario_id'] = $resultado['id'];
+                header("Location: ../Views/Index.php");
+                exit();
+            } else {
+                // Manejar el error de autenticación si el usuario no existe o la contraseña no coincide
+                echo "El documento o la contraseña son incorrectos.";
+            }
+        } else {
+            // Mostrar el formulario de login o un mensaje de error si no se envía el formulario correctamente
+            echo "Por favor, complete el formulario de login con su documento.";
+        }
+    }
 }

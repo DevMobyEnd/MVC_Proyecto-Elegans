@@ -9,14 +9,15 @@
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
-                <input class="input" name="Gmail" type="email" required> <!-- Cambio aquí -->
+                <input class="input" name="Gmail" type="email" value="<?php if (iseet($_GET ['$doc'])) {
+                  echo 'voy a actulizar'}else {echo 'Voy a insertar'}?>" required> <!-- Cambio aquí -->
                 <label>Gmail</label>
             </div>
             <div class="input-box">
                 <span class="icon">
                     <ion-icon name="lock-closed"></ion-icon>
                 </span>
-                <input class="input" name="password" type="password" required> 
+                <input class="input" name="password" type="password"required> 
                 <label>Password</label>
             </div>
             <div class="remember-forgot">

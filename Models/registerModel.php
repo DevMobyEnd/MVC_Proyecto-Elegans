@@ -43,4 +43,51 @@ class registerModel {
     public function obtenerUltimoIdRegistrado() {
         return $this->conexion->insert_id;
     }
+
+    public function procesarRegistro() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Captura los datos del formulario
+            $nombre = $_POST['nombre'];
+            $documento = $_POST['documento'];
+            $fechaNacimiento = $_POST['fechaNacimiento'];
+            $clave = $_POST['clave'];
+            
+            // Procesa la carga del archivo de foto
+            $rutaFoto = $this->cargarFoto($_FILES['foto']);
+    
+            // Aquí deberías validar los datos recibidos (por ejemplo, asegurarte de que no estén vacíos)
+    
+            // Crea una instancia de tu modelo de registro
+            $modeloRegistro = new registerModel();
+    
+            // Intenta registrar al usuario
+            $resultado = $modeloRegistro->registrarUsuarioc($nombre, $documento, $fechaNacimiento, $rutaFoto, $clave);
+    
+            if ($resultado) {
+                // Si el registro es exitoso, redirige o muestra un mensaje
+                // Por ejemplo, redirigir al usuario a la página de inicio de sesión
+                header("Location: login.php");
+                exit();
+            } else {
+                // Si hay un error en el registro, muestra un mensaje o maneja el error
+                echo "Hubo un error en el registro. Por favor, inténtalo de nuevo.";
+            }
+        } else {
+            // Si el método no es POST, redirige al formulario de registro
+            header("Location: register.php");
+            exit();
+        }
+    }
+    
+    private function cargarFoto($archivoFoto) {
+        if ($archivoFoto['error'] == UPLOAD_ERR_OK) {
+            $nombreTemporal = $archivoFoto['tmp_name'];
+            $nombreArchivo = basename($archivoFoto['name']);
+            $rutaDestino = "/ruta/a/tu/directorio/de/imagenes/" . $nombreArchivo;
+            if (move_uploaded_file($nombreTemporal, $rutaDestino)) {
+                return $rutaDestino; // Devuelve la ruta de la foto si la carga fue exitosa
+            }
+        }
+        return null; // Devuelve null si no se pudo cargar la foto
+    }
 }
