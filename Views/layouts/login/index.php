@@ -1,4 +1,20 @@
+<?php
+// Asegúrate de incluir el modelo UsuarioModel
+require_once '../Models/UsuarioModel.php';
 
+// Crea una instancia del modelo UsuarioModel
+$usuarioModel = new UsuarioModel();
+
+// Verifica si el parámetro 'doc' está presente en la URL
+if (isset($_GET['doc'])) {
+    // Utiliza la función retornadorDato para obtener el valor deseado
+    // Suponiendo que 'doc' es un documento y quieres obtener el correo asociado a ese documento
+    $valor = $usuarioModel->retornadorDato(2, $_GET['doc']); // Asumiendo que '2' es el descriptor para buscar por documento y obtener el correo
+    $valorInput = $valor ? $valor : 'No encontrado';
+} else {
+    $valorInput = 'Voy a insertar';
+}
+?>
 
 
 <div class="wrapper">
@@ -9,8 +25,7 @@
                 <span class="icon">
                     <ion-icon name="mail"></ion-icon>
                 </span>
-                <input class="input" name="Gmail" type="email" value="<?php if (iseet($_GET ['$doc'])) {
-                  echo 'voy a actulizar'}else {echo 'Voy a insertar'}?>" required> <!-- Cambio aquí -->
+                <input class="input" name="Gmail" type="email" value="<?php echo $valorInput; ?>" required> <!-- Cambio aquí -->
                 <label>Gmail</label>
             </div>
             <div class="input-box">
