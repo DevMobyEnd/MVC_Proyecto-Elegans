@@ -39,7 +39,7 @@ class UsuarioModel {
             $campo = "nombres";
             $busqueda = "Gmail";
         } else if ($des == 2) {
-            $campo = "foto";
+            $campo = "apellidos";
             // Asumiendo que quieres buscar por Gmail para obtener la foto, ajusta según sea necesario
             $busqueda = "Gmail";
         }
