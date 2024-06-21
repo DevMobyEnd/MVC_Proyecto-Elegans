@@ -1,0 +1,48 @@
+<style>
+    *{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    font-family: "Word Sans",sans-serif;
+    letter-spacing: 10px;
+    background: rgb(255, 255, 255);
+    display: flex;
+    height: 100vh;
+    width: 210vh;
+    justify-content: center;
+    align-items: center;
+}
+
+h2{
+    font-size: 10rem;
+    position: absolute;
+}
+.border{
+    color: rgb(255, 255, 255);
+    text-shadow: 
+    -1px -1px 0 rgb(33, 2, 2),
+    -1px 1px 0 rgb(33, 2, 2),
+    1px 1px 0 rgb(33, 2, 2),
+    1px -1px 0 rgb(33, 2, 2);
+}
+
+.wave{
+    color: #ff8000;
+    animation: wave 3s ease-in-out infinite;
+}
+
+@keyframes wave{
+    0%, 100%{
+        clip-path: polygon(0% 47%, 10% 48%, 33% 54%, 54% 60%, 70% 61%, 84% 59%, 100% 52%, 100% 100%, 0% 100% );
+    }
+    50% {
+        clip-path: polygon(0% 60%, 15% 65%, 34% 66%, 51% 62%, 67% 50%, 84% 45%, 100% 46%, 100% 100%, 0% 100%);
+    }
+}
+</style>
+
+
+<h2 class="border">Bienvenido</h2>
+<h2 class="wave">Bienvenido</h2>

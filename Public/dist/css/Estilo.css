@@ -1,5 +1,45 @@
 @import url('https://fonts.googleapis.com/css2? family= Indie+Flower & family= Josefin+Sans:ital,wght@1,300 & display=swap');
+:root{
+    --color-barra-lateral:rgb(255,255,255);
 
+    --color-texto:rgb(0,0,0);
+    --color-texto-menu:rgb(134,136,144);
+
+    --color-menu-hover:rgb(238,238,238);
+    --color-menu-hover-texto:rgb(0,0,0);
+
+    --color-boton:rgb(0,0,0);
+    --color-boton-texto:rgb(255,255,255);
+
+    --color-linea:rgb(180,180,180);
+
+    --color-switch-base :rgb(201,202,206);
+    --color-switch-circulo:rgb(241,241,241);
+
+    --color-scroll:rgb(192,192,192);
+    --color-scroll-hover:rgb(134,134,134);
+}
+
+.dark-mode{
+    --color-barra-lateral:rgb(44,45,49);
+
+    --color-texto:rgb(255,255,255);
+    --color-texto-menu:rgb(110,110,117);
+
+    --color-menu-hover:rgb(0,0,0);
+    --color-menu-hover-texto:rgb(238,238,238);
+
+    --color-boton:rgb(255,255,255);
+    --color-boton-texto:rgb(0,0,0);
+
+    --color-linea:rgb(90,90,90);
+
+    --color-switch-base :rgb(39,205,64);
+    --color-switch-circulo:rgb(255,255,255);
+
+    --color-scroll:rgb(68,69,74);
+    --color-scroll-hover:rgb(85,85,85);
+}
 * {
     margin: 0;
     padding: 0;
@@ -296,3 +336,39 @@ header {
 
 }
 
+/* custom.css */
+.sidebar {
+    height: 100vh; /* Altura completa */
+    width: 250px; /* Ancho del sidebar */
+    position: fixed; /* Posición fija */
+    z-index: 1; /* Permanece sobre el contenido */
+    top: 0; /* Alineado arriba */
+    left: 0; /* Alineado a la izquierda */
+    background-color: #111; /* Color de fondo */
+    overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+    padding-top: 20px; /* Espacio superior */
+}
+
+.sidebar a {
+    padding: 10px 15px; /* Espaciado */
+    text-decoration: none; /* Sin subrayado */
+    font-size: 18px; /* Tamaño de fuente */
+    color: white; /* Color de texto */
+    display: block; /* Hace que los enlaces llenen el contenedor */
+}
+
+.sidebar a:hover {
+    color: #f1f1f1; /* Color de texto al pasar el mouse */
+}
+
+.sidebar .navbar-nav {
+    flex-direction: column;
+}
+
+.sidebar .nav-item {
+    display: block;
+
+}
+.menu-vertical > li {
+    display: block;
+}
