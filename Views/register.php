@@ -15,9 +15,8 @@ require_once '../Controller/registerController.php';
 require_once '../Models/registerModel.php';
 
 // Incluye los layouts después de iniciar sesión y de los require_once necesarios
-require_once "./layouts/head.php";
-require_once "./layouts/header.php";
-require_once "./layouts/login/create.php";
+require_once "../Views/layouts/head.php";
+require_once "./layouts/login/Seccionregisters.php";
 
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btnregistrar'])) {

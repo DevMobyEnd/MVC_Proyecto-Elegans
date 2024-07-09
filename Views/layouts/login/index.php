@@ -23,9 +23,9 @@ if (isset($_GET['doc'])) {
         <form method="post" action="login.php"> <!-- Cambio aquí -->
             <div class="input-box">
                 <span class="icon">
-                    <ion-icon name="mail"></ion-icon>
+                    <ion-icon name="email"></ion-icon>
                 </span>
-                <input class="input" name="Gmail" type="email" value="<?php echo $valorInput; ?>" required> <!-- Cambio aquí -->
+                <input class="input" name="Gmail" type="aa" value="<?php echo $valorInput; ?>" required> <!-- Cambio aquí -->
                 <label>Gmail</label>
             </div>
             <div class="input-box">

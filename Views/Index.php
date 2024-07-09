@@ -1,8 +1,9 @@
 <?php
-require_once "./layouts/head.php";
-require_once "./layouts/header.php";
+require_once "../Views/layouts/head.php";
+require_once "../Views/layouts/wrapper.php";
 require_once '../Middleware/auth.php'; // Este archivo puede contener funciones útiles, pero no forzaremos la autenticación aquí.
-require_once '../Views/layouts/main-menu.php';
+
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
@@ -56,5 +57,3 @@ if (isset($_SESSION['usuario_id'])) {
     echo "<p>¿Eres nuevo aquí? <a href='../Views/register.php'>Regístrate ahora</a> o <a href='../Views/login.php'>inicia sesión</a>.</p>";
 }
 
-// El resto de tu página de inicio sigue aquí...
-?>

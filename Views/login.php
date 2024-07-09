@@ -9,9 +9,11 @@ if (isset($_SESSION['usuario_id'])) {
     exit();
 }
 
-require_once "./layouts/head.php";
-require_once "./layouts/header.php";
-require_once "./layouts/login/index.php";
+// Define el título de la página
+$tituloPagina = "Inicio De Seción - Elegans";
+
+require_once "../Views/layouts/head.php";
+require_once "../Views/layouts/login/Seccionlogin.php";
 
 require_once '../Config/Conexion.php';
 require_once '../Controller/UsuarioController.php';
@@ -19,7 +21,7 @@ require_once '../Models/UsuarioModel.php';
 
 // Verifica si el formulario ha sido enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btningresar'])) {
-    $email = $_POST['Gmail']; // Captura el email del formulario
+    $email = $_POST['email']; // Captura el email del formulario
     $password = $_POST['password']; // Captura la contraseña del formulario
 
     $usuarioModel = new UsuarioModel(); // Crea una instancia de UsuarioModel
