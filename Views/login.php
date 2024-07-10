@@ -12,8 +12,8 @@ if (isset($_SESSION['usuario_id'])) {
 // Define el título de la página
 $tituloPagina = "Inicio De Seción - Elegans";
 
-require_once "../Views/layouts/head.php";
-require_once "../Views/layouts/login/Seccionlogin.php";
+require_once "./layout/Seccionlogin/head.php";
+
 
 require_once '../Config/Conexion.php';
 require_once '../Controller/UsuarioController.php';

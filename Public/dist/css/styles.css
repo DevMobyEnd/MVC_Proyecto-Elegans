@@ -97,7 +97,9 @@ a.text-muted{
 a.theme-toggle{
     text-decoration: none;
 }
-
+.col-12 {
+    flex-basis: 100%;
+}
 .sidebar-link[data-bs-toggle="collapse"]::after {
     border: solid;
     border-width: 0 .075rem .075rem 0;
@@ -397,6 +399,11 @@ section {
 }
 .form-group input::placeholder {
     color: transparent;
+}
+#card {
+    width: 150px;
+    height: 250px;
+    background-color: #cee1fe;
 }
 .form-group .form-label{
     position: absolute;
