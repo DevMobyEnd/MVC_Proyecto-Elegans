@@ -117,6 +117,99 @@ a.theme-toggle{
     transform: rotate(45deg);
     transition: all .2s ease-out;
 }
+/* Efecto hover para los elementos del menú lateral */
+.sidebar-nav .sidebar-item .sidebar-link {
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-nav .sidebar-item .sidebar-link:hover {
+    background-color: #f1f1f1; /* Cambia el color de fondo al que desees */
+    color: #000;
+}
+
+/* Efecto hover para dispositivos móviles */
+@media (max-width: 767px) {
+    .sidebar-nav .sidebar-item .sidebar-link {
+        transition: background-color 0.3s ease;
+        color: #fff;
+    }
+
+    .sidebar-nav .sidebar-item .sidebar-link:hover {
+        background-color: #e1e1e1; /* Cambia el color de fondo al que desees */
+        color: #000;
+    }
+}
+/* estilos del primer card de la seccion de Home */
+#imghome {
+    width: 190px;
+    object-fit: cover;
+    border-radius: 0 3px 0 0;
+    margin-bottom: 10px; /* Separación entre la imagen y el hr */
+    display: block; /* Asegura que la imagen se trate como un bloque para centrado automático */
+    margin: 0 auto; /* Centra la imagen horizontalmente */
+}
+
+#card {
+    width: 100%; /* Anchura del contenedor */
+    margin: 0 auto; /* Centrar el contenedor */
+    padding: 20px; /* Espaciado interior del contenedor */
+    border: 1px solid #ccc; /* Borde del contenedor */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra del contenedor */
+    background-color: #cee1fe;
+    text-align: center; /* Centrar contenido en pantallas pequeñas */
+}
+
+/* Media Query para pantallas grandes */
+@media (min-width: 1200px) {
+    #card {
+        max-width: 800px; /* Ancho máximo del contenedor en pantallas grandes */
+    }
+}
+
+/* Media Query para pantallas medianas */
+@media (min-width: 768px) and (max-width: 1199px) {
+    #card {
+        width: 70%; /* Ajustar el ancho del contenedor al 70% en pantallas medianas */
+        max-width: none; /* No restringir el ancho máximo en pantallas medianas */
+    }
+}
+
+/* Media Query específica para dispositivos como Galaxy Fold2, Galaxy Tab S7, iPad Air */
+@media (min-width: 600px) and (max-width: 1199px) {
+    #card {
+        width: 70%; /* Ajustar el ancho del contenedor al 70% en estos dispositivos */
+        max-width: none; /* No restringir el ancho máximo en estos dispositivos */
+    }
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 599px) {
+    #card {
+        width: 90%; /* Ajustar el ancho del contenedor al 90% en pantallas pequeñas */
+    }
+    #imghome {
+        margin-bottom: 10px; /* Separación entre la imagen y el hr */
+        float: none; /* Anula el float en pantallas pequeñas */
+    }
+
+    hr {
+        margin-top: 10px; /* Espacio superior entre hr y párrafo */
+    }
+}
+
+#card {
+    margin-bottom: 20px; /* Agrega un margen inferior para separar el primer contenedor del segundo */
+}
+
+@media (max-width: 767px) {
+    #card {
+        margin-bottom: 10px; /* Reducir el margen en pantallas pequeñas si es necesario */
+    }
+}
+
+
+
+
 
 .avatar {
     height: 40px;
@@ -400,11 +493,7 @@ section {
 .form-group input::placeholder {
     color: transparent;
 }
-#card {
-    width: 150px;
-    height: 250px;
-    background-color: #cee1fe;
-}
+
 .form-group .form-label{
     position: absolute;
     top: 9px;

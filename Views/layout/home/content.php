@@ -7,27 +7,26 @@
             <div class="row">
                 <div class="col-12 col-md-6 d-flex">
                     <div id="card" class="card flex-fill border-0 illustration">
-                        <div class="card-body p-0 d-flex flex-fill">
-                            <div class="row g-0 w-100">
-                                <div class="col-md-8">
-                                    <div class="p-3 m-1">
-                                        <h5>Bienvenido a solicitudes bar Elegans!</h5>
-                                        <p class="mb-0">Aquí podrás hacer la solicitud de tus canciones favoritas desde la comodidad de tu mesa.</p>
-                                        <p>Recuerda que antes de realizar cualquier solicitud, debes iniciar sesión.</p>
+                        <div class="card-body p-0">
+                            <div class="row g-0">
+                                <div class="col-12 col-md-8">
+                                    <div class="p-3">
+                                        <h4>Bienvenido a solicitudes bar Elegans!</h4>
+                                        <p>Aquí podrás hacer la solicitud de tus canciones favoritas desde la comodidad de tu mesa.</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4 align-self-end text-end">
-                                    <img src="/Public/dist/img/customer-support.jpg" class="img-fluid illustration-img" alt="" style="height:150px; width:150px; object-fit: contain;">
+                                <div class="col-12 col-md-4 text-center">
+                                    <img id="imghome" src="/Public/dist/img/customer-support.jpg" class="img-fluid illustration-img" alt="">
                                 </div>
                                 <div class="col-12">
                                     <hr style="background-color: #cee1fe; height: 4px; margin-top: 0;">
-                                    <p>Recuerda que antes de realizar cualquier solicitud, debes iniciar sesión
-                                    </p>
+                                    <p>Recuerda que antes de realizar cualquier solicitud, debes iniciar sesión</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-12 d-flex">
                     <div class="card flex-fill border-0">
@@ -41,6 +40,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Modal de Términos y Condiciones -->
                 <div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
