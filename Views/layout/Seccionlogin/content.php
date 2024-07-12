@@ -1,5 +1,5 @@
 <main class="content px-3 py-2">
-<div class="container mt-5">
+    <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="container-fluid">
                 <div class="row justify-content-center">
@@ -13,7 +13,7 @@
                                     <div id="emailStep" class="mb-3">
                                         <section>
                                             <div class="form-group d-flex flex-column align-items-center position-relative">
-                                                <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="Gmail" id="emailInput" style="width: 100%; max-width: 400px;" required>
+                                                <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="Gmail" id="emailInput" required>
                                                 <label class="form-label long-label">
                                                     <i class="fa-solid fa-envelope"></i> Correo Electrónico
                                                 </label>
@@ -41,6 +41,21 @@
                                     <p class="text-center mt-3">
                                         ¿No tiene una cuenta? <a href="#">Regístrese</a>
                                     </p>
+                                    <div class="hr-with-text">
+                                        <hr>
+                                        <span>0</span>
+                                    </div>
+                                    <div class="social-login-buttons">
+                                        <button class="btn btn-social btn-google">
+                                            <ion-icon name="logo-google"></ion-icon> Iniciar sesión con Google
+                                        </button>
+                                        <button class="btn btn-social btn-github">
+                                            <ion-icon name="logo-github"></ion-icon> Iniciar sesión con GitHub
+                                        </button>
+                                        <button class="btn btn-social btn-microsoft">
+                                            <ion-icon name="logo-windows"></ion-icon> Iniciar sesión con Microsoft
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
