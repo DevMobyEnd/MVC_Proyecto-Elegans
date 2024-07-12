@@ -68,4 +68,3 @@ $seccion = basename($_SERVER['PHP_SELF']);
 // } else {
 //     echo '<link rel="stylesheet" href="../Public/dist/css/Estilo.css">';
 // }
-?>

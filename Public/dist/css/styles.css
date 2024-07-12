@@ -511,5 +511,15 @@ section {
     background-color: #ffffff;
     font-size: 14px;
     color: #1771d2;
+  
+}
+
+#loginForm a{
+    text-decoration: none;
+}
+
+#loginForm-lg {
+    height: 50px; /* Ajusta este valor según tus necesidades */
+    font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
 }
 
