@@ -2,49 +2,68 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header text-center" style="font-size: 24px; font-weight: bold;">
-                    Registrarse
-                </div>
-                <div class="card-body">
-                    <form action="/./Views/register.php" method="POST">
-                        <div class="mb-3">
-                            <label for="registerFirstName" class="form-label">Nombres</label>
-                            <input type="text" class="form-control" id="registerFirstName"  name="Nombres">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerLastName" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="registerLastName" name="Apellidos">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerDocumentNumber" class="form-label">NumeroDocumento</label>
-                            <input type="text" class="form-control" id="registerDocumentNumber" name="NumeroDocumento">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerAlias" class="form-label">Usuario</label>
-                            <input type="text" class="form-control" id="registerAlias" name="Usuario">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerEmail" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="registerEmail"  name="Gmail">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerPassword" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="registerPassword" name="password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerConfirmPassword" class="form-label">Confirmar
-                                Contraseña</label>
-                            <input type="password" class="form-control" id="registerConfirmPassword" name="password">
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <button name="btnregistrar" type="submit" class="edit-profile-btn2">Registrarse</button>
-                        </div>
-
-                    </form>
-                    <div class="text-center mt-3">
-                        <p>¿Ya tienes una cuenta? <a href="Seccionlogin.html">Inicia sesión</a></p>
+                <form id="registerForm" method="POST" action="/Views/register.php">
+                    <div id="registerStep" class="mb-3">
+                        <section>
+                            <h1 class="welcome-title">
+                                <span class="static-text">Únete a nosotros</span>
+                                <span class="dynamic-text">
+                                    <span>Join us!</span>
+                                    <span>Rejoignez-nous!</span>
+                                    <span>私たちと一緒に！</span>
+                                </span>
+                            </h1>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-user"></i> Nombres
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-user"></i> Apellidos
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-id-card"></i> Numero de Documento
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-user-tag"></i> Apodo
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="email" placeholder="CorreoElectrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-envelope"></i> Correo Electrónico
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-lock"></i> Contraseña
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-lock"></i> Confirmar Contraseña
+                                </label>
+                            </div>
+                        </section>
                     </div>
-                </div>
+                    <div class="text-center">
+                        <button type="submit" id="registerBtn" name="btnregistrar" class="btn btn-primary btn-lg">Registrarse</button>
+                    </div>
+                    <p class="text-center mt-3">
+                        ¿Ya tienes una cuenta? <a href="#">Inicia sesión</a>
+                    </p>
+                </form>
             </div>
         </div>
 

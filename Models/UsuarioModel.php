@@ -9,38 +9,29 @@ class UsuarioModel {
         $this->conexion = $conexion->obtenerConexion();
     }
 
-    public function verificarEmail($email) {
-        $sql = "SELECT id, nombres, Gmail, password FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
-        $stmt = $this->conexion->prepare($sql);
+    public function obtenerUsuarioPorEmail($email) {
+        $query = "SELECT * FROM tb_usuarios WHERE Gmail = ?";
+        $stmt = $this->conexion->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($resultado && $resultado->num_rows > 0) {
-            return $resultado->fetch_assoc();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
         }
-        return null;
+        return null; // Retorna null si no se encuentra el usuario
     }
 
     public function verificarCredenciales($email, $password) {
-        $usuario = $this->verificarEmail($email);
-        if ($usuario && password_verify($password, $usuario['password'])) {
-            return $usuario;
+        $sql = "SELECT id, nombres, password FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            if (password_verify($password, $row['password'])) {
+                return $row;
+            }
         }
         return false;
-    }
-
-    // Método adicional para obtener usuario por número de documento
-    public function obtenerUsuarioPorDocumento($documento) {
-        $sql = "SELECT id, nombres, Gmail, password FROM tb_usuarios WHERE numero_documento = ? LIMIT 1";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $documento);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($resultado && $resultado->num_rows > 0) {
-            return $resultado->fetch_assoc();
-        }
-        return null;
     }
 }

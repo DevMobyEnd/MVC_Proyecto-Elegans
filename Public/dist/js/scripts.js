@@ -68,8 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
-//Funcionalidades para la Vista de Login  
 document.addEventListener('DOMContentLoaded', function () {
     const emailStep = document.getElementById('emailStep');
     const passwordStep = document.getElementById('passwordStep');
@@ -106,81 +104,141 @@ document.addEventListener('DOMContentLoaded', function () {
         forgotPassword.style.display = 'none';
         if (hrWithText) hrWithText.style.display = 'block';
         if (socialLoginButtons) socialLoginButtons.style.display = 'block';
+
+        // Clear the password field
+        passwordInput.value = '';
+
+        // Focus on the email input
+        emailInput.focus();
     }
 
-    continueBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (emailInput.value.trim() !== '') {
-            verifyEmail();
-        }
-    });
-
+    // Add this event listener after the other event listeners
     editEmail.addEventListener('click', function (e) {
         e.preventDefault();
         showEmailStep();
     });
 
-    loginForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        login();
-    });
-
     continueBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        if (emailInput.value.trim() !== '') {
-            verifyEmail();
-        }
-    });
+        console.log('Botón Continuar clickeado');
+        const email = emailInput.value;
 
-    function verifyEmail() {
-        const email = emailInput.value.trim();
         fetch('/Views/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
             },
-            body: `action=verifyEmail&Gmail=${encodeURIComponent(email)}`
+            body: `Gmail=${encodeURIComponent(email)}`
         })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                showPasswordStep();
-            } else {
-                alert(result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while verifying the email.');
-        });
-    }
-
-    function login() {
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-        fetch('../Controller/UsuarioController.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `action=login&Gmail=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-        })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error("Server response was not JSON:", text);
+                    throw new Error("Server response was not JSON");
+                }
+            })
             .then(data => {
                 if (data.success) {
-                    window.location.href = data.redirect;
+                    showPasswordStep();
                 } else {
-                    alert(data.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('There has been a problem with your fetch operation:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo.'
+                });
             });
-    }
+    });
 
-    continueBtn.addEventListener('click', verifyEmail);
-    loginForm.addEventListener('submit', function (e) {
+    submitBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        login();
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        fetch('/Views/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `Gmail=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respuesta del servidor:', data);
+                if (data.success) {
+                    window.location.href = '/Views/Index.php';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            });
+    });
+
+    // Add this event listener after the other event listeners
+    editEmail.addEventListener('click', function (e) {
+        e.preventDefault();
+        showEmailStep();
+    });
+});
+
+//Funcionalidades para la vista de registro
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(result => {
+        if(result.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: result.message
+            }).then(() => {
+                window.location.href = result.redirect || '/';
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: result.message
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al procesar la solicitud: ' + error.message
+        });
     });
 });

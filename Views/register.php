@@ -1,68 +1,49 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once '../Controller/RegisterController.php';
 
-//  require_once '../Middleware/auth.php'; // Ajusta la ruta según sea necesario
- 
+$controller = new RegisterController();
+
+// Handle AJAX requests
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    header('Content-Type: application/json');
+    try {
+        $response = $controller->registrar();
+        echo json_encode($response);
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// Handle form submission for non-AJAX requests
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $result = $controller->registrar();
+    if ($result['status'] === 'success') {
+        header('Location: ' . $result['redirect']);
+        exit;
+    } else {
+        $errores = $result['message'];
+    }
+}
 
 // Define el título de la página
 $tituloPagina = "Registro - Elegans";
 
-require_once '../Config/Conexion.php';
-require_once '../Controller/registerController.php';
-require_once '../Models/registerModel.php';
-
-// Incluye los layouts después de iniciar sesión y de los require_once necesarios
-
+// Incluye el head
 require_once "./layout/Seccionregisters/head.php";
 
-// Verifica si el formulario ha sido enviado
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['btnregistrar'])) {
-    // Captura los datos del formulario
-    $nombres = $_POST['Nombres'];
-    $apellidos = $_POST['Apellidos'];
-    $numeroDocumento = $_POST['NumeroDocumento'];
-    $usuario = $_POST['Usuario'];
-    $email = $_POST['Gmail'];
-    $password = $_POST['password'];
+// Aquí incluirías el resto del HTML de la página, incluyendo el formulario
+// ...
 
-    // Crea una instancia de tu modelo de usuario
-    $modeloRegistro = new registerModel();
-
-    // Intenta registrar al usuario
-    $resultado = $modeloRegistro->registrarUsuario($nombres, $apellidos, $numeroDocumento, $usuario, $email, $password);
-
-    if ($resultado) {
-        // Si el registro es exitoso, muestra un mensaje y redirige
-        echo "<script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Registro exitoso. Por favor, inicia sesión.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                setTimeout(function(){
-                    window.location.href = '../Views/login.php';
-                }, 1500);
-              </script>";
-    } else {
-        // Si hay un error en el registro, muestra un mensaje
-        echo "<script>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Hubo un error en el registro. Por favor, inténtalo de nuevo.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-              </script>";
-    }
-}
-
-// Define la variable $seccion basada en el archivo PHP actual
-$seccion = basename($_SERVER['PHP_SELF']);
-
+// Puedes agregar aquí lógica adicional para manejar estilos específicos si es necesario
+// $seccion = basename($_SERVER['PHP_SELF']);
 // if ($seccion == "register.php") {
 //     echo '<link rel="stylesheet" href="../Public/dist/css/style.css">';
 // } else {

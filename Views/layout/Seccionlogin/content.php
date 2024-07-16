@@ -71,18 +71,6 @@
             </div>
         </div>
     </div>
-    <!-- <div class="card-header text-center" style="font-size: 24px; font-weight: bold;">
-                        Iniciar Sesión
-                    </div> -->
-    <!-- <div class="form-group">
-                        <input type="password" placeholder="Contraseña" class="form-control">
-                        <label class="form-label">
-                            <i class="fa-solid fa-lock"></i> Contraseña
-                        </label>
-                    </div>
-                    <div class="text-center mt-3">
-                        <p>¿Aún no tienes una cuenta? <a href="Seccionregisters.html">Regístrate</a></p>
-                    </div> -->
     <!-- Modal de Términos y Condiciones -->
     <div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
