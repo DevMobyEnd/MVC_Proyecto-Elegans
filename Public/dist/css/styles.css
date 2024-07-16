@@ -494,32 +494,46 @@ section {
     width: 100%;
     height: 100%;
     flex-flow: column;
+    text-align: center;
 }
+
 .form-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 100%; 
-    width: 50%; 
+    max-width: 100%;
+    width: 50%;
     /* Ajusta este valor según tus necesidades */
     margin: 0 auto;
     /* Centra el campo de entrada en la pantalla */
     position: relative;
     margin: 20px 0;
 }
+
+@media (max-width: 483px) {
+    .form-group {
+        width: 100%;
+    }
+}
+
 .form-group input {
     width: 100%;
     padding: 12px 15px;
-    font-size: 20px; 
+    font-size: 20px;
     border-radius: 5px;
     border: #acacac solid 2px;
     background-color: transparent;
     color: #000000;
     transition: 0.15s all ease;
 }
-#emailStep, #passwordStep {
-    margin-bottom: 5px; /* Adjust this value as needed */
+
+
+#emailStep,
+#passwordStep {
+    margin-bottom: 5px;
+    /* Adjust this value as needed */
 }
+
 .form-group input:focus {
     border-color: #eee;
 }
@@ -532,45 +546,70 @@ section {
     position: absolute;
     top: 12px;
     left: 0;
-    font-size: 20px;
+    font-size: 16px;
+    /* Reducido de 20px a 16px */
     padding: 0 10px;
     color: #acacac;
     pointer-events: none;
     transition: 0.15s all ease;
 }
+
 .form-group input:focus+.form-label,
 .form-group input:not(:placeholder-shown)+.form-label {
     transform: translate(5px, -28px);
     background-color: #ffffff;
-    font-size: 16px;
+    font-size: 14px;
+    /* Reducido de 16px a 14px */
     color: #1771d2;
-
 }
+
+@media (max-width: 576px) {
+    .form-group .form-label {
+        font-size: 14px;
+        /* Aún más pequeño en pantallas móviles */
+    }
+
+    .form-group input:focus+.form-label,
+    .form-group input:not(:placeholder-shown)+.form-label {
+        font-size: 12px;
+        /* Aún más pequeño cuando está enfocado o tiene contenido */
+    }
+}
+
 #loginForm a {
     text-decoration: none;
 }
+
 #loginForm-lg {
     height: 50px;
     /* Ajusta este valor según tus necesidades */
     font-size: 16px;
     /* Ajusta el tamaño de la fuente si es necesario */
 }
+
 .hr-with-text {
     position: relative;
     text-align: center;
     margin: 10px 0;
 }
+
 .hr-with-text hr {
     border-top: 2px solid #000000;
     margin: 0;
 }
+
 .hr-with-text span {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
-    padding: 0 10px;
+    padding: 0 20px;
+    width: 50px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /*Botones para conectar con 3 plataformas*/
@@ -581,7 +620,9 @@ section {
     max-width: 400px;
     margin: 0 auto;
 }
+
 .btn-social {
+    top: 20px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -596,29 +637,141 @@ section {
     color: #333;
     transition: all 0.3s ease;
     margin-bottom: 15px;
+    border-color: #000000 solid 3px !important;
+    /* Borde negro */
+
 }
+
 .btn-social:hover,
 .btn-social:active {
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #e2e2e2 !important;
+    /* Cambia el color de fondo al hacer hover o click**/
 }
+
 .btn-social ion-icon {
     margin-right: 10px;
     font-size: 24px;
 }
+
 .btn-google {
-    border-color: #DB4437;
+    border: #000000 solid 1px !important;
+    /* Borde negro */
+
 }
+
 .btn-github {
-    border-color: #333;
+    border: #000000 solid 1px !important;
+    /* Borde negro */
+
 }
+
 .btn-github ion-icon {
     color: #333;
 }
+
 .btn-microsoft {
-    border-color: #00A4EF;
+    border: #000000 solid 1px !important;
+    /* Borde azul de Microsoft**/
 }
+
 .btn-microsoft ion-icon {
     color: #00A4EF;
 }
 
+.welcome-title {
+    font-size: 1.8em;
+    text-align: center;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 0 15px;
+    overflow: hidden;
+}
+
+@media (max-width: 465px) {
+    .welcome-title {
+        font-size: 1.4em;
+        padding: 0 8px;
+    }
+
+    .dynamic-text {
+        width: 120px;
+    }
+}
+
+@media (max-width: 320px) {
+    .welcome-title {
+        font-size: 1.1em;
+        padding: 0 5px;
+    }
+
+    .dynamic-text {
+        width: 90px;
+    }
+}
+
+.welcome-title::before,
+.welcome-title::after {
+    content: '[';
+    position: absolute;
+    font-size: 1em;
+    animation: blink 1s infinite;
+}
+
+.welcome-title::before {
+    left: 0;
+}
+
+.welcome-title::after {
+    right: 0;
+    content: ']';
+}
+
+.static-text {
+    margin-right: 0.2em;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.dynamic-text {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    height: 1.2em;
+    width: 150px;
+}
+
+.dynamic-text span {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 30px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.dynamic-text span.active {
+    opacity: 1;
+}
+
+.dynamic-text span.prev {
+    transform: translateY(100%);
+}
+
+.dynamic-text span.next {
+    transform: translateY(-100%);
+}

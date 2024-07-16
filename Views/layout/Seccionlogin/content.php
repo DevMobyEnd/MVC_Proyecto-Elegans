@@ -5,13 +5,20 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="card">
-                            <div class="card-header text-center">
-                                Inicia Sesión
-                            </div>
+
+
                             <div class="card-body">
-                                <form id="loginForm" action="/./Views/login.php" method="POST">
+                                <form id="loginForm" method="POST" action="/Views/login.php">
                                     <div id="emailStep" class="mb-3">
                                         <section>
+                                            <h1 class="welcome-title">
+                                                <span class="static-text">Bienvenidos</span>
+                                                <span class="dynamic-text">
+                                                    <span>Welcome!</span>
+                                                    <span>Bienvenue!</span>
+                                                    <span>ようこそ!</span>
+                                                </span>
+                                            </h1>
                                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                                 <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="Gmail" id="emailInput" required>
                                                 <label class="form-label long-label">
@@ -35,7 +42,7 @@
                                         </p>
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" id="continueBtn" class="btn btn-primary btn-lg">Continuar</button>
+                                        <button type="submit" id="continueBtn" class="btn btn-primary btn-lg">Continuar</button>
                                         <button type="submit" id="submitBtn" name="btningresar" class="btn btn-primary btn-lg" style="display: none;">Ingresar</button>
                                     </div>
                                     <p class="text-center mt-3">
@@ -43,17 +50,17 @@
                                     </p>
                                     <div class="hr-with-text">
                                         <hr>
-                                        <span>0</span>
+                                        <span>O</span>
                                     </div>
                                     <div class="social-login-buttons">
-                                        <button class="btn btn-social btn-google">
-                                            <ion-icon name="logo-google"></ion-icon> Iniciar sesión con Google
+                                        <button type="button" class="btn btn-social btn-google">
+                                            <ion-icon name="logo-google"></ion-icon> Continuar con Google
                                         </button>
-                                        <button class="btn btn-social btn-github">
-                                            <ion-icon name="logo-github"></ion-icon> Iniciar sesión con GitHub
+                                        <button type="button" class="btn btn-social btn-github">
+                                            <ion-icon name="logo-github"></ion-icon> Continuar con GitHub
                                         </button>
-                                        <button class="btn btn-social btn-microsoft">
-                                            <ion-icon name="logo-windows"></ion-icon> Iniciar sesión con Microsoft
+                                        <button type="button" class="btn btn-social btn-microsoft">
+                                            <ion-icon name="logo-windows"></ion-icon> Continuar con Microsoft Account
                                         </button>
                                     </div>
                                 </form>

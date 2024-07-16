@@ -68,12 +68,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+
+//Funcionalidades para la Vista de Login  
 document.addEventListener('DOMContentLoaded', function () {
     const emailStep = document.getElementById('emailStep');
     const passwordStep = document.getElementById('passwordStep');
     const continueBtn = document.getElementById('continueBtn');
     const submitBtn = document.getElementById('submitBtn');
     const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.querySelector('input[name="password"]');
     const editEmail = document.getElementById('editEmail');
     const hrWithText = document.querySelector('.hr-with-text');
     const socialLoginButtons = document.querySelector('.social-login-buttons');
@@ -89,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
         editEmail.style.display = 'inline-block';
         emailInput.readOnly = true;
         forgotPassword.style.display = 'block';
-
         if (hrWithText) hrWithText.style.display = 'none';
         if (socialLoginButtons) socialLoginButtons.style.display = 'none';
     }
@@ -102,14 +104,14 @@ document.addEventListener('DOMContentLoaded', function () {
         editEmail.style.display = 'none';
         emailInput.readOnly = false;
         forgotPassword.style.display = 'none';
-
         if (hrWithText) hrWithText.style.display = 'block';
         if (socialLoginButtons) socialLoginButtons.style.display = 'block';
     }
 
-    continueBtn.addEventListener('click', function () {
+    continueBtn.addEventListener('click', function (e) {
+        e.preventDefault();
         if (emailInput.value.trim() !== '') {
-            showPasswordStep();
+            verifyEmail();
         }
     });
 
@@ -118,35 +120,67 @@ document.addEventListener('DOMContentLoaded', function () {
         showEmailStep();
     });
 
-    // Restore original form when going back to email step
-    emailInput.addEventListener('input', function() {
-        if (emailInput.value.trim() === '') {
-            loginForm.innerHTML = originalFormContent;
-            // Re-assign event listeners after restoring original content
-            document.addEventListener('DOMContentLoaded', initializeListeners);
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        login();
+    });
+
+    continueBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (emailInput.value.trim() !== '') {
+            verifyEmail();
         }
     });
 
-    function initializeListeners() {
-        const continueBtn = document.getElementById('continueBtn');
-        const emailInput = document.getElementById('emailInput');
-        const editEmail = document.getElementById('editEmail');
-
-        if (continueBtn) {
-            continueBtn.addEventListener('click', function () {
-                if (emailInput.value.trim() !== '') {
-                    showPasswordStep();
-                }
-            });
-        }
-
-        if (editEmail) {
-            editEmail.addEventListener('click', function (e) {
-                e.preventDefault();
-                showEmailStep();
-            });
-        }
+    function verifyEmail() {
+        const email = emailInput.value.trim();
+        fetch('/Views/login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=verifyEmail&Gmail=${encodeURIComponent(email)}`
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showPasswordStep();
+            } else {
+                alert(result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while verifying the email.');
+        });
     }
 
-    initializeListeners();
+    function login() {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        fetch('../Controller/UsuarioController.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=login&Gmail=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    continueBtn.addEventListener('click', verifyEmail);
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        login();
+    });
 });
