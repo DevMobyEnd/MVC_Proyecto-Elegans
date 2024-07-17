@@ -45,7 +45,7 @@ class RegisterController
 
         $output = ob_get_clean(); // Get the buffered content and clear the buffer
         if ($resultado) {
-            return ['status' => 'success', 'message' => 'Usuario registrado exitosamente', 'redirect' => '/login.php', 'debug' => $output];
+            return ['status' => 'success', 'message' => 'Usuario registrado exitosamente', 'redirect' => '/Views/login.php', 'debug' => $output];
         } else {
             return ['status' => 'error', 'message' => 'Hubo un error al registrar el usuario', 'debug' => $output];
         }

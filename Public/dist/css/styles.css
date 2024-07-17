@@ -535,7 +535,9 @@ section {
 }
 
 .form-group input:focus {
-    border-color: #eee;
+    border-color: black; /* Cambia este color al que prefieras para el focus */
+    outline: none; /* Elimina el outline predeterminado del navegador */
+    box-shadow: none; /* Esto ayuda a eliminar cualquier sombra que pueda parecer un outline */
 }
 
 .form-group input::placeholder {
@@ -556,11 +558,11 @@ section {
 
 .form-group input:focus+.form-label,
 .form-group input:not(:placeholder-shown)+.form-label {
-    transform: translate(5px, -28px);
+    transform: translate(5px, -24px);
     background-color: #ffffff;
     font-size: 14px;
     /* Reducido de 16px a 14px */
-    color: #1771d2;
+    color: #000000;
 }
 
 @media (max-width: 576px) {
@@ -775,3 +777,4 @@ section {
 .dynamic-text span.next {
     transform: translateY(-100%);
 }
+

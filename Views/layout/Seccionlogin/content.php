@@ -42,8 +42,12 @@
                                         </p>
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" id="continueBtn" class="btn btn-primary btn-lg">Continuar</button>
-                                        <button type="submit" id="submitBtn" name="btningresar" class="btn btn-primary btn-lg" style="display: none;">Ingresar</button>
+                                        <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
+                                            <button type="submit" id="continueBtn" class="edit-profile-btn2 btn-lg fw-semibold">Continuar</button>
+                                        </div>
+                                        <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
+                                            <button type="submit" id="submitBtn" name="btningresar" class="edit-profile-btn2 btn-lg fw-semibold" style="display: none;">Ingresar</button>
+                                        </div>
                                     </div>
                                     <p class="text-center mt-3">
                                         ¿No tiene una cuenta? <a href="#">Regístrese</a>

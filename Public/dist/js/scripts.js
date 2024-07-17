@@ -201,14 +201,97 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
 //Funcionalidades para la vista de registro
+// Constantes para los umbrales de fuerza de contraseña
+const WEAK_THRESHOLD = 40;
+const MODERATE_THRESHOLD = 60;
+const STRONG_THRESHOLD = 80;
+
+// Función para debounce
+const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(null, args), delay);
+    };
+};
+
+// Función para validar la contraseña
+const validatePassword = (e) => {
+    const password = e.target.value;
+    let strength = 0;
+    const progressBar = document.getElementById('password-strength');
+    const passwordHelp = document.getElementById('passwordHelp');
+
+    if (password.length >= 8) strength += 20;
+    if (password.match(/[a-z]+/)) strength += 20;
+    if (password.match(/[A-Z]+/)) strength += 20;
+    if (password.match(/[0-9]+/)) strength += 20;
+    if (password.match(/[$@#&!]+/)) strength += 20;
+
+    progressBar.style.width = strength + '%';
+    progressBar.setAttribute('aria-valuenow', strength);
+
+    if (strength < WEAK_THRESHOLD) {
+        progressBar.className = 'progress-bar bg-danger';
+        passwordHelp.textContent = 'Contraseña débil';
+    } else if (strength < MODERATE_THRESHOLD) {
+        progressBar.className = 'progress-bar bg-warning';
+        passwordHelp.textContent = 'Contraseña moderada';
+    } else if (strength < STRONG_THRESHOLD) {
+        progressBar.className = 'progress-bar bg-info';
+        passwordHelp.textContent = 'Contraseña fuerte';
+    } else {
+        progressBar.className = 'progress-bar bg-success';
+        passwordHelp.textContent = 'Contraseña muy fuerte';
+    }
+};
+
+// Aplicar debounce a la función de validación de contraseña
+const debouncedValidatePassword = debounce(validatePassword, 300);
+
+document.getElementById('passwordInput').addEventListener('input', debouncedValidatePassword);
+
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    let formData = new FormData(this);
-    
+
+    // Client-side validation
+    const Nombres = document.getElementById('nombresInput').value;
+    const Apellidos = document.getElementById('apellidosInput').value;
+    const NumerodeDocumento = document.getElementById('NumerodeDocumentoInput').value;
+    const Apodo = document.getElementById('apodoInput').value;
+    const CorreoElectronico = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+
+    if (!Nombres || !Apellidos || !NumerodeDocumento || !Apodo || !CorreoElectronico || !password) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, complete todos los campos requeridos.'
+        });
+        return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(CorreoElectronico)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, ingrese un email válido.'
+        });
+        return;
+    }
+
+    const formData = new FormData(this);
+
     fetch(this.action, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
     })
     .then(response => {
         if (!response.ok) {

@@ -48,6 +48,10 @@
                                 <label class="form-label long-label">
                                     <i class="fa-solid fa-lock"></i> Contraseña
                                 </label>
+                                <div class="progress mt-2" style="height: 5px; width: 100%;">
+                                    <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small id="passwordHelp" class="form-text text-muted">La contraseña debe tener al menos 8 caracteres.</small>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
@@ -58,7 +62,9 @@
                         </section>
                     </div>
                     <div class="text-center">
-                        <button type="submit" id="registerBtn" name="btnregistrar" class="btn btn-primary btn-lg">Registrarse</button>
+                        <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
+                            <button type="submit" id="registerForm" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
+                        </div>
                     </div>
                     <p class="text-center mt-3">
                         ¿Ya tienes una cuenta? <a href="#">Inicia sesión</a>
