@@ -50,7 +50,7 @@
                                         </div>
                                     </div>
                                     <p class="text-center mt-3">
-                                        ¿No tiene una cuenta? <a href="#">Regístrese</a>
+                                        ¿No tiene una cuenta? <a href="/Views/register.php">Regístrese</a>
                                     </p>
                                     <div class="hr-with-text">
                                         <hr>

@@ -14,6 +14,13 @@
                                 </span>
                             </h1>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista previa" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 10px;">
+                                <input type="file" class="form-control form-control-lg" name="profilePicture" id="Foto_PerfilInput" accept="image/*" onchange="previewImage(this);">
+                                <label class="form-label long-label">
+                                    <i class="fa-solid fa-image"></i> Foto de Perfil
+                                </label>
+                            </div>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
                                 <label class="form-label long-label">
                                     <i class="fa-solid fa-user"></i> Nombres

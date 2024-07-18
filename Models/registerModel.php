@@ -9,17 +9,17 @@ class RegisterModel {
         $this->conexion = $conexion->obtenerConexion();
     }
 
-    public function registrarUsuario($nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password) {
-        if (empty($nombres) || empty($apellidos) || empty($numeroDocumento) || empty($apodo) || empty($correoElectronico) || empty($password)) {
+    public function registrarUsuario($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password) {
+        if (empty($foto_perfil) || empty($nombres) || empty($apellidos) || empty($numeroDocumento) || empty($apodo) || empty($correoElectronico) || empty($password)) {
             return false;
         }
     
         $passwordEncriptado = password_hash($password, PASSWORD_DEFAULT);
     
-        $sql = "INSERT INTO tb_usuarios (nombres, apellidos, numero_documento, Apodo, Gmail, password) VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO tb_usuarios (foto_perfil, nombres, apellidos, numero_documento, Apodo, Gmail, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
         if ($stmt = $this->conexion->prepare($sql)) {
-            $stmt->bind_param("ssssss", $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $passwordEncriptado);
+            $stmt->bind_param("sssssss", $foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $passwordEncriptado);
             $resultado = $stmt->execute();
             $stmt->close();
             return $resultado;
@@ -32,25 +32,19 @@ class RegisterModel {
     }
 
     public function verificarCorreoExistente($correoElectronico) {
-        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE Gmail = ?";
-        if ($stmt = $this->conexion->prepare($sql)) {
-            $stmt->bind_param("s", $correoElectronico);
-            $stmt->execute();
-            $count = 0; // Declare and initialize $count
-            $stmt->bind_result($count);
-            $stmt->fetch();
-            $stmt->close();
-            return $count > 0;
-        }
-        return false;
+        return $this->verificarExistencia("Gmail", $correoElectronico);
     }
 
     public function verificarApodoExistente($apodo) {
-        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE Apodo = ?";
+        return $this->verificarExistencia("Apodo", $apodo);
+    }
+
+    private function verificarExistencia($campo, $valor) {
+        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE $campo = ?";
         if ($stmt = $this->conexion->prepare($sql)) {
-            $stmt->bind_param("s", $apodo);
+            $stmt->bind_param("s", $valor);
             $stmt->execute();
-            $count = 0; // Declare and initialize $count
+            $count = 0;
             $stmt->bind_result($count);
             $stmt->fetch();
             $stmt->close();

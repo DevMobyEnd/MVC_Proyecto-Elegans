@@ -257,6 +257,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     // Client-side validation
+    const Foto_Perfil = document.getElementById('Foto_PerfilInput').value;
     const Nombres = document.getElementById('nombresInput').value;
     const Apellidos = document.getElementById('apellidosInput').value;
     const NumerodeDocumento = document.getElementById('NumerodeDocumentoInput').value;
@@ -264,7 +265,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     const CorreoElectronico = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
 
-    if (!Nombres || !Apellidos || !NumerodeDocumento || !Apodo || !CorreoElectronico || !password) {
+    if (!Foto_Perfil || !Nombres || !Apellidos || !NumerodeDocumento || !Apodo || !CorreoElectronico || !password) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -325,3 +326,20 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         });
     });
 });
+//Funcionalidades para la vista  la foto de perfil
+function previewImage(input) {
+    var preview = document.getElementById('profilePreview');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.src = "/Public/dist/img/profile.jpg";
+        preview.style.display = 'none';
+    }
+}
