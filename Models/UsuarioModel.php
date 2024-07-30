@@ -22,7 +22,7 @@ class UsuarioModel {
     }
 
     public function verificarCredenciales($email, $password) {
-        $sql = "SELECT id, nombres, password FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
+        $sql = "SELECT id, nombres, password, foto_perfil FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -34,4 +34,5 @@ class UsuarioModel {
         }
         return false;
     }
+
 }

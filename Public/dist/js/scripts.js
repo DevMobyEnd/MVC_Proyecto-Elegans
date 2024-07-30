@@ -250,13 +250,13 @@ const validatePassword = (e) => {
 
 // Aplicar debounce a la función de validación de contraseña
 const debouncedValidatePassword = debounce(validatePassword, 300);
-
 document.getElementById('passwordInput').addEventListener('input', debouncedValidatePassword);
 
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Client-side validation
+    let errors = [];
+
     const Foto_Perfil = document.getElementById('Foto_PerfilInput').value;
     const Nombres = document.getElementById('nombresInput').value;
     const Apellidos = document.getElementById('apellidosInput').value;
@@ -265,22 +265,25 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     const CorreoElectronico = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
 
-    if (!Foto_Perfil || !Nombres || !Apellidos || !NumerodeDocumento || !Apodo || !CorreoElectronico || !password) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor, complete todos los campos requeridos.'
-        });
-        return;
-    }
+    if (!Foto_Perfil) errors.push('La foto de perfil es requerida.');
+    if (!Nombres) errors.push('El nombre es requerido.');
+    if (!Apellidos) errors.push('El apellido es requerido.');
+    if (!NumerodeDocumento) errors.push('El número de documento es requerido.');
+    if (!Apodo) errors.push('El apodo es requerido.');
+    if (!CorreoElectronico) errors.push('El correo electrónico es requerido.');
+    if (!password) errors.push('La contraseña es requerida.');
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(CorreoElectronico)) {
+    if (CorreoElectronico && !emailRegex.test(CorreoElectronico)) {
+        errors.push('Por favor, ingrese un email válido.');
+    }
+
+    if (errors.length > 0) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Por favor, ingrese un email válido.'
+            html: `<ul>${errors.map(error => `<li>${error}</li>`).join('')}</ul>`
         });
         return;
     }
@@ -294,11 +297,10 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
+    .then(response => response.text()) // Change to text to debug
+    .then(result => {
+        console.log(result); // Print the result to the console
+        return JSON.parse(result); // Then parse it as JSON
     })
     .then(result => {
         if(result.status === 'success') {
@@ -326,7 +328,8 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         });
     });
 });
-//Funcionalidades para la vista  la foto de perfil
+
+// Funcionalidades para la vista la foto de perfil
 function previewImage(input) {
     var preview = document.getElementById('profilePreview');
     if (input.files && input.files[0]) {

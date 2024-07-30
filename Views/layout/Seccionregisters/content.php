@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <form id="registerForm" method="POST" action="/Views/register.php">
+                <form id="registerForm" method="POST" action="/Views/register.php" enctype="multipart/form-data" data-gtm-form-interact-id="0">
                     <div id="registerStep" class="mb-3">
                         <section>
                             <h1 class="welcome-title">
@@ -70,7 +70,7 @@
                     </div>
                     <div class="text-center">
                         <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
-                            <button type="submit" id="registerForm" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
+                            <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
                         </div>
                     </div>
                     <p class="text-center mt-3">

@@ -28,6 +28,7 @@ class RegisterController
         if ($_SERVER["REQUEST_METHOD"] != "POST") {
             return ['status' => 'error', 'message' => 'Método no permitido'];
         }
+
         $foto_perfil = $_FILES['profilePicture'] ?? null;
         $nombres = htmlspecialchars($_POST['Nombres'] ?? '', ENT_QUOTES, 'UTF-8');
         $apellidos = htmlspecialchars($_POST['Apellidos'] ?? '', ENT_QUOTES, 'UTF-8');
@@ -50,10 +51,13 @@ class RegisterController
             if (!$ruta_foto) {
                 return ['status' => 'error', 'message' => 'Error al procesar la imagen'];
             }
+
+            // Guarda la ruta de la foto en la sesión
+            $_SESSION['profile_picture'] = $ruta_foto;
         }
 
         $resultado = $this->modelo->registrarUsuario($ruta_foto, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password);
-        
+
         $output = ob_get_clean(); // Get the buffered content and clear the buffer
         if ($resultado) {
             return ['status' => 'success', 'message' => 'Usuario registrado exitosamente', 'redirect' => '/Views/login.php', 'debug' => $output];
@@ -67,24 +71,35 @@ class RegisterController
         if ($foto['error'] !== UPLOAD_ERR_OK) {
             return false;
         }
-    
+
         if (!in_array($foto['type'], self::ALLOWED_MIME_TYPES)) {
             return false;
         }
-    
+
         if ($foto['size'] > self::MAX_FILE_SIZE) {
             return false;
         }
-    
-        $upload_dir = '../uploads/'; // Adjust this path as needed
+
+        // Asegúrate de que la carpeta de carga exista y tenga permisos adecuados
+        $upload_dir = '../uploads/';
+
+        // Verifica si la carpeta existe y, si no, intenta crearla
+        if (!is_dir($upload_dir)) {
+            if (!mkdir($upload_dir, 0755, true)) {
+                return false; // No se pudo crear la carpeta
+            }
+        }
+
+        // Genera un nombre único para el archivo y construye la ruta completa
         $filename = uniqid() . '_' . basename($foto['name']);
         $upload_file = $upload_dir . $filename;
-    
+
+        // Mueve el archivo cargado a la carpeta de destino
         if (move_uploaded_file($foto['tmp_name'], $upload_file)) {
-            return $upload_file; // Return the path of the uploaded file
+            return $filename; // Devuelve solo el nombre del archivo, no la ruta completa
         }
-    
-        return false;
+
+        return false; // Error al mover el archivo
     }
 
     private function validarDatos($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password, $confirmPassword)
@@ -121,12 +136,10 @@ class RegisterController
 
         // Validación de la imagen
         if ($foto_perfil && $foto_perfil['error'] !== UPLOAD_ERR_NO_FILE) {
-            $tipos_permitidos = ['image/jpeg', 'image/png', 'image/gif'];
-            if (!in_array($foto_perfil['type'], $tipos_permitidos)) {
+            if (!in_array($foto_perfil['type'], self::ALLOWED_MIME_TYPES)) {
                 $errores[] = 'El archivo debe ser una imagen (JPEG, PNG o GIF)';
             }
-            $max_size = 5 * 1024 * 1024; // 5MB
-            if ($foto_perfil['size'] > $max_size) {
+            if ($foto_perfil['size'] > self::MAX_FILE_SIZE) {
                 $errores[] = 'La imagen no debe exceder los 5MB';
             }
         }

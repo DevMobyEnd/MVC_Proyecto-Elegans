@@ -1,7 +1,12 @@
 <?php
 session_start();
-// Rest of your PHP code
+
+$profilePicture = isset($_SESSION['profile_picture']) ? $_SESSION['profile_picture'] : 'Public/dist/img/profile.jpg';
+
+// Construir la ruta completa para el navegador si no es la imagen por defecto
+$profilePictureUrl = $profilePicture !== 'Public/dist/img/profile.jpg' ? '/uploads/' . $profilePicture : $profilePicture;
 ?>
+
 <nav class="navbar navbar-expand px-3 border-bottom">
     <button class="btn" id="sidebar-toggle" type="button">
         <span class="navbar-toggler-icon"></span>
@@ -18,10 +23,10 @@ session_start();
             <?php else: ?>
                 <li class="nav-item dropdown">
                     <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                        <img src="/Public/dist/img/profile.jpg" class="avatar img-fluid rounded" alt="">
+                        <img src="<?php echo htmlspecialchars($profilePictureUrl); ?>" class="avatar img-fluid rounded-circle" alt="Foto de perfil">
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="#" class="dropdown-item">Ajustes</a>
+                        <a href="settings.php" class="dropdown-item">Ajustes</a>
                         <a href="logout.php" class="dropdown-item">Cerrar sesión</a>
                     </div>
                 </li>
@@ -29,3 +34,11 @@ session_start();
         </ul>
     </div>
 </nav>
+
+<style>
+    .avatar {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+</style>

@@ -19,9 +19,10 @@ class UsuarioController {
     }
 
     public function login($email, $password) {
-        $usuario = $this->modelo->obtenerUsuarioPorEmail($email);
-        if ($usuario && password_verify($password, $usuario['password'])) {
+        $usuario = $this->modelo->verificarCredenciales($email, $password);
+        if ($usuario) {
             $_SESSION['usuario_id'] = $usuario['id'];
+            $_SESSION['profile_picture'] = $usuario['foto_perfil']; // Guardar la ruta de la foto de perfil en la sesión
             return ['success' => true, 'message' => 'Login exitoso'];
         } else {
             return ['success' => false, 'message' => 'Credenciales incorrectas'];
