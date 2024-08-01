@@ -369,3 +369,81 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         console.error('Error:', error);
     });
 });
+
+// Funcionalidades de la vista del Admin panel
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    const contentArea = document.getElementById('content-area');
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('href').split('=')[1]; // Extrae el valor de page de la URL
+            
+            fetch(`content.php?page=${page}`)
+                .then(response => response.text())
+                .then(html => {
+                    contentArea.innerHTML = html; // Reemplaza el contenido del área
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    let currentPage = 1;
+    const itemsPerPage = 7;
+
+    // Cargar usuarios iniciales
+    loadUsers(currentPage);
+
+    // Paginación
+    function loadUsers(page) {
+        fetch(`content.php?page=listaUsuarios&currentPage=${page}&itemsPerPage=${itemsPerPage}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('listaUsuarios').innerHTML = html;
+                createPagination();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Crear paginación
+    function createPagination() {
+        fetch('content.php?page=contarUsuarios')
+            .then(response => response.json())
+            .then(data => {
+                const totalItems = data.total;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                let paginationHTML = '';
+
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHTML += `<button class="pagination-btn" data-page="${i}">${i}</button>`;
+                }
+
+                document.getElementById('pagination').innerHTML = paginationHTML;
+
+                document.querySelectorAll('.pagination-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        currentPage = parseInt(this.getAttribute('data-page'));
+                        loadUsers(currentPage);
+                    });
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Búsqueda de usuarios
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const searchTerm = document.getElementById('searchInput').value;
+
+        fetch(`content.php?page=buscarUsuarios&query=${encodeURIComponent(searchTerm)}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('listaUsuarios').innerHTML = html;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+});
+
+
