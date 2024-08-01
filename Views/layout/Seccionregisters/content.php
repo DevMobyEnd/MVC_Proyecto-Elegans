@@ -68,6 +68,10 @@
                             </div>
                         </section>
                     </div>
+                    <!-- Insertar reCAPTCHA aquí -->
+                    <div class="form-group d-flex justify-content-center mb-3">
+                        <div class="g-recaptcha" data-sitekey="6Lc_EhwqAAAAAGgMnBpbvoIGEzIhwaMO8PNEnkVf"></div>
+                    </div>
                     <div class="text-center">
                         <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
                             <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>

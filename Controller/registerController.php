@@ -15,6 +15,13 @@ class RegisterController
         $this->modelo = new RegisterModel();
     }
 
+    private function verificarCaptcha($captcha){
+        $secretKey = "6Lc_EhwqAAAAAFP2Ls-IBwuNVebxqahruI16yZNH";
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secretKey."&response=".$captcha."&remoteip=".$ip);
+        $responseKeys = json_decode($response,true);
+        return intval($responseKeys["success"]) === 1;
+    }
     public function registrar()
     {
         // Set headers at the beginning
@@ -27,6 +34,15 @@ class RegisterController
 
         if ($_SERVER["REQUEST_METHOD"] != "POST") {
             return ['status' => 'error', 'message' => 'Método no permitido'];
+        }
+        
+        if(isset($_POST['g-recaptcha-response'])){
+            $captcha = $_POST['g-recaptcha-response'];
+            if(!$this->verificarCaptcha($captcha)){
+                return ['status' => 'error', 'message' => 'Por favor, verifica que no eres un robot.'];
+            }
+        } else {
+            return ['status' => 'error', 'message' => 'Por favor, completa el CAPTCHA.'];
         }
 
         $foto_perfil = $_FILES['profilePicture'] ?? null;
