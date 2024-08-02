@@ -22,7 +22,7 @@
                                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                                 <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="Gmail" id="emailInput" required>
                                                 <label class="form-label long-label">
-                                                    <i class="fa-solid fa-envelope"></i> Correo Electrónico
+                                                    <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                                 </label>
                                                 <a href="#" id="editEmail" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">Editar</a>
                                             </div>
@@ -33,7 +33,7 @@
                                             <div class="form-group d-flex flex-column align-items-center">
                                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" style="width: 100%; max-width: 400px;" required>
                                                 <label class="form-label long-label">
-                                                    <i class="fa-solid fa-lock"></i> Contraseña
+                                                    <ion-icon name="lock-closed-outline"></ion-icon> Contraseña
                                                 </label>
                                             </div>
                                         </section>

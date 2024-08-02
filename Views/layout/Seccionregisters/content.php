@@ -17,43 +17,43 @@
                                 <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista previa" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 10px;">
                                 <input type="file" class="form-control form-control-lg" name="profilePicture" id="Foto_PerfilInput" accept="image/*" onchange="previewImage(this);">
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-image"></i> Foto de Perfil
+                                    <ion-icon name="image-outline"></ion-icon> Foto de Perfil
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-user"></i> Nombres
+                                    <ion-icon name="person-outline"></ion-icon> Nombres
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-user"></i> Apellidos
+                                    <ion-icon name="person-outline"></ion-icon> Apellidos
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-id-card"></i> Numero de Documento
+                                    <ion-icon name="card-outline"></ion-icon> Numero de Documento
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-user-tag"></i> Apodo
+                                    <ion-icon name="pricetag-outline"></ion-icon> Apodo
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="email" placeholder="CorreoElectrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-envelope"></i> Correo Electrónico
+                                    <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                 </label>
                             </div>
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-lock"></i> Contraseña
+                                    <ion-icon name="lock-closed-outline"></ion-icon> Contraseña
                                 </label>
                                 <div class="progress mt-2" style="height: 5px; width: 100%;">
                                     <div id="password-strength" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -63,7 +63,7 @@
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
                                 <label class="form-label long-label">
-                                    <i class="fa-solid fa-lock"></i> Confirmar Contraseña
+                                    <ion-icon name="lock-closed-outline"></ion-icon> Confirmar Contraseña
                                 </label>
                             </div>
                         </section>
@@ -76,7 +76,7 @@
                         <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
                     </div>
                     <p class="text-center mt-3">
-                        ¿Ya tienes una cuenta? <a href="#">Inicia sesión</a>
+                        ¿Ya tienes una cuenta? <a href="/Views/login.php">Inicia sesión</a>
                     </p>
                 </form>
             </div>

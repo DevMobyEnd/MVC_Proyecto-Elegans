@@ -8,7 +8,7 @@
         </li>
         <li class="sidebar-item">
             <a href="index.php" class="sidebar-link">
-                <i class="fa-solid fa-house"></i>
+                <i class="fas fa-home"></i>
                 Inicio
             </a>
         </li>
@@ -17,13 +17,13 @@
         </li>
         <li class="sidebar-item">
             <a href="?page=dashboard" class="sidebar-link" data-page="dashboard">
-                <i class="fa-solid fa-chart-line"></i>
+                <i class="fas fa-tachometer-alt"></i>
                 Dashboard
             </a>
         </li>
         <li class="sidebar-item">
             <a href="#usuariosSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
-                <i class="fa-solid fa-users"></i>
+                <i class="fas fa-user-friends"></i>
                 Gestión de Usuarios
             </a>
             <ul class="collapse" id="usuariosSubmenu">
@@ -34,7 +34,7 @@
         </li>
         <li class="sidebar-item">
             <a href="#contenidoSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
-                <i class="fa-solid fa-music"></i>
+                <i class="fas fa-headphones"></i>
                 Gestión de Contenido
             </a>
             <ul class="collapse" id="contenidoSubmenu">
@@ -45,7 +45,7 @@
         </li>
         <li class="sidebar-item">
             <a href="#configuracionSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
-                <i class="fa-solid fa-cog"></i>
+                <i class="fas fa-sliders-h"></i>
                 Configuraciones
             </a>
             <ul class="collapse" id="configuracionSubmenu">
@@ -55,19 +55,19 @@
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link">
-                <i class="fa-solid fa-file-alt"></i>
+                <i class="fas fa-chart-bar"></i>
                 Reporte de Actividad
             </a>
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link">
-                <i class="fa-solid fa-user"></i>
+                <i class="fas fa-id-card"></i>
                 Mi Perfil
             </a>
         </li>
         <li class="sidebar-item">
             <a href="#" class="sidebar-link">
-                <i class="fa-solid fa-sign-out-alt"></i>
+                <i class="fas fa-sign-out-alt"></i>
                 Cerrar Sesión
             </a>
         </li>

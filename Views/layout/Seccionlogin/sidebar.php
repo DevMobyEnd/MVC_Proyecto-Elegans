@@ -1,6 +1,6 @@
 <div class="h-100">
     <div class="sidebar-logo">
-        <a href="#"><img class="img-fluid" src="/Public/dist/img/Logo.png" alt="" style="width: 200px; height:200px;position: relative;    top: -60px;"></a>
+        <a href="#"><img class="img-fluid" src="/Public/dist/img/Logo.png" alt="" style="width: 200px; height:200px; position: relative; top: -60px;"></a>
     </div>
     <ul class="sidebar-nav">
         <li class="sidebar-header">
@@ -12,10 +12,5 @@
                 Inicio
             </a>
         </li>
-
-
-
-
     </ul>
 </div>
-
