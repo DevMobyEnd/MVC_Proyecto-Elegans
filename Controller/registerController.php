@@ -1,4 +1,6 @@
 <?php
+use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
+use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
 require_once '../Models/registerModel.php';
 
 class RegisterController
@@ -15,12 +17,45 @@ class RegisterController
         $this->modelo = new RegisterModel();
     }
 
-    private function verificarCaptcha($captcha){
-        $secretKey = "6Lc_EhwqAAAAAFP2Ls-IBwuNVebxqahruI16yZNH";
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secretKey."&response=".$captcha."&remoteip=".$ip);
-        $responseKeys = json_decode($response,true);
-        return intval($responseKeys["success"]) === 1;
+    private function verificarCaptcha($token)
+    {
+        $projectId = '6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_';
+        $siteKey = '6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_';
+        $recaptchaAction = '/Views/register.php';
+    
+        $client = new \Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient();
+        $projectName = $client->projectName($projectId);
+    
+        $assessment = new \Google\Cloud\RecaptchaEnterprise\V1\Assessment([
+            'event' => [
+                'site_key' => $siteKey,
+                'token' => $token,
+            ],
+        ]);
+    
+        try {
+            $response = $client->createAssessment(
+                $projectName,
+                $assessment
+            );
+    
+            if ($response->getTokenProperties()->getValid() == false) {
+                return false;
+            }
+    
+            if ($response->getTokenProperties()->getAction() !== $recaptchaAction) {
+                return false;
+            }
+    
+            if ($response->getRiskAnalysis()->getScore() < 0.5) {
+                return false;
+            }
+    
+            return true;
+        } catch (Exception $e) {
+            // Manejar el error
+            return false;
+        }
     }
     public function registrar()
     {
@@ -35,7 +70,7 @@ class RegisterController
         if ($_SERVER["REQUEST_METHOD"] != "POST") {
             return ['status' => 'error', 'message' => 'Método no permitido'];
         }
-        
+
         if(isset($_POST['g-recaptcha-response'])){
             $captcha = $_POST['g-recaptcha-response'];
             if(!$this->verificarCaptcha($captcha)){

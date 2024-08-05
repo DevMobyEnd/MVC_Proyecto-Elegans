@@ -348,25 +348,29 @@ function previewImage(input) {
 }
 document.getElementById('registerForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    var formData = new FormData(this);
-    formData.append('g-recaptcha-response', grecaptcha.getResponse());
 
-    fetch('/Controller/registerController.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.status === 'success') {
-            alert('Registro exitoso');
-            // Redirigir o hacer algo más
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    grecaptcha.enterprise.ready(function() {
+        grecaptcha.enterprise.execute('6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_', {action: 'register'}).then(function(token) {
+            var formData = new FormData(e.target);
+            formData.append('g-recaptcha-response', token);
+
+            fetch('/Controller/registerController.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert('Registro exitoso');
+                    // Redirigir o hacer algo más
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
     });
 });
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 
-<head>
+<>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_"></script>  
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFSYGPE6F3"></script>
@@ -52,6 +52,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script src="/Public/dist/js/scripts.js"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+
+    
 </body>
 
 </html>

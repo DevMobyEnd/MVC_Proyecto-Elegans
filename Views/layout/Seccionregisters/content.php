@@ -70,7 +70,7 @@
                     </div>
                     <!-- Insertar reCAPTCHA aquí -->
                     <div class="d-flex flex-column align-items-center mb-3">
-                        <div class="g-recaptcha" data-sitekey="6Lc_EhwqAAAAAGgMnBpbvoIGEzIhwaMO8PNEnkVf"></div>
+                        <div class="g-recaptcha" data-sitekey="6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_"></div>
                     </div>
                     <div class="d-flex justify-content-center">
                         <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
