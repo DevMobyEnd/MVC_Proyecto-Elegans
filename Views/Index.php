@@ -1,5 +1,31 @@
 <?php
-require_once "../Views/layout/home/head.php";
+// Primero, verificamos si el archivo global.php existe
+if (file_exists('../Config/global.php')) {
+    require_once '../Config/global.php';
+    
+    // Verificamos si todas las variables necesarias están definidas y no están vacías
+    if (
+        defined('DB_HOST') && !empty(DB_HOST) &&
+        defined('DB_NAME') && !empty(DB_NAME) &&
+        defined('DB_USERNAME') && !empty(DB_USERNAME) &&
+        defined('DB_PASSWORD') && 
+        defined('DB_ENCODE') && !empty(DB_ENCODE)
+    ) {
+        // Si todas las variables están definidas y no vacías, continuamos con la carga normal
+        require_once "./layout/home/head.php";
+        // ... resto del código de la página de inicio
+    } else {
+        // Si alguna variable no está definida o está vacía, redirigimos al instalador
+        header('Location: ./Views/InstallView.php');
+        exit();
+    }
+} else {
+    // Si el archivo global.php no existe, redirigimos al instalador
+    header('Location: ./Views/InstallView.php');
+    exit();
+}
+
+// ... resto de tu código actual
 // require_once '../Middleware/auth.php'; // Este archivo puede contener funciones útiles, pero no forzaremos la autenticación aquí.
 
 
