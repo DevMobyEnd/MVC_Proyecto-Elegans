@@ -1,34 +1,34 @@
-<?php
-session_start();
-
-$profilePicture = isset($_SESSION['profile_picture']) ? $_SESSION['profile_picture'] : 'Public/dist/img/profile.jpg';
-
-// Construir la ruta completa para el navegador si no es la imagen por defecto
-$profilePictureUrl = $profilePicture !== 'Public/dist/img/profile.jpg' ? '/uploads/' . $profilePicture : $profilePicture;
-?>
-
 <nav class="navbar navbar-expand px-3 border-bottom">
     <button class="btn" id="sidebar-toggle" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="navbar-collapse navbar">
-        <ul class="navbar-nav">
-            <?php if (!isset($_SESSION['usuario_id'])): ?>
-                <li class="nav-item">
-                    <a href="login.php" class="nav-link">Iniciar Sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a href="register.php" class="nav-link">Registrarse</a>
+        <ul class="navbar-nav ms-auto">
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?php if (isset($_SESSION['foto_perfil'])): ?>
+                            <img src="../uploads/<?php echo htmlspecialchars($_SESSION['foto_perfil']); ?>"
+                                alt="Profile"
+                                class="rounded-circle avatar"
+                                width="32"
+                                height="32"
+                                onerror="this.onerror=null; this.src='../Public/dist/img/profile.jpg';">
+                        <?php else: ?>
+                            <i class="fas fa-user-circle"></i>
+                        <?php endif; ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="profile.php">Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="../Helpers/logout.php">Cerrar Sesión</a></li>
+                    </ul>
                 </li>
             <?php else: ?>
-                <li class="nav-item dropdown">
-                    <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                        <img src="<?php echo htmlspecialchars($profilePictureUrl); ?>" class="avatar img-fluid rounded-circle" alt="Foto de perfil">
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a href="settings.php" class="dropdown-item">Ajustes</a>
-                        <a href="logout.php" class="dropdown-item">Cerrar sesión</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="register.php">Registrarse</a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -36,9 +36,28 @@ $profilePictureUrl = $profilePicture !== 'Public/dist/img/profile.jpg' ? '/uploa
 </nav>
 
 <style>
+    .navbar {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        min-height: 48px;
+    }
+
     .avatar {
         width: 40px;
-        height: 40px;
+        height: 40cpx;
         object-fit: cover;
+    }
+
+    .fa-user-circle {
+        font-size: 24px;
+    }
+
+    .navbar-nav {
+        padding: 0;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
     }
 </style>

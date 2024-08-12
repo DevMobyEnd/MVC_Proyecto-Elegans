@@ -1,8 +1,8 @@
 <main class="content px-3 py-2">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-10">
             <div class="card">
-                <form id="registerForm" method="POST" action="/Views/register.php" enctype="multipart/form-data" data-gtm-form-interact-id="0">
+                <form id="registerForm" class="register-form" method="POST" action="/Views/register.php" enctype="multipart/form-data">
                     <div id="registerStep" class="mb-3">
                         <section>
                             <h1 class="welcome-title">
@@ -13,43 +13,81 @@
                                     <span>私たちと一緒に！</span>
                                 </span>
                             </h1>
+
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista previa" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 10px;">
-                                <input type="file" class="form-control form-control-lg" name="profilePicture" id="Foto_PerfilInput" accept="image/*" onchange="previewImage(this);">
+                                <input type="file" class="form-control form-control-lg" name="profilePicture" id="Foto_PerfilInput" accept="image/*">
+                                <input type="hidden" id="croppedImageData" name="croppedImageData">
                                 <label class="form-label long-label">
                                     <ion-icon name="image-outline"></ion-icon> Foto de Perfil
                                 </label>
                             </div>
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
+
+                            <!-- Modal para recortar la imagen -->
+                            <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="cropModalLabel">Ajustar imagen de perfil</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div>
+                                                <img id="imageToCrop" src="" alt="Imagen para recortar" style="max-width: 100%;">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="button" class="btn btn-primary" id="cropImageBtn">Recortar y Usar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nombres -->
+                            <div class="form-group d-flex flex-column align-items-start position-relative">
                                 <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="person-outline"></ion-icon> Nombres
                                 </label>
                             </div>
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
+
+                            <!-- Apellidos -->
+                            <div class="form-group d-flex flex-column align-items-start position-relative">
                                 <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="person-outline"></ion-icon> Apellidos
                                 </label>
                             </div>
+
+                            <!-- Número de Documento -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="card-outline"></ion-icon> Numero de Documento
                                 </label>
                             </div>
+
+                            <!-- Apodo -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="pricetag-outline"></ion-icon> Apodo
                                 </label>
                             </div>
+
+                            <!-- Correo Electrónico -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="email" placeholder="CorreoElectrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                 </label>
                             </div>
+
+                            <!-- Add CSRF token -->
+                            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+
+                            <!-- Contraseña -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
                                 <label class="form-label long-label">
@@ -60,6 +98,8 @@
                                 </div>
                                 <small id="passwordHelp" class="form-text text-muted">La contraseña debe tener al menos 8 caracteres.</small>
                             </div>
+
+                            <!-- Confirmar Contraseña -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
                                 <label class="form-label long-label">
@@ -68,21 +108,33 @@
                             </div>
                         </section>
                     </div>
-                    <!-- Insertar reCAPTCHA aquí -->
+
+                    <!-- reCAPTCHA -->
                     <div class="d-flex flex-column align-items-center mb-3">
-                        <div class="g-recaptcha" data-sitekey="6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_"></div>
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAAg7dIijZcb4rb5v" data-callback="onCaptchaSuccess"></div>
                     </div>
+
+                    <!-- Add reCAPTCHA token -->
+                    <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
+
+                    <!-- Añade esto para mostrar errores -->
+                    <div id="formErrors" class="alert alert-danger" style="display: none;"></div>
+
+                    <!-- Botón de registro -->
                     <div class="d-flex justify-content-center">
                         <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
                     </div>
+
                     <p class="text-center mt-3">
                         ¿Ya tienes una cuenta? <a href="/Views/login.php">Inicia sesión</a>
                     </p>
                 </form>
             </div>
         </div>
-
     </div>
+
+
+
 
     <!-- Modal de Términos y Condiciones -->
     <div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
@@ -133,7 +185,4 @@
             </div>
         </div>
     </div>
-
-
-
 </main>

@@ -778,4 +778,37 @@ section {
 .dynamic-text span.next {
     transform: translateY(-100%);
 }
+#registerForm .form-group:first-of-type {
+    width: 80%;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+#registerForm .form-group:first-of-type input[type="file"] {
+    max-width: 100%;
+}
+
+#registerForm .form-group:first-of-type .long-label {
+    display: block;
+    text-align: center;
+}
+
+
+#registerForm .form-group:not(:first-of-type) {
+    width: 30%;
+    margin: 0 auto 20px;
+}
+
+#registerForm .form-group:not(:first-of-type) input {
+    max-width: 100%;
+}
+
+#registerForm .form-group:not(:first-of-type) .long-label {
+    display: block;
+    text-align: left;
+}
+
+
+
+
 

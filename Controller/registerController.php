@@ -1,13 +1,25 @@
 <?php
-use Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient;
-use Google\Cloud\RecaptchaEnterprise\V1\Assessment;
+require_once '../Helpers/Logger.php';
 require_once '../Models/registerModel.php';
+require_once '../Config/config.php';
+require_once '../Helpers/CaptchaVerifier.php';
+require_once '../Helpers/ImageProcessor.php';
+require_once '../Helpers/PasswordValidator.php';
+require_once '../Helpers/CSRFTokenGenerator.php';
+require_once '../vendor/autoload.php'; // Para Guzzle y Respect\Validation
+
+use GuzzleHttp\Client;
+use Respect\Validation\Validator as v;
 
 class RegisterController
 {
-    private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
-    private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private $modelo;
+    private $logger;
+    private $captchaVerifier;
+    private $imageProcessor;
+    private $passwordValidator;
+    private $csrfTokenGenerator;
+    private $httpClient;
 
     public function __construct()
     {
@@ -15,207 +27,150 @@ class RegisterController
             session_start();
         }
         $this->modelo = new RegisterModel();
+        $this->logger = new Logger();
+        $this->captchaVerifier = new CaptchaVerifier();
+        $this->imageProcessor = new ImageProcessor();
+        $this->passwordValidator = new PasswordValidator();
+        $this->csrfTokenGenerator = new CSRFTokenGenerator();
+        $this->httpClient = new Client();
     }
 
-    private function verificarCaptcha($token)
-    {
-        $projectId = '6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_';
-        $siteKey = '6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_';
-        $recaptchaAction = '/Views/register.php';
-    
-        $client = new \Google\Cloud\RecaptchaEnterprise\V1\RecaptchaEnterpriseServiceClient();
-        $projectName = $client->projectName($projectId);
-    
-        $assessment = new \Google\Cloud\RecaptchaEnterprise\V1\Assessment([
-            'event' => [
-                'site_key' => $siteKey,
-                'token' => $token,
-            ],
-        ]);
-    
-        try {
-            $response = $client->createAssessment(
-                $projectName,
-                $assessment
-            );
-    
-            if ($response->getTokenProperties()->getValid() == false) {
-                return false;
-            }
-    
-            if ($response->getTokenProperties()->getAction() !== $recaptchaAction) {
-                return false;
-            }
-    
-            if ($response->getRiskAnalysis()->getScore() < 0.5) {
-                return false;
-            }
-    
-            return true;
-        } catch (Exception $e) {
-            // Manejar el error
-            return false;
-        }
-    }
     public function registrar()
     {
-        // Set headers at the beginning
         header('Content-Type: application/json');
-        ob_start(); // Start output buffering
+        ob_start();
 
-        // Enable error reporting
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+        try {
+            $this->validateRequest();
+            $this->validateCSRFToken();
+            $this->verifyCaptcha();
 
+            $userData = $this->sanitizeUserData();
+            $this->validateUserData($userData);
+
+            $ruta_foto = $this->processProfilePicture();
+
+            $this->modelo->iniciarTransaccion();
+            $userId = $this->modelo->registrarUsuario(
+                $ruta_foto,
+                $userData['nombres'],
+                $userData['apellidos'],
+                $userData['numeroDocumento'],
+                $userData['apodo'],
+                $userData['correoElectronico'],
+                password_hash($userData['password'], PASSWORD_DEFAULT)
+            );
+
+            if ($userId) {
+                $this->modelo->finalizarTransaccion();
+                unset($_SESSION['csrf_token']);
+
+                $output = ob_get_clean();
+                return [
+                    'status' => 'success',
+                    'message' => 'Usuario registrado exitosamente',
+                    'redirect' => '/Views/login.php',
+                    'debug' => $output
+                ];
+            } else {
+                throw new Exception('Error al registrar el usuario');
+            }
+        } catch (Exception $e) {
+            $this->modelo->revertirTransaccion();
+            $this->logger->error('Error en el registro: ' . $e->getMessage());
+            $output = ob_get_clean();
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'debug' => $output
+            ];
+        }
+    }
+
+    private function validateRequest()
+    {
         if ($_SERVER["REQUEST_METHOD"] != "POST") {
-            return ['status' => 'error', 'message' => 'Método no permitido'];
+            throw new Exception('Método no permitido');
+        }
+    }
+
+    private function validateCSRFToken()
+    {
+        if (!isset($_POST['csrf_token']) || !$this->csrfTokenGenerator->validate($_POST['csrf_token'])) {
+            throw new Exception("CSRF token validation failed");
+        }
+    }
+
+    private function verifyCaptcha()
+    {
+        if (!isset($_POST['cf-turnstile-response']) || !$this->captchaVerifier->verify($_POST['cf-turnstile-response'])) {
+            throw new Exception('Por favor, verifica que no eres un robot.');
+        }
+    }
+
+    private function sanitizeUserData()
+    {
+        return [
+            'nombres' => htmlspecialchars($_POST['Nombres'] ?? '', ENT_QUOTES, 'UTF-8'),
+            'apellidos' => htmlspecialchars($_POST['Apellidos'] ?? '', ENT_QUOTES, 'UTF-8'),
+            'numeroDocumento' => htmlspecialchars($_POST['NumerodeDocumento'] ?? '', ENT_QUOTES, 'UTF-8'),
+            'apodo' => htmlspecialchars($_POST['Apodo'] ?? '', ENT_QUOTES, 'UTF-8'),
+            'correoElectronico' => filter_input(INPUT_POST, 'CorreoElectronico', FILTER_SANITIZE_EMAIL),
+            'password' => $_POST['password'] ?? '',
+            'confirmPassword' => $_POST['confirmPassword'] ?? ''
+        ];
+    }
+
+    private function validateUserData($userData)
+    {
+        $validator = v::key('nombres', v::notEmpty()->stringType())
+            ->key('apellidos', v::notEmpty()->stringType())
+            ->key('numeroDocumento', v::notEmpty()->stringType())
+            ->key('apodo', v::notEmpty()->stringType())
+            ->key('correoElectronico', v::notEmpty()->email())
+            ->key('password', v::notEmpty()->stringType())
+            ->key('confirmPassword', v::notEmpty()->equals($userData['password']));
+
+        try {
+            $validator->assert($userData);
+        } catch (\Respect\Validation\Exceptions\NestedValidationException $exception) {
+            throw new Exception(implode(', ', $exception->getMessages()));
         }
 
-        if(isset($_POST['g-recaptcha-response'])){
-            $captcha = $_POST['g-recaptcha-response'];
-            if(!$this->verificarCaptcha($captcha)){
-                return ['status' => 'error', 'message' => 'Por favor, verifica que no eres un robot.'];
-            }
+        $this->passwordValidator->validate($userData['password']);
+
+        if ($this->modelo->verificarCorreoExistente($userData['correoElectronico'])) {
+            throw new Exception('El correo electrónico ya está registrado');
+        }
+
+        if ($this->modelo->verificarApodoExistente($userData['apodo'])) {
+            throw new Exception('El Apodo ya está en uso');
+        }
+    }
+
+    private function processProfilePicture()
+    {
+        if (isset($_POST['croppedImageData'])) {
+            $ruta_foto = $this->imageProcessor->processCroppedImage($_POST['croppedImageData']);
         } else {
-            return ['status' => 'error', 'message' => 'Por favor, completa el CAPTCHA.'];
-        }
-
-        $foto_perfil = $_FILES['profilePicture'] ?? null;
-        $nombres = htmlspecialchars($_POST['Nombres'] ?? '', ENT_QUOTES, 'UTF-8');
-        $apellidos = htmlspecialchars($_POST['Apellidos'] ?? '', ENT_QUOTES, 'UTF-8');
-        $numeroDocumento = htmlspecialchars($_POST['NumerodeDocumento'] ?? '', ENT_QUOTES, 'UTF-8');
-        $apodo = htmlspecialchars($_POST['Apodo'] ?? '', ENT_QUOTES, 'UTF-8');
-        $correoElectronico = filter_input(INPUT_POST, 'CorreoElectronico', FILTER_SANITIZE_EMAIL);
-        $password = $_POST['password'] ?? '';
-        $confirmPassword = $_POST['confirmPassword'] ?? '';
-
-        $errores = $this->validarDatos($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password, $confirmPassword);
-
-        if (!empty($errores)) {
-            return ['status' => 'error', 'message' => implode(', ', $errores)];
-        }
-
-        // Procesar la imagen si es válida
-        $ruta_foto = '';
-        if ($foto_perfil) {
-            $ruta_foto = $this->procesarImagen($foto_perfil);
-            if (!$ruta_foto) {
-                return ['status' => 'error', 'message' => 'Error al procesar la imagen'];
+            $foto_perfil = $_FILES['profilePicture'] ?? null;
+            if (empty($foto_perfil) || $foto_perfil['error'] === UPLOAD_ERR_NO_FILE) {
+                throw new Exception('La foto de perfil es obligatoria');
             }
-
-            // Guarda la ruta de la foto en la sesión
-            $_SESSION['profile_picture'] = $ruta_foto;
+            $ruta_foto = $this->imageProcessor->process($foto_perfil);
         }
-
-        $resultado = $this->modelo->registrarUsuario($ruta_foto, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password);
-
-        $output = ob_get_clean(); // Get the buffered content and clear the buffer
-        if ($resultado) {
-            return ['status' => 'success', 'message' => 'Usuario registrado exitosamente', 'redirect' => '/Views/login.php', 'debug' => $output];
-        } else {
-            return ['status' => 'error', 'message' => 'Hubo un error al registrar el usuario', 'debug' => $output];
+    
+        if (!$ruta_foto) {
+            throw new Exception('Error al procesar la imagen');
         }
+    
+        $_SESSION['profile_picture'] = $ruta_foto;
+        return $ruta_foto; // Asegúrate de que siempre se retorne $ruta_foto
     }
 
-    private function procesarImagen($foto)
+    public function generateCSRFToken()
     {
-        if ($foto['error'] !== UPLOAD_ERR_OK) {
-            return false;
-        }
-
-        if (!in_array($foto['type'], self::ALLOWED_MIME_TYPES)) {
-            return false;
-        }
-
-        if ($foto['size'] > self::MAX_FILE_SIZE) {
-            return false;
-        }
-
-        // Asegúrate de que la carpeta de carga exista y tenga permisos adecuados
-        $upload_dir = '../uploads/';
-
-        // Verifica si la carpeta existe y, si no, intenta crearla
-        if (!is_dir($upload_dir)) {
-            if (!mkdir($upload_dir, 0755, true)) {
-                return false; // No se pudo crear la carpeta
-            }
-        }
-
-        // Genera un nombre único para el archivo y construye la ruta completa
-        $filename = uniqid() . '_' . basename($foto['name']);
-        $upload_file = $upload_dir . $filename;
-
-        // Mueve el archivo cargado a la carpeta de destino
-        if (move_uploaded_file($foto['tmp_name'], $upload_file)) {
-            return $filename; // Devuelve solo el nombre del archivo, no la ruta completa
-        }
-
-        return false; // Error al mover el archivo
-    }
-
-    private function validarDatos($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password, $confirmPassword)
-    {
-        $errores = [];
-
-        if (empty($nombres) || empty($apellidos) || empty($numeroDocumento) || empty($apodo) || empty($correoElectronico)) {
-            $errores[] = 'Todos los campos son obligatorios';
-        }
-
-        // Validación separada para la foto si es obligatoria
-        if (empty($foto_perfil) || $foto_perfil['error'] === UPLOAD_ERR_NO_FILE) {
-            $errores[] = 'La foto de perfil es obligatoria';
-        }
-
-        if ($password !== $confirmPassword) {
-            $errores[] = 'Las contraseñas no coinciden';
-        }
-
-        $passwordStrength = $this->validarFortalezaPassword($password);
-        if ($passwordStrength !== true) {
-            $errores[] = $passwordStrength;
-        }
-
-        if (!filter_var($correoElectronico, FILTER_VALIDATE_EMAIL)) {
-            $errores[] = 'El correo electrónico no es válido';
-        } elseif ($this->modelo->verificarCorreoExistente($correoElectronico)) {
-            $errores[] = 'El correo electrónico ya está registrado';
-        }
-
-        if ($this->modelo->verificarApodoExistente($apodo)) {
-            $errores[] = 'El Apodo ya está en uso';
-        }
-
-        // Validación de la imagen
-        if ($foto_perfil && $foto_perfil['error'] !== UPLOAD_ERR_NO_FILE) {
-            if (!in_array($foto_perfil['type'], self::ALLOWED_MIME_TYPES)) {
-                $errores[] = 'El archivo debe ser una imagen (JPEG, PNG o GIF)';
-            }
-            if ($foto_perfil['size'] > self::MAX_FILE_SIZE) {
-                $errores[] = 'La imagen no debe exceder los 5MB';
-            }
-        }
-
-        return $errores;
-    }
-
-    private function validarFortalezaPassword($password)
-    {
-        if (strlen($password) < 8) {
-            return "La contraseña debe tener al menos 8 caracteres.";
-        }
-        if (!preg_match("/[A-Z]/", $password)) {
-            return "La contraseña debe contener al menos una letra mayúscula.";
-        }
-        if (!preg_match("/[a-z]/", $password)) {
-            return "La contraseña debe contener al menos una letra minúscula.";
-        }
-        if (!preg_match("/[0-9]/", $password)) {
-            return "La contraseña debe contener al menos un número.";
-        }
-        if (!preg_match("/[!@#$%^&*()\-_=+{};:,<.>]/", $password)) {
-            return "La contraseña debe contener al menos un carácter especial.";
-        }
-        return true;
+        return $this->csrfTokenGenerator->generate();
     }
 
     public function mostrarAlerta($tipo, $titulo, $mensajes = [], $redireccion = '')

@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+require_once __DIR__ . '/../Controller/HomeController.php';
+
+$homeController = new HomeController();
+$userData = $homeController->index();
+
+
 // Primero, verificamos si el archivo global.php existe
 if (file_exists('../Config/global.php')) {
     require_once '../Config/global.php';
@@ -16,12 +24,12 @@ if (file_exists('../Config/global.php')) {
         // ... resto del código de la página de inicio
     } else {
         // Si alguna variable no está definida o está vacía, redirigimos al instalador
-        header('Location: ./Views/InstallView.php');
+        header('Location: /Views/InstallView.php');
         exit();
     }
 } else {
     // Si el archivo global.php no existe, redirigimos al instalador
-    header('Location: ./Views/InstallView.php');
+    header('Location: /Views/InstallView.php');
     exit();
 }
 

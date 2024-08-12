@@ -5,16 +5,13 @@ class Conexion {
     protected $conexion_db;
 
     public function __construct() {
-        // Intenta establecer una conexión a la base de datos utilizando los parámetros definidos en global.php
         $this->conexion_db = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
         
-        // Verifica si hubo un error al conectar
         if ($this->conexion_db->connect_errno) {
             echo "Error al conectar con la base de datos: " . $this->conexion_db->connect_error;
-            exit(); // Termina la ejecución si hay un error
+            exit();
         }
-
-        // Establece el conjunto de caracteres a utilizar en la conexión para evitar problemas de codificación
+    
         $this->conexion_db->set_charset(DB_ENCODE);
     }
 
@@ -34,6 +31,22 @@ class Conexion {
         } else {
             return null; // Retorna null si no hay resultados o si la consulta falló
         }
+    }
+
+    public function crearBaseDatos($dbname) {
+        $sql = "CREATE DATABASE IF NOT EXISTS `$dbname`";
+        return $this->conexion_db->query($sql);
+    }
+
+    public function verificarBaseDatos($dbname) {
+        $sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$dbname'";
+        $result = $this->conexion_db->query($sql);
+        return $result->num_rows > 0;
+    }
+
+    public function conectarSinBaseDatos($host, $username, $password) {
+        $this->conexion_db = new mysqli($host, $username, $password);
+        return !$this->conexion_db->connect_errno;
     }
 
     // Cierra la conexión a la base de datos

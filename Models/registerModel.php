@@ -9,47 +9,46 @@ class RegisterModel {
         $this->conexion = $conexion->obtenerConexion();
     }
 
-    public function registrarUsuario($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password) {
-        if (empty($foto_perfil) || empty($nombres) || empty($apellidos) || empty($numeroDocumento) || empty($apodo) || empty($correoElectronico) || empty($password)) {
-            return false;
-        }
-    
-        $passwordEncriptado = password_hash($password, PASSWORD_DEFAULT);
-    
-        $sql = "INSERT INTO tb_usuarios (foto_perfil, nombres, apellidos, numero_documento, Apodo, Gmail, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-        if ($stmt = $this->conexion->prepare($sql)) {
-            $stmt->bind_param("sssssss", $foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $passwordEncriptado);
-            $resultado = $stmt->execute();
-            $stmt->close();
-            return $resultado;
-        }
-        return false;
+    public function iniciarTransaccion() {
+        $this->conexion->begin_transaction();
     }
 
-    public function obtenerUltimoIdRegistrado() {
-        return $this->conexion->insert_id;
+    public function finalizarTransaccion() {
+        $this->conexion->commit();
+    }
+
+    public function revertirTransaccion() {
+        $this->conexion->rollback();
+    }
+
+    public function registrarUsuario($foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password) {
+        $sql = "INSERT INTO tb_usuarios (foto_perfil, nombres, apellidos, numero_documento, Apodo, Gmail, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("sssssss", $foto_perfil, $nombres, $apellidos, $numeroDocumento, $apodo, $correoElectronico, $password);
+        if ($stmt->execute()) {
+            return $this->conexion->insert_id; // Devuelve el ID del usuario insertado
+        } else {
+            throw new Exception("Error al registrar el usuario: " . $stmt->error);
+        }
     }
 
     public function verificarCorreoExistente($correoElectronico) {
-        return $this->verificarExistencia("Gmail", $correoElectronico);
+        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE Gmail = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("s", $correoElectronico);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $count = $result->fetch_row()[0];
+        return $count > 0;
     }
 
     public function verificarApodoExistente($apodo) {
-        return $this->verificarExistencia("Apodo", $apodo);
-    }
-
-    private function verificarExistencia($campo, $valor) {
-        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE $campo = ?";
-        if ($stmt = $this->conexion->prepare($sql)) {
-            $stmt->bind_param("s", $valor);
-            $stmt->execute();
-            $count = 0;
-            $stmt->bind_result($count);
-            $stmt->fetch();
-            $stmt->close();
-            return $count > 0;
-        }
-        return false;
+        $sql = "SELECT COUNT(*) FROM tb_usuarios WHERE Apodo = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("s", $apodo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $count = $result->fetch_row()[0];
+        return $count > 0;
     }
 }

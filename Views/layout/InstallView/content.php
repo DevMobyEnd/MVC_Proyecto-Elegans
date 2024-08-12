@@ -1,30 +1,55 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración de Base de Datos</title>
-</head>
-<body>
-    <h1>Configuración de Base de Datos</h1>
-    <form action="guardar_config.php" method="POST">
-        <label for="db_host">Host de la Base de Datos:</label>
-        <input type="text" id="db_host" name="db_host" value="localhost" required><br><br>
+<main class="content px-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form id="dbConfigForm" method="POST" action="/Views/InstallView.php">
+                        <section>
 
-        <label for="db_name">Nombre de la Base de Datos:</label>
-        <input type="text" id="db_name" name="db_name" value="db_Pruebita" required><br><br>
+                            <h1 class="welcome-title">
+                                <span class="static-text">Configuración de Base de Datos</span>
+                            </h1>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Host de la Base de Datos" class="form-control form-control-lg" name="db_host" id="db_host" required>
+                                <label class="form-label long-label">
+                                    <ion-icon name="server-outline"></ion-icon> Host de la Base de Datos
+                                </label>
+                            </div>
+                            <!-- Repetir estructura similar para db_name, db_username, db_password -->
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Nombre de la Base de Datos" class="form-control form-control-lg" name="db_name" id="db_name" required>
+                                <label class="form-label long-label">
+                                    <ion-icon name="folder-outline"></ion-icon> Nombre de la Base de Datos
+                                </label>
+                            </div>
 
-        <label for="db_username">Usuario de la Base de Datos:</label>
-        <input type="text" id="db_username" name="db_username" value="root" required><br><br>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="text" placeholder="Usuario de la Base de Datos" class="form-control form-control-lg" name="db_username" id="db_username" required>
+                                <label class="form-label long-label">
+                                    <ion-icon name="person-outline"></ion-icon> Usuario de la Base de Datos
+                                </label>
+                            </div>
 
-        <label for="db_password">Contraseña de la Base de Datos:</label>
-        <input type="password" id="db_password" name="db_password"><br><br>
+                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                                <input type="password" placeholder="Contraseña de la Base de Datos" class="form-control form-control-lg" name="db_password" id="db_password" >
+                                <label class="form-label long-label">
+                                    <ion-icon name="lock-closed-outline"></ion-icon> Contraseña de la Base de Datos
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button type="submit" name="guardar" class="edit-profile-btn2 btn-lg fw-semibold">Guardar Configuración</button>
+                                <a href="/Views/Index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
+                            </div>
 
-        <input type="submit" name="guardar" value="Guardar Configuración">
-    </form>
-    <br>
-    <form action="omitir_config.php" method="POST">
-        <input type="submit" value="Omitir configuración (Ya tengo todo configurado)">
-    </form>
-</body>
-</html>
+                        </section>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    if (isset($_GET['error'])) {
+        echo '<div class="alert alert-danger">' . htmlspecialchars($_GET['error']) . '</div>';
+    }
+    ?>
+</main>

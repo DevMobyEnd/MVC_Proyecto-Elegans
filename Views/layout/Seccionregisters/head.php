@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 
-<>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($tituloPagina) ? $tituloPagina : 'Elegans'; ?></title>
-    <link rel="website icon" type="png" href="/Public/dist/img/2.png">
+    <link rel="website icon" type="png" href="/Public/dist/img/Logo3.png">
     <link rel="stylesheet" href="/Public/dist/css/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ley3x4qAAAAAMMY_bUy8XrlGQwa6N47ZjKDhNt_"></script>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFSYGPE6F3"></script>
@@ -25,7 +21,6 @@
             dataLayer.push(arguments);
         }
         gtag('js', new Date());
-
         gtag('config', 'G-NFSYGPE6F3');
     </script>
 </head>
@@ -45,16 +40,22 @@
         </div>
     </div>
 
-    <script>
-        $(".alert").alert();
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script src="/Public/dist/js/scripts.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script>
+    <script src="/Public/dist/js/Cropper.js"></script>
+    <script src="/Public/dist/js/theme-toggle.js"></script>
+    <script src="/Public/dist/js/register.js"></script>
 
-    
+    <script>
+        // Use Bootstrap's native JavaScript for alerts if needed
+        // document.querySelectorAll('.alert').forEach(alert => new bootstrap.Alert(alert));
+    </script>
 </body>
 
 </html>
