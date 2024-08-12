@@ -20,13 +20,35 @@ class InstallModel {
         return $exists;
     }
 
-    public function crearBaseDatos($db_name) {
-        try {
-            $sql = "CREATE DATABASE IF NOT EXISTS `$db_name`";
-            $this->conexion->obtenerConexion()->query($sql);
+    public function crearBaseDatos($db_host, $db_name, $db_username, $db_password) {
+        $conn = new mysqli($db_host, $db_username, $db_password);
+        if ($conn->connect_error) {
+            $this->error = "Error de conexión: " . $conn->connect_error;
+            return false;
+        }
+        
+        $sql = "CREATE DATABASE IF NOT EXISTS $db_name";
+        if ($conn->query($sql) === TRUE) {
+            $conn->close();
             return true;
-        } catch (Exception $e) {
-            $this->error = "Error al crear la base de datos: " . $e->getMessage();
+        } else {
+            $this->error = "Error al crear la base de datos: " . $conn->error;
+            $conn->close();
+            return false;
+        }
+    }
+
+    public function guardarConfiguracion($db_host, $db_name, $db_username, $db_password) {
+        $config = "<?php\n";
+        $config .= "define('DB_HOST', '$db_host');\n";
+        $config .= "define('DB_NAME', '$db_name');\n";
+        $config .= "define('DB_USER', '$db_username');\n";
+        $config .= "define('DB_PASS', '$db_password');\n";
+        
+        if (file_put_contents('../Config/global.php', $config)) {
+            return true;
+        } else {
+            $this->error = "No se pudo guardar la configuración";
             return false;
         }
     }

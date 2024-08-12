@@ -32,7 +32,14 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: `check_db=1&db_host=${dbHost}&db_name=${dbName}&db_username=${dbUsername}&db_password=${dbPassword}`
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Raw response:', response);
+            return response.text();  // Get the raw text first
+        })
+        .then(text => {
+            console.log('Response text:', text);
+            return JSON.parse(text);  // Now parse it as JSON
+        })
         .then(data => {
             if (data.exists) {
                 Swal.fire({
