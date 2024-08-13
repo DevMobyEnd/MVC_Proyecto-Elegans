@@ -3,7 +3,8 @@
         <div class="col-md-10">
             <div class="card">
                 <form id="registerForm" class="register-form" method="POST" action="/Views/register.php" enctype="multipart/form-data">
-                    <div id="registerStep" class="mb-3">
+                    <!-- Step 1 -->
+                    <div id="step1" class="register-step">
                         <section>
                             <h1 class="welcome-title">
                                 <span class="static-text">Únete a nosotros</span>
@@ -14,36 +15,41 @@
                                 </span>
                             </h1>
 
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
-                                <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista previa" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 10px;">
-                                <input type="file" class="form-control form-control-lg" name="profilePicture" id="Foto_PerfilInput" accept="image/*">
-                                <input type="hidden" id="croppedImageData" name="croppedImageData">
-                                <label class="form-label long-label">
-                                    <ion-icon name="image-outline"></ion-icon> Foto de Perfil
-                                </label>
+                            <div class="form-group">
+                                <label for="Foto_PerfilInput">Foto de Perfil</label>
+                                <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista Previa" style="width: 150px; height: 150px; margin-top: 10px; border-radius: 50%;" onclick="openCropperModal();">
+                                <input type="file" id="Foto_PerfilInput" class="form-control" accept="image/*" style="display: none;">
+                                <button type="button" id="selectImageBtn" class="btn btn-primary mt-2">Seleccionar Imagen</button>
                             </div>
 
-                            <!-- Modal para recortar la imagen -->
+                            <!-- Modal -->
                             <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="cropModalLabel">Ajustar imagen de perfil</h5>
+                                            <h5 class="modal-title" id="cropModalLabel">Recortar Imagen</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <div>
-                                                <img id="imageToCrop" src="" alt="Imagen para recortar" style="max-width: 100%;">
-                                            </div>
+                                            <img id="imageToCrop" src="" alt="Imagen para Recortar">
                                         </div>
                                         <div class="modal-footer">
+                                            <button type="button" id="cropImageBtn" class="btn btn-primary">Recortar</button>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                            <button type="button" class="btn btn-primary" id="cropImageBtn">Recortar y Usar</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <input type="hidden" id="croppedImageData" name="croppedImageData">
+
+                            <button type="button" class="btn btn-primary" onclick="showStep(2)">Siguiente</button>
+                        </section>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div id="step2" class="register-step" style="display: none;">
+                        <section>
                             <!-- Nombres -->
                             <div class="form-group d-flex flex-column align-items-start position-relative">
                                 <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
@@ -78,15 +84,20 @@
 
                             <!-- Correo Electrónico -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
-                                <input type="email" placeholder="CorreoElectrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
+                                <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                 </label>
                             </div>
 
-                            <!-- Add CSRF token -->
-                            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                            <button type="button" class="btn btn-secondary" onclick="showStep(1)">Atrás</button>
+                            <button type="button" class="btn btn-primary" onclick="showStep(3)">Siguiente</button>
+                        </section>
+                    </div>
 
+                    <!-- Step 3 -->
+                    <div id="step3" class="register-step" style="display: none;">
+                        <section>
                             <!-- Contraseña -->
                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
@@ -106,28 +117,22 @@
                                     <ion-icon name="lock-closed-outline"></ion-icon> Confirmar Contraseña
                                 </label>
                             </div>
+
+                            <!-- reCAPTCHA -->
+                            <div class="d-flex flex-column align-items-center mb-3">
+                                <div class="cf-turnstile" data-sitekey="0x4AAAAAAAg7dIijZcb4rb5v" data-callback="onCaptchaSuccess"></div>
+                            </div>
+
+                            <!-- Add reCAPTCHA token -->
+                            <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
+
+                            <!-- Añade esto para mostrar errores -->
+                            <div id="formErrors" class="alert alert-danger" style="display: none;"></div>
+
+                            <button type="button" class="btn btn-secondary" onclick="showStep(2)">Atrás</button>
+                            <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
                         </section>
                     </div>
-
-                    <!-- reCAPTCHA -->
-                    <div class="d-flex flex-column align-items-center mb-3">
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAAg7dIijZcb4rb5v" data-callback="onCaptchaSuccess"></div>
-                    </div>
-
-                    <!-- Add reCAPTCHA token -->
-                    <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
-
-                    <!-- Añade esto para mostrar errores -->
-                    <div id="formErrors" class="alert alert-danger" style="display: none;"></div>
-
-                    <!-- Botón de registro -->
-                    <div class="d-flex justify-content-center">
-                        <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
-                    </div>
-
-                    <p class="text-center mt-3">
-                        ¿Ya tienes una cuenta? <a href="/Views/login.php">Inicia sesión</a>
-                    </p>
                 </form>
             </div>
         </div>

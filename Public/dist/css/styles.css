@@ -808,6 +808,27 @@ section {
     text-align: left;
 }
 
+#imageToCrop {
+    max-width: 100%;
+    display: block;
+}
+
+.cropper-container {
+    width: 100% !important;
+    height: 600px !important;
+}
+
+#profilePreview {
+    width: 150px; /* Ajusta el tamaño del contenedor según sea necesario */
+    height: 150px; /* Asegúrate de que el contenedor sea cuadrado */
+    border-radius: 50%; /* Forma de círculo */
+    object-fit: cover; /* Asegura que la imagen cubra el contenedor sin distorsionarse */
+    display: block;
+    margin-top: 10px;
+}
+
+
+
 
 
 
