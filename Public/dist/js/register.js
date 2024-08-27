@@ -1,6 +1,6 @@
-//Funcionalidades para la vista de registro
+document.cookie = "name=value; SameSite=None; Secure";
 
-//Función de desinfección  para evitar ataques XSS
+// Función de desinfección para evitar ataques XSS
 function sanitizeInput(input) {
     const div = document.createElement('div');
     div.textContent = input;
@@ -61,22 +61,40 @@ function onCaptchaSuccess(token) {
     document.getElementById('cf-turnstile-response').value = token;
 }
 
-// Función para validar el formulario
-function validateForm() {
+// Función para validar el primer paso del formulario
+function validateStep1() {
     let errors = [];
     const Foto_Perfil = document.getElementById('Foto_PerfilInput').files[0];
-    const Nombres = sanitizeInput(document.getElementById('nombresInput').value);
-    const Apellidos = sanitizeInput(document.getElementById('apellidosInput').value);
-    const NumerodeDocumento = sanitizeInput(document.getElementById('NumerodeDocumentoInput').value);
-    const Apodo = sanitizeInput(document.getElementById('apodoInput').value);
-    const CorreoElectronico = sanitizeInput(document.getElementById('emailInput').value);
-    const password = document.getElementById('passwordInput').value;
+    const Nombres = sanitizeInput(document.getElementById('nombresInput').value.trim());
+    const Apellidos = sanitizeInput(document.getElementById('apellidosInput').value.trim());
+    const NumerodeDocumento = sanitizeInput(document.getElementById('NumerodeDocumentoInput').value.trim());
+    const Apodo = sanitizeInput(document.getElementById('apodoInput').value.trim());
 
     if (!Foto_Perfil) errors.push('La foto de perfil es requerida.');
     if (!Nombres) errors.push('El nombre es requerido.');
     if (!Apellidos) errors.push('El apellido es requerido.');
     if (!NumerodeDocumento) errors.push('El número de documento es requerido.');
     if (!Apodo) errors.push('El apodo es requerido.');
+
+    if (errors.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos requeridos',
+            html: errors.join('<br>'),
+            confirmButtonText: 'Entendido'
+        });
+        return false;
+    }
+
+    return true;
+}
+
+// Función para validar el segundo paso del formulario
+function validateStep2() {
+    let errors = [];
+    const CorreoElectronico = sanitizeInput(document.getElementById('emailInput').value);
+    const password = document.getElementById('passwordInput').value;
+
     if (!CorreoElectronico) errors.push('El correo electrónico es requerido.');
     if (!password) errors.push('La contraseña es requerida.');
 
@@ -89,11 +107,29 @@ function validateForm() {
     return errors;
 }
 
-// Manejo del evento submit del formulario
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+// Manejo del evento para avanzar al siguiente paso
+document.getElementById('nextStepBtn').addEventListener('click', function(e) {
     e.preventDefault();
 
-    let errors = validateForm();
+    let errors = validateStep1();
+
+    if (errors.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos requeridos',
+            html: `<ul>${errors.map(error => `<li>${error}</li>`).join('')}</ul>`,
+            confirmButtonText: 'Entendido'
+        });
+    } else {
+        showStep(2);  // Mostrar el segundo paso solo si no hay errores
+    }
+});
+
+// Manejo del evento submit del formulario
+document.getElementById('registerButton').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    let errors = validateStep2();
 
     if (errors.length > 0) {
         Swal.fire({
@@ -104,7 +140,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         return;
     }
 
-    const formData = new FormData(this);
+    const formData = new FormData(document.getElementById('registerForm'));
     formData.append('Foto_Perfil', document.getElementById('Foto_PerfilInput').files[0]);
     formData.set('Nombres', sanitizeInput(document.getElementById('nombresInput').value));
     formData.set('Apellidos', sanitizeInput(document.getElementById('apellidosInput').value));
@@ -114,7 +150,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     formData.append('cf-turnstile-response', document.getElementById('cf-turnstile-response').value);
     formData.append('croppedImageData', document.getElementById('croppedImageData').value);
 
-    fetch(this.action, {
+    fetch(document.getElementById('registerForm').action, {
         method: 'POST',
         body: formData,
         headers: {
@@ -144,14 +180,15 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error(error);
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Ocurrió un error al procesar la solicitud: ' + error.message
+            text: 'Hubo un problema al registrar el usuario. Por favor, intente nuevamente.'
         });
     });
 });
+
 
 // Funcionalidades para la vista de la foto de perfil
 document.getElementById('selectImageBtn').addEventListener('click', function() {
@@ -200,3 +237,6 @@ function showStep(stepNumber) {
         currentStep.style.display = 'block';
     }
 }
+
+// Inicializar con el primer paso
+showStep(1);

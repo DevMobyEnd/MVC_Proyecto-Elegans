@@ -34,29 +34,55 @@ h4 {
 /* Layout for admin dashboard skeleton */
 
 .wrapper {
-    align-items: stretch;
     display: flex;
     width: 100%;
+    transition: padding-left 0.35s ease-in-out;
 }
 
 #sidebar {
-    max-width: 264px;
-    min-width: 264px;
+    width: 264px;
     background: var(--bs-dark);
-    transition: all 0.35s ease-in-out;
+    transition: margin-left 0.44s ease-in-out, width 0.44s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1000;
 }
 
+/* Sidebar Toggle */
+
+#sidebar.collapsed {
+    margin-left: -264px;
+}
+
+
 .main {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+    flex-grow: 1;
+    display: flex;
     flex-direction: column;
     min-height: 100vh;
-    min-width: 0;
-    overflow: hidden;
-    transition: all 0.35s ease-in-out;
-    width: 100%;
-    background: var(--bs-dark-bg-subtle);    
+    transition: margin-left 0.45s ease-in-out;
+    background: var(--bs-dark-bg-subtle);
+    margin-left: 264px;
 }
+
+.content {
+    flex: 1 0 auto;
+}
+
+@media (max-width: 767px) {
+    .main {
+        margin-left: 0;
+    }
+}
+
+.main.expanded {
+    margin-left: 0;
+}
+
+
 
 /* Sidebar Elements Style */
 
@@ -177,6 +203,13 @@ a.theme-toggle {
     /* Centrar contenido en pantallas pequeñas */
 }
 
+
+
+
+
+
+
+
 /* Media Query para pantallas grandes */
 @media (min-width: 1200px) {
     #card {
@@ -264,14 +297,14 @@ a.theme-toggle {
 }
 
 .card {
-    box-shadow: 0 0 .875rem 0 rgba(34, 46, 60, .05);
+    box-shadow: 0 0 .875rem 0 rgba(34, 46, 60, .05) !important; 
     margin-bottom: 24px;
 
 }
 
 .illustration {
-    background-color: var(--bs-primary-bg-subtle);
-    color: var(--bs-emphasis-color);
+    background-color: var(--bs-primary-bg-subtle) !important;
+    color: var(--bs-emphasis-color) !important;
 }
 
 .illustration-img {
@@ -279,11 +312,7 @@ a.theme-toggle {
     width: 100%;
 }
 
-/* Sidebar Toggle */
 
-#sidebar.collapsed {
-    margin-left: -264px;
-}
 
 /* Footer and Nav */
 
@@ -336,10 +365,12 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 }
 
 #usuario {
-    border-radius: 5px;
-    height: 200px;
-    width: 400px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
 }
+
 
 .user-stats-container {
     display: flex;
@@ -350,8 +381,9 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 }
 
 .edit-profile-btn {
-    background-color: #cee1fe;
-    color: #000;
+    background-color: var(--bs-primary-bg-subtle) !important;
+    color: var(--bs-emphasis-color) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
     /* Cambia este valor según necesites */
     border: none;
     padding: 10px 20px;
@@ -364,8 +396,22 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 }
 
 .edit-profile-btn:hover {
-    background-color: #bdcdee;
-    /* Color al pasar el mouse por encima, ajusta según necesites */
+    background-color: var(--bs-primary-bg-subtle-hover) !important;
+    color: var(--bs-emphasis-color-hover) !important;
+}
+
+@media (prefers-color-scheme: light) {
+    .edit-profile-btn:hover {
+        background-color: #e9ecef !important;
+        color: #495057 !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .edit-profile-btn:hover {
+        background-color: #4dabf7 !important;
+        color: #ffffff !important;
+    }
 }
 
 .edit-profile-btn-wrapper {
@@ -382,8 +428,9 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 }
 
 .edit-profile-btn2 {
-    background-color: #cee1fe;
-    color: #000;
+    background-color: var(--bs-primary-bg-subtle) !important;
+    color: var(--bs-emphasis-color) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
     /* Cambia este valor según necesites */
     border: none;
     padding: 10px 20px;
@@ -397,10 +444,23 @@ html[data-bs-theme="light"] .theme-toggle .fa-sun {
 
 
 .edit-profile-btn2:hover {
-    background-color: #bdcdee;
-    /* Color al pasar el mouse por encima, ajusta según necesites */
+    background-color: var(--bs-primary-bg-subtle-hover) !important;
+    color: var(--bs-emphasis-color-hover) !important;
 }
 
+@media (prefers-color-scheme: light) {
+    .edit-profile-btn2:hover {
+        background-color: #007bff !important;
+        color: #ffffff !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .edit-profile-btn2:hover {
+        background-color: #4dabf7 !important;
+        color: #ffffff !important;
+    }
+}
 /* En tu archivo style.css */
 .btn-wrapper-adjusted {
     position: relative;
@@ -778,6 +838,7 @@ section {
 .dynamic-text span.next {
     transform: translateY(-100%);
 }
+
 #registerForm .form-group:first-of-type {
     width: 80%;
     margin: 0 auto 20px;
@@ -826,6 +887,35 @@ section {
     display: block;
     margin-top: 10px;
 }
+
+.form-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Espacio entre los elementos */
+}
+
+.form-group {
+    flex: 1; /* Para que los elementos ocupen el mismo espacio */
+    min-width: 200px; /* Ancho mínimo para evitar que se reduzcan demasiado */
+}
+
+.welcome-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Media Query para pantallas pequeñas */
+@media (max-width: 768px) {
+    .form-container {
+        flex-direction: column; /* Apila los elementos uno debajo del otro */
+        gap: 10px; /* Reduce el espacio entre los elementos */
+    }
+
+    .form-group {
+        min-width: 100%; /* Hace que ocupen el 100% del ancho disponible */
+    }
+}
+
 
 
 

@@ -28,7 +28,7 @@
             </a>
             <ul class="collapse" id="usuariosSubmenu">
                 <li><a href="?page=listaUsuarios" class="sidebar-link">Lista de Usuarios</a></li>
-                <li><a href="#" class="sidebar-link">Roles y Permisos</a></li>
+                <li><a href="?page=RolesPermisos" class="sidebar-link">Roles y Permisos</a></li>
                 <li><a href="#" class="sidebar-link">Solicitudes de DJs</a></li>
             </ul>
         </li>
@@ -38,8 +38,6 @@
                 Gestión de Contenido
             </a>
             <ul class="collapse" id="contenidoSubmenu">
-                <li><a href="#" class="sidebar-link">Eventos</a></li>
-                <li><a href="#" class="sidebar-link">Música</a></li>
                 <li><a href="#" class="sidebar-link">Comentarios y Reseñas</a></li>
             </ul>
         </li>
@@ -52,24 +50,6 @@
                 <li><a href="#" class="sidebar-link">Configuración del Sistema</a></li>
                 <li><a href="#" class="sidebar-link">Notificaciones</a></li>
             </ul>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="fas fa-chart-bar"></i>
-                Reporte de Actividad
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="fas fa-id-card"></i>
-                Mi Perfil
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">
-                <i class="fas fa-sign-out-alt"></i>
-                Cerrar Sesión
-            </a>
         </li>
     </ul>
 </div>

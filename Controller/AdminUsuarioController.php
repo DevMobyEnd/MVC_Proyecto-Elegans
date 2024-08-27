@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../Models/AdminUsuarioModel.php';
 
-class AdminController {
+class AdminUsuarioController {
+    
     private $usuarioModel;
 
     public function __construct() {
@@ -9,27 +10,34 @@ class AdminController {
     }
 
     public function dashboard() {
-        // Lógica para el dashboard
         $totalUsuarios = $this->usuarioModel->contarUsuarios();
-        // Obtén más datos según sea necesario
-        
-        include __DIR__ . '/../Views/partials/admin_dashboard.php';
+        $registrosPorMes = $this->usuarioModel->obtenerRegistrosPorMes();
+        $this->cargarVista('partials/admin_dashboard', [
+            'totalUsuarios' => $totalUsuarios,
+            'registrosPorMes' => $registrosPorMes
+        ]);
     }
 
-    public function listaUsuarios() {
-        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
-        $limit = 10;
-        $usuarios = $this->usuarioModel->obtenerUsuarios($offset, $limit);
-        
-        include __DIR__ . '/../Views/partials/lista_usuarios.php';
+    public function obtenerDatosUsuarios() {
+        try {
+            $registrosPorMes = $this->usuarioModel->obtenerRegistrosPorMes();
+            header('Content-Type: application/json');
+            echo json_encode($registrosPorMes);
+        } catch (Exception $e) {
+            header('HTTP/1.1 500 Internal Server Error');
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        exit;
     }
 
-    public function buscarUsuarios() {
-        $criterios = $_GET['criterios'] ?? '';
-        $usuarios = $this->usuarioModel->buscarUsuarios($criterios);
-        
-        // Devolver los resultados como JSON para AJAX
-        header('Content-Type: application/json');
-        echo json_encode($usuarios);
+    public function listarUsuarios($currentPage, $itemsPerPage) {
+        $offset = ($currentPage - 1) * $itemsPerPage;
+        $usuarios = $this->usuarioModel->obtenerUsuarios($offset, $itemsPerPage);
+        $this->cargarVista('partials/lista_usuarios', ['usuarios' => $usuarios]);
+    }
+
+    private function cargarVista($vista, $datos = []) {
+        extract($datos);
+        include __DIR__ . "/../Views/layout/Admin/$vista.php";
     }
 }

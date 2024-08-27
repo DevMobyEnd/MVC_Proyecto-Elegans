@@ -2,7 +2,7 @@
 require_once "global.php";
 
 class Conexion {
-    protected $conexion_db;
+    private  $conexion_db;
 
     public function __construct() {
         $this->conexion_db = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);

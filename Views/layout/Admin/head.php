@@ -24,13 +24,13 @@
     <div class="wrapper">
         <aside id="sidebar" class="js-sidebar">
             <!-- Contenido de la barra lateral -->
-            <?php include('../Views/layout/Admin/sidebar.php'); ?>
+            <?php include('./Views/layout/Admin/sidebar.php'); ?>
         </aside>
         <div class="main">
-            <?php include('../Views/layout/Seccionlogin/navbar.php'); ?>
+            <?php include('./Views/layout/home/navbar.php'); ?>
             <?php include('content.php'); ?>
-            <?php include('../Views/layout/home/theme-toggle.php'); ?>
-            <?php include('../Views/layout/home/footer.php'); ?>
+            <?php include('./Views/layout/home/theme-toggle.php'); ?>
+            <?php include('./Views/layout/home/footer.php'); ?>
         </div>
     </div>
 
@@ -40,6 +40,7 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="/Public/dist/js/theme-toggle.js"></script>
+    <script src="/Public/dist/js/sidebar.js"></script>
     <script src="/Public/dist/js/admin.js"></script>
     <script>
         // Use Bootstrap's native JavaScript for alerts if needed

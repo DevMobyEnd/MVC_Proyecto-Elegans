@@ -6,40 +6,55 @@
                     <h1>Dashboard</h1>
                     <div class="row">
                         <!-- Card Usuarios Registrados -->
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-8 mb-4">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Usuarios Registrados</h5>
-                                    <canvas id="usuariosChart"></canvas>
+                                    <p class="card-text">
+                                        Total: <?php echo isset($totalUsuarios) ? $totalUsuarios : 'N/A'; ?>
+                                    </p>
+                                    <div style="height: 300px;">
+                                        <canvas id="usuariosChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Card Solicitudes Pendientes -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Solicitudes Pendientes</h5>
-                                    <canvas id="SolicitudesChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Card DJs Activos -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">DJs Activos</h5>
-                                    <canvas id="DjChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-
                     </div>
-                    <!-- Se pueden agregar más tarjetas o gráficos aquí -->
                 </div>
             </div>
-            <!-- Aquí se cargará el contenido dinámico de otras secciones -->
-
             <div id="dynamic-content" class="content-section" style="display: none;"></div>
         </div>
+    </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('usuariosChart').getContext('2d');
+    var registrosPorMes = <?php echo json_encode($registrosPorMes); ?>;
+
+    var labels = registrosPorMes.map(function(item) {
+        return item.mes;
+    });
+
+    var datos = registrosPorMes.map(function(item) {
+        return item.total;
+    });
+
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Usuarios registrados por mes',
+                data: datos,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>

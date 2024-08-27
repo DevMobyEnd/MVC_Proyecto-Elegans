@@ -1,12 +1,12 @@
 <?php
-require_once '../Helpers/Logger.php';
-require_once '../Models/registerModel.php';
-require_once '../Config/config.php';
-require_once '../Helpers/CaptchaVerifier.php';
-require_once '../Helpers/ImageProcessor.php';
-require_once '../Helpers/PasswordValidator.php';
-require_once '../Helpers/CSRFTokenGenerator.php';
-require_once '../vendor/autoload.php'; // Para Guzzle y Respect\Validation
+require_once './Helpers/Logger.php';
+require_once './Models/registerModel.php';
+require_once './Config/config.php';
+require_once './Helpers/CaptchaVerifier.php';
+require_once './Helpers/ImageProcessor.php';
+require_once './Helpers/PasswordValidator.php';
+require_once './Helpers/CSRFTokenGenerator.php';
+require_once './vendor/autoload.php'; // Para Guzzle y Respect\Validation
 
 use GuzzleHttp\Client;
 use Respect\Validation\Validator as v;
@@ -65,11 +65,18 @@ class RegisterController
                 $this->modelo->finalizarTransaccion();
                 unset($_SESSION['csrf_token']);
 
+                // Establece las variables de sesión
+                $_SESSION['usuario_id'] = $userId;
+                $_SESSION['apodo'] = $userData['apodo'];
+                $_SESSION['foto_perfil'] = $ruta_foto;
+                $_SESSION['nombres'] = $userData['nombres'];
+                $_SESSION['apellidos'] = $userData['apellidos'];
+
                 $output = ob_get_clean();
                 return [
                     'status' => 'success',
                     'message' => 'Usuario registrado exitosamente',
-                    'redirect' => '/Views/login.php',
+                    'redirect' => '/login.php',
                     'debug' => $output
                 ];
             } else {
@@ -159,11 +166,11 @@ class RegisterController
             }
             $ruta_foto = $this->imageProcessor->process($foto_perfil);
         }
-    
+
         if (!$ruta_foto) {
             throw new Exception('Error al procesar la imagen');
         }
-    
+
         $_SESSION['profile_picture'] = $ruta_foto;
         return $ruta_foto; // Asegúrate de que siempre se retorne $ruta_foto
     }

@@ -40,8 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     continueBtn.addEventListener('click', function (e) {
         e.preventDefault();
         const email = emailInput.value;
-
-        fetch('/Views/login.php', {
+        fetch('/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -49,15 +48,17 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: `action=checkEmail&Gmail=${encodeURIComponent(email)}`
         })
-        .then(response => response.json())
+        .then(response => response.text()) // Cambia a .text() para ver la respuesta cruda
         .then(data => {
-            if (data.success) {
+            console.log(data); // Verifica la respuesta cruda
+            const jsonData = JSON.parse(data); // Luego intenta parsear
+            if (jsonData.success) {
                 showPasswordStep();
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: data.message
+                    text: jsonData.message
                 });
             }
         })
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
     
-        fetch('/Views/login.php', {
+        fetch('/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -106,10 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.json();
+            return response.text(); // Cambia a .text() para ver la respuesta cruda
         })
         .then(data => {
-            if (data.success) {
+            console.log(data); // Verifica la respuesta cruda
+            const jsonData = JSON.parse(data); // Luego intenta parsear
+            if (jsonData.success) {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Bienvenido!',
@@ -117,13 +120,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    window.location.href = '/Views/Index.php';
+                    window.location.href = '/Index.php';
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: data.message || 'Hubo un problema al iniciar sesión.'
+                    text: jsonData.message || 'Hubo un problema al iniciar sesión.'
                 });
             }
         })

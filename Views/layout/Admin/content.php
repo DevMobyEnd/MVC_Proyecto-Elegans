@@ -1,18 +1,20 @@
 <?php
-if (isset($_GET['page'])) {
-    $page = $_GET['page'];
-    switch ($page) {
-        case 'dashboard':
-            include 'partials/admin_dashboard.php';
-            break;
-        case 'listaUsuarios':
-            include 'partials/lista_usuarios.php';
-            break;
-        // Otros casos para diferentes secciones
-        default:
-            echo '<h2>Bienvenido al panel de administración</h2>';
-            break;
-    }
-} else {
-    echo '<h2>Bienvenido al panel de administración</h2>';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Controller/AdminUsuarioController.php';
+$controller = new AdminUsuarioController();
+
+$controller = new AdminUsuarioController();
+$page = isset($_GET['page']) ? $_GET['page'] : 'N';
+
+switch ($page) {
+    case 'dashboard':
+        $controller->dashboard();
+        break;
+    case 'listaUsuarios':
+        $controller->listarUsuarios(isset($_GET['currentPage']) ? $_GET['currentPage'] : 1, 7);
+        break;
+    case 'admin_dashboard':
+        $controller->obtenerDatosUsuarios();
+        break;    
+    case 'RolesPermisos':
+        break;
 }

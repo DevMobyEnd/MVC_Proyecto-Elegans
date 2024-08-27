@@ -19,16 +19,16 @@
                         <?php endif; ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="profile.php">Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="/Myperfil.php">Mi Perfil</a></li>
                         <li><a class="dropdown-item" href="../Helpers/logout.php">Cerrar Sesión</a></li>
                     </ul>
                 </li>
             <?php else: ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="login.php">Iniciar Sesión</a>
+                    <a class="nav-link" href="/login.php">Iniciar Sesión</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="register.php">Registrarse</a>
+                    <a class="nav-link" href="/register.php">Registrarse</a>
                 </li>
             <?php endif; ?>
         </ul>

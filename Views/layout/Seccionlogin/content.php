@@ -5,10 +5,8 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="card">
-
-
                             <div class="card-body">
-                                <form id="loginForm" method="POST" action="/Views/login.php">
+                                <form id="loginForm" method="POST" action="/login.php">
                                     <div id="emailStep" class="mb-3">
                                         <section>
                                             <h1 class="welcome-title">
@@ -50,7 +48,7 @@
                                         </div>
                                     </div>
                                     <p class="text-center mt-3">
-                                        ¿No tiene una cuenta? <a href="/Views/register.php">Regístrese</a>
+                                        ¿No tiene una cuenta? <a href="/register.php">Regístrese</a>
                                     </p>
                                     <div class="hr-with-text">
                                         <hr>

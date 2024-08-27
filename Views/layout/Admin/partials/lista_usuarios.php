@@ -28,10 +28,10 @@
                         <?php if (isset($usuarios) && is_array($usuarios)) : ?>
                             <?php foreach ($usuarios as $usuario) : ?>
                                 <tr>
-                                    <td><?php echo $usuario['nombres'] . ' ' . $usuario['apellidos']; ?></td>
-                                    <td><?php echo $usuario['Gmail']; ?></td>
-                                    <td><?php echo $usuario['Apodo']; ?></td>
-                                    <td><?php echo $usuario['rol']; ?></td>
+                                    <td><?php echo htmlspecialchars($usuario['nombres'] . ' ' . $usuario['apellidos']); ?></td>
+                                    <td><?php echo htmlspecialchars($usuario['Gmail']); ?></td>
+                                    <td><?php echo htmlspecialchars($usuario['Apodo']); ?></td>
+                                    <td><?php echo htmlspecialchars($usuario['rol']); ?></td>
                                     <td><?php echo $usuario['estado'] ? 'Activo' : 'Inactivo'; ?></td>
                                     <td>
                                         <button class="btn btn-warning btn-sm" onclick="editarUsuario(<?php echo $usuario['id']; ?>)">Editar</button>
@@ -63,3 +63,10 @@
         <div id="dynamic-content" class="content-section" style="display: none;"></div>
     </div>
 </main>
+
+<script>
+function buscarUsuarios() {
+    const search = document.getElementById('buscarUsuario').value;
+    window.location.href = '?page=listaUsuarios&search=' + encodeURIComponent(search);
+}
+</script>

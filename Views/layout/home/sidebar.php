@@ -1,4 +1,4 @@
-<div class="h-100">
+<div class="sidebar h-100">
     <div class="sidebar-logo" style="padding: 10px 0; text-align: center;">
         <a href="#"><img class="img-fluid" src="/Public/dist/img/Logo.png" alt="" style="width: 200px; height: 200px; margin-top: -30px; margin-left: -25px;"></a>
     </div>

@@ -2,7 +2,11 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <form id="registerForm" class="register-form" method="POST" action="/Views/register.php" enctype="multipart/form-data">
+                <form id="registerForm" class="register-form" method="POST" action="/register.php" enctype="multipart/form-data">
+                    <!-- CSRF token -->
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                        <!-- Resto de los campos del formulario -->
+                   
                     <!-- Step 1 -->
                     <div id="step1" class="register-step">
                         <section>
@@ -43,63 +47,51 @@
 
                             <input type="hidden" id="croppedImageData" name="croppedImageData">
 
-                            <button type="button" class="btn btn-primary" onclick="showStep(2)">Siguiente</button>
-                        </section>
-                    </div>
+                            <div class="form-container">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
+                                    <label class="form-label long-label">
+                                        <ion-icon name="person-outline"></ion-icon> Nombres
+                                    </label>
+                                </div>
 
+                                <div class="form-group">
+                                    <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
+                                    <label class="form-label long-label">
+                                        <ion-icon name="person-outline"></ion-icon> Apellidos
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-container">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
+                                    <label class="form-label long-label">
+                                        <ion-icon name="card-outline"></ion-icon> Numero de Documento
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
+                                    <label class="form-label long-label">
+                                        <ion-icon name="pricetag-outline"></ion-icon> Apodo
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="button" id="nextStepBtn" class="edit-profile-btn2 btn-lg fw-semibold mb-4" onclick="showStep(2)">Siguiente</button>                        </section>
+                    </div>
                     <!-- Step 2 -->
                     <div id="step2" class="register-step" style="display: none;">
                         <section>
-                            <!-- Nombres -->
-                            <div class="form-group d-flex flex-column align-items-start position-relative">
-                                <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
-                                <label class="form-label long-label">
-                                    <ion-icon name="person-outline"></ion-icon> Nombres
-                                </label>
-                            </div>
-
-                            <!-- Apellidos -->
-                            <div class="form-group d-flex flex-column align-items-start position-relative">
-                                <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
-                                <label class="form-label long-label">
-                                    <ion-icon name="person-outline"></ion-icon> Apellidos
-                                </label>
-                            </div>
-
-                            <!-- Número de Documento -->
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
-                                <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
-                                <label class="form-label long-label">
-                                    <ion-icon name="card-outline"></ion-icon> Numero de Documento
-                                </label>
-                            </div>
-
-                            <!-- Apodo -->
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
-                                <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
-                                <label class="form-label long-label">
-                                    <ion-icon name="pricetag-outline"></ion-icon> Apodo
-                                </label>
-                            </div>
-
-                            <!-- Correo Electrónico -->
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                            <div class="form-group">
                                 <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="CorreoElectronico" id="emailInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                 </label>
                             </div>
 
-                            <button type="button" class="btn btn-secondary" onclick="showStep(1)">Atrás</button>
-                            <button type="button" class="btn btn-primary" onclick="showStep(3)">Siguiente</button>
-                        </section>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div id="step3" class="register-step" style="display: none;">
-                        <section>
-                            <!-- Contraseña -->
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                            <div class="form-group">
                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="lock-closed-outline"></ion-icon> Contraseña
@@ -110,26 +102,22 @@
                                 <small id="passwordHelp" class="form-text text-muted">La contraseña debe tener al menos 8 caracteres.</small>
                             </div>
 
-                            <!-- Confirmar Contraseña -->
-                            <div class="form-group d-flex flex-column align-items-center position-relative">
+                            <div class="form-group">
                                 <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="lock-closed-outline"></ion-icon> Confirmar Contraseña
                                 </label>
                             </div>
 
-                            <!-- reCAPTCHA -->
                             <div class="d-flex flex-column align-items-center mb-3">
                                 <div class="cf-turnstile" data-sitekey="0x4AAAAAAAg7dIijZcb4rb5v" data-callback="onCaptchaSuccess"></div>
                             </div>
 
-                            <!-- Add reCAPTCHA token -->
                             <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
 
-                            <!-- Añade esto para mostrar errores -->
                             <div id="formErrors" class="alert alert-danger" style="display: none;"></div>
 
-                            <button type="button" class="btn btn-secondary" onclick="showStep(2)">Atrás</button>
+                            <button type="button" class="btn btn-secondary" onclick="showStep(1)">Atrás</button>
                             <button type="submit" id="registerButton" class="edit-profile-btn2 btn-lg fw-semibold">Registrarse</button>
                         </section>
                     </div>

@@ -1,5 +1,5 @@
 <?php
-require_once '../Config/conexion.php';
+require_once './Config/conexion.php';
 
 class UsuarioModel {
     private $conexion;
@@ -10,7 +10,7 @@ class UsuarioModel {
     }
 
     public function obtenerUsuarioPorEmail($email) {
-        $sql = "SELECT * FROM tb_usuarios WHERE Gmail = ?";
+        $sql = "SELECT id, nombres, apellidos, Gmail, password, foto_perfil, Apodo FROM tb_usuarios WHERE Gmail = ?";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -22,7 +22,7 @@ class UsuarioModel {
     }
 
     public function verificarCredenciales($email, $password) {
-        $sql = "SELECT id, nombres, password, foto_perfil FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
+        $sql = "SELECT id, nombres, apellidos, password, foto_perfil, Apodo FROM tb_usuarios WHERE Gmail = ? LIMIT 1";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -34,6 +34,7 @@ class UsuarioModel {
         }
         return false;
     }
+
     public function crearToken($userId, $type) {
         $token = bin2hex(random_bytes(32));
         $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
@@ -73,4 +74,69 @@ class UsuarioModel {
         $stmt->execute();
     }
 
+    // Método actualizado para obtener el nombre completo del usuario
+    public function obtenerNombreCompleto($userId) {
+        $sql = "SELECT CONCAT(nombres, ' ', apellidos) AS nombre_completo FROM tb_usuarios WHERE id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            return $row['nombre_completo'];
+        }
+        return 'Nombre no disponible';
+    }
+
+    public function obtenerUsuarioPorId($id) {
+        $sql = "SELECT id, nombres, apellidos, Gmail, foto_perfil, Apodo FROM tb_usuarios WHERE id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            return $row;
+        }
+        return null;
+    }
+
+    public function actualizarUsuario($idUsuario, $datosUsuario) {
+        $sql = "UPDATE tb_usuarios SET 
+                nombres = ?, 
+                apellidos = ?, 
+                numero_documento = ?, 
+                Apodo = ?, 
+                Gmail = ?";
+        
+        $params = [
+            $datosUsuario['nombres'],
+            $datosUsuario['apellidos'],
+            $datosUsuario['numero_documento'],
+            $datosUsuario['apodo'],
+            $datosUsuario['correo_electronico']
+        ];
+        $types = "sssss";
+    
+        if (isset($datosUsuario['password'])) {
+            $sql .= ", password = ?";
+            $params[] = $datosUsuario['password'];
+            $types .= "s";
+        }
+    
+        if (isset($datosUsuario['foto_perfil'])) {
+            $sql .= ", foto_perfil = ?";
+            $params[] = $datosUsuario['foto_perfil'];
+            $types .= "s";
+        }
+    
+        $sql .= " WHERE id = ?";
+        $params[] = $idUsuario;
+        $types .= "i";
+    
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        
+        return $stmt->execute();
+    }
+    
 }
+
