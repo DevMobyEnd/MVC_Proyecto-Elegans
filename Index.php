@@ -3,16 +3,30 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start(); // Inicia la sesión solo si no ha sido iniciada
 }
 
-require_once  'Controller/HomeController.php';
+require_once 'Controller/HomeController.php';
 
 $homeController = new HomeController();
 $userData = $homeController->index(); // Obtiene los datos del usuario desde el controlador
 
-// Primero, verificamos si el archivo global.php existe
+// Verifica si el usuario está en sesión
+// if (isset($_SESSION['usuario_id'])) {
+//     $userId = $_SESSION['usuario_id'];
+// } else {
+//     // Redirige o lanza un error si no hay un usuario en sesión.
+//     die("Error: Usuario no autenticado.");
+// }
+
+// Verifica si se está haciendo una solicitud de búsqueda de canción
+if (isset($_GET['songName']) && !empty(trim($_GET['songName']))) {
+    require_once 'test_spotify.php';
+    exit(); // Asegúrate de que el script se detenga después de procesar la solicitud de búsqueda
+}
+
+// Verifica si el archivo global.php existe
 if (file_exists('Config/global.php')) {
     require_once 'Config/global.php';
     
-    // Verificamos si todas las variables necesarias están definidas y no están vacías
+    // Verifica si todas las variables necesarias están definidas y no están vacías
     if (
         defined('DB_HOST') && !empty(DB_HOST) &&
         defined('DB_NAME') && !empty(DB_NAME) &&
@@ -20,19 +34,29 @@ if (file_exists('Config/global.php')) {
         defined('DB_PASSWORD') && 
         defined('DB_ENCODE') && !empty(DB_ENCODE)
     ) {
-        // Si todas las variables están definidas y no vacías, continuamos con la carga normal
+        // Maneja la solicitud POST para agregar una solicitud de música
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $homeController->addMusicRequest();
+            exit(); // Asegúrate de que el script se detenga después de procesar la solicitud POST
+        }
+
+        // Carga normal de la vista de inicio
         require_once "Views/layout/home/head.php";
         // ... resto del código de la página de inicio
     } else {
-        // Si alguna variable no está definida o está vacía, redirigimos al instalador
+        // Redirige al instalador si alguna variable está indefinida o vacía
         header('Location: Views/InstallView.php');
         exit();
     }
 } else {
-    // Si el archivo global.php no existe, redirigimos al instalador
+    // Redirige al instalador si el archivo global.php no existe
     header('Location: Views/InstallView.php');
     exit();
 }
+
+
+// Aquí puedes incluir el resto del código de tu página de inicio
+
 
 // Aquí puedes incluir el resto del código de tu página de inicio
 // Por ejemplo, contenido específico para usuarios autenticados o no autenticados

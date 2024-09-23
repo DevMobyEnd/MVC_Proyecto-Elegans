@@ -36,8 +36,8 @@
                                             </div>
                                         </section>
                                         <p class="text-center">
-                                            <a href="#" id="forgotPassword">¿Olvidó su contraseña?</a>
-                                        </p>
+                                            <a href="/test_recover_password.php" id="forgotPassword" >¿Olvidó su contraseña?</a>
+                                            </p>
                                     </div>
                                     <div class="text-center">
                                         <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
@@ -73,6 +73,31 @@
             </div>
         </div>
     </div>
+    <!-- Modal de Recuperación de Contraseña -->
+    <div class="modal fade" id="recuperarContrasenaModal" tabindex="-1" aria-labelledby="recuperarContrasenaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recuperarContrasenaModalLabel">Recuperación de Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="recuperarContrasenaForm">
+                        <div class="mb-3">
+                            <label for="recuperarEmail" class="form-label">Ingrese su correo electrónico</label>
+                            <input type="email" class="form-control" id="recuperarEmail" name="recuperarEmail" required placeholder="Correo Electrónico">
+                        </div>
+                        <div id="mensajeRecuperacion" class="alert d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnEnviarRecuperacion">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Términos y Condiciones -->
     <div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -122,7 +147,46 @@
             </div>
         </div>
     </div>
-
-
-
 </main>
+<script>
+    document.getElementById('btnEnviarRecuperacion').addEventListener('click', function() {
+        const email = document.getElementById('recuperarEmail').value;
+        const mensajeRecuperacion = document.getElementById('mensajeRecuperacion');
+
+        if (email) {
+            fetch('/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        action: 'solicitarRecuperacionContrasena',
+                        Gmail: email
+                    })
+                })
+                .then(response => {
+                    console.log(response);
+                    return response.json(); // Esto lanzará un error si la respuesta no es JSON
+                })
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        mensajeRecuperacion.classList.remove('d-none', 'alert-danger');
+                        mensajeRecuperacion.classList.add('alert-success');
+                        mensajeRecuperacion.innerText = data.message;
+                    } else {
+                        mensajeRecuperacion.classList.remove('d-none', 'alert-success');
+                        mensajeRecuperacion.classList.add('alert-danger');
+                        mensajeRecuperacion.innerText = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    mensajeRecuperacion.classList.remove('d-none', 'alert-success');
+                    mensajeRecuperacion.classList.add('alert-danger');
+                    mensajeRecuperacion.innerText = 'Error al procesar la solicitud.';
+                });
+
+        }
+    });
+</script>

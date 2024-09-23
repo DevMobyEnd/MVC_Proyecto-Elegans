@@ -49,6 +49,7 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/Public/dist/js/theme-toggle.js"></script>
     <script src="/Public/dist/js/sidebar.js"></script>
+    <script src="/Public/dist/js/Spotify.js"></script>
     <!-- <script>
         $(".alert").alert();
     </script> -->

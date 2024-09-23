@@ -82,6 +82,57 @@ h4 {
     margin-left: 0;
 }
 
+/* Loader Overlay (Fondo oscuro que cubre toda la pantalla) */
+#loaderOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    z-index: 1050; /* Asegúrate de que esté encima de otros elementos */
+    display: none; /* Oculto por defecto */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tamaño del Spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+/* Para ocultar la información detallada que es el ID de Spotify*/
+.hidden {
+    display: none;
+}
+
+/* Tabla para mostrar los datos de Spotify */
+.table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    text-align: left;
+    padding: 10px;
+}
+
+.table tbody td {
+    padding: 10px;
+}
+
+.table img {
+    border-radius: 4px;
+}
+
+
+
+
 
 
 /* Sidebar Elements Style */

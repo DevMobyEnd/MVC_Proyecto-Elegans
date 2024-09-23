@@ -40,26 +40,64 @@
                         <?php if ($userData['isLoggedIn']): ?>
                             <h4>Hacer una solicitud de canción</h4>
                             <form id="songRequestForm">
+                                <!-- Campo de búsqueda -->
                                 <div class="mb-3">
-                                    <label for="songName" class="form-label">Nombre de la canción</label>
-                                    <input type="text" class="form-control" id="songName" required>
+                                    <label for="searchSong" class="form-label">Buscar canción</label>
+                                    <input type="text" class="form-control" id="searchSong" placeholder="Buscar canción...">
+                                    <button type="button" class="btn btn-secondary mt-2" id="searchButton">Buscar</button>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="artistName" class="form-label">Nombre del artista</label>
-                                    <input type="text" class="form-control" id="artistName" required>
-                                </div>
+
+                                <!-- Vista previa de la canción seleccionada -->
+                                <div id="selectedSongPreview" class="mb-3"></div>
+
+                                <!-- Campos ocultos para la información de la canción -->
+                                <input type="hidden" id="selectedTrackId" name="spotify_track_id">
+                                <input type="hidden" id="selectedTrackName" name="nombre_cancion">
+                                <input type="hidden" id="selectedArtistName" name="nombre_artista">
+                                <input type="hidden" id="selectedImageUrl" name="imagen_url">
+
                                 <button type="submit" class="btn btn-primary">Enviar solicitud</button>
                             </form>
                         <?php else: ?>
                             <h4>¡Bienvenido a Elegans!</h4>
-                            <p>Somos tu plataforma dedicada a hacer que cada noche sea inolvidable. En Elegans, ponemos el poder de la música en tus manos.</p>
-                            <p>Imagina estar en tu bar o discoteca favorita y poder influir directamente en la atmósfera musical. Con nuestra interfaz intuitiva, simplemente busca la canción que te haga vibrar, envía tu solicitud y deja que nuestros DJs se encarguen del resto.</p>
-                            <p>Únete a nuestra comunidad de melómanos y DJs hoy mismo. ¡La música nunca ha sido tan personal!</p>
-                            <p><strong>Elegans</strong> - Donde tus deseos musicales se hacen realidad.</p>
+                            <p>Somos tu plataforma dedicada a hacer que cada noche sea inolvidable...</p>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
+
+
+            <!-- Loader Overlay -->
+            <div id="loaderOverlay" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Buscando...</span>
+                </div>
+            </div>
+
+
+            <!-- Modal para resultados de búsqueda -->
+            <div id="searchModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Resultados de búsqueda</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="searchResults"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
         </div>
     </div>
 </main>

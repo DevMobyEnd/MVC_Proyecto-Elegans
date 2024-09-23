@@ -1,128 +1,183 @@
-<main id="profileContent" class="content px-3 py-2">
-    <div class="container-fluid">
-        <div class="mb-3">
-            <h4>Chat de Usuario</h4>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-4 d-flex">
-                <!-- Lista de contactos -->
-                <div class="card flex-fill border-0">
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action active">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">DJ Techno</h5>
-                                    <small>Ahora</small>
-                                </div>
-                                <p class="mb-1">Última solicitud: Thunderstruck</p>
-                            </a>
-                            <a href="#" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">DJ Pop</h5>
-                                    <small>3 días</small>
-                                </div>
-                                <p class="mb-1">Última solicitud: Shape of You</p>
-                            </a>
-                            <!-- Más contactos aquí -->
-                        </div>
-                    </div>
-                </div>
+<main class="content px-3 py-2">
+    <div class="chat-container">
+        <!-- Panel de contactos -->
+        <div class="contacts-panel">
+            <div class="search-container">
+                <input type="text" placeholder="Buscar contactos..." class="search-input">
             </div>
-            <div class="col-12 col-md-8 d-flex">
-                <!-- Ventana de chat -->
-                <div class="card flex-fill border-0">
-                    <div class="card-body d-flex flex-column" style="height: 600px;">
-                        <!-- Encabezado del chat -->
-                        <div class="chat-header mb-3">
-                            <h5>Chat con DJ Techno</h5>
+            <ul class="contact-list">
+                <?php foreach ($data['usuarios'] as $usuario): ?>
+                    <li class="contact-item">
+                        <img src="https://via.placeholder.com/40" alt="<?php echo htmlspecialchars($usuario['Apodo']); ?>" class="contact-avatar">
+                        <div>
+                            <p class="font-semibold"><?php echo htmlspecialchars($usuario['Apodo']); ?></p>
+                            <p class="text-sm text-gray-500">
+                                <span style="color: #10b981;">●</span>
+                                <span>En línea</span>
+                            </p>
                         </div>
-                        <!-- Mensajes del chat -->
-                        <div class="chat-messages flex-grow-1 overflow-auto mb-3" style="height: 400px;">
-                            <div class="message received">
-                                <p>Hola, ¿qué canción te gustaría escuchar?</p>
-                                <small>10:30 AM</small>
-                            </div>
-                            <div class="message sent">
-                                <p>¡Hola! Me gustaría escuchar Thunderstruck de AC/DC</p>
-                                <small>10:32 AM</small>
-                            </div>
-                            <div class="message received">
-                                <p>¡Excelente elección! La pondré en la lista.</p>
-                                <small>10:33 AM</small>
-                            </div>
-                            <!-- Más mensajes aquí -->
-                        </div>
-                        <!-- Formulario para enviar mensajes -->
-                        <form class="chat-input">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Escribe un mensaje...">
-                                <button class="btn btn-primary" type="submit">Enviar</button>
-                            </div>
-                        </form>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+        <!-- Panel de chat -->
+        <div class="chat-panel">
+            <div class="messages-container" id="messages">
+                <?php foreach ($data['mensajesRecientes'] as $mensaje): ?>
+                    <div class="message <?php echo $mensaje['emisor_id'] == $data['usuarioActual'] ? 'sent' : 'received'; ?>">
+                        <p class="font-semibold"><?php echo $mensaje['emisor_id'] == $data['usuarioActual'] ? 'Tú' : htmlspecialchars($mensaje['emisor_nombre']); ?></p>
+                        <p><?php echo htmlspecialchars($mensaje['contenido']); ?></p>
+                        <p class="text-xs text-right mt-1 opacity-75"><?php echo date('H:i', strtotime($mensaje['fecha_envio'])); ?></p>
                     </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="message-input">
+                <div class="input-container">
+                    <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                    <button id="send-button" class="send-button">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+<script>
+    const socket = io('http://localhost:3000'); // Cambia a tu dominio o localhost
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+
+    // Cargar mensajes iniciales desde el servidor
+    socket.on('load messages', (messages) => {
+        messages.forEach(addMessage);
+    });
+
+    // Recibir y agregar nuevo mensaje
+    socket.on('chat message', (msg) => {
+        addMessage(msg);
+    });
+
+    // Enviar mensaje cuando se hace clic en el botón
+    sendButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        if (message.trim()) {
+            socket.emit('chat message', {
+                emisor_id: <?php echo $_SESSION['user_id']; ?>,
+                receptor_id: null, // Para mensajes globales
+                contenido: message,
+                es_global: true
+            });
+            messageInput.value = ''; // Limpiar campo de entrada
+        }
+    });
+
+    // Función para agregar mensajes al contenedor de mensajes
+    function addMessage(msg) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', msg.emisor_id === <?php echo $_SESSION['user_id']; ?> ? 'sent' : 'received');
+        messageElement.innerHTML = `
+            <p class="font-semibold">${msg.emisor_id === <?php echo $_SESSION['user_id']; ?> ? 'Tú' : 'Otro usuario'}</p>
+            <p>${msg.contenido}</p>
+            <p class="text-xs text-right mt-1 opacity-75">${new Date(msg.fecha_envio).toLocaleTimeString()}</p>
+        `;
+        messagesContainer.appendChild(messageElement);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Hacer scroll hacia el último mensaje
+    }
+</script>
+
 <style>
-    .chat-messages {
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+    }
+    .chat-container {
+        display: flex;
+        height: 100vh;
+        background-color: #f3f4f6;
+    }
+    .contacts-panel {
+        width: 25%;
+        background-color: white;
+        border-right: 1px solid #e5e7eb;
+    }
+    .search-container {
+        padding: 1rem;
+        position: relative;
+    }
+    .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+    }
+    .contact-list {
+        overflow-y: auto;
+        height: calc(100vh - 80px);
+    }
+    .contact-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        cursor: pointer;
+    }
+    .contact-item:hover {
+        background-color: #f9fafb;
+    }
+    .contact-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+    }
+    .chat-panel {
+        flex: 1;
         display: flex;
         flex-direction: column;
     }
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+    }
     .message {
-        max-width: 70%;
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 10px;
+        max-width: 75%;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
     }
-    .received {
+    .message.received {
+        background-color: #e5e7eb;
         align-self: flex-start;
-        background-color: #f1f0f0;
     }
-    .sent {
+    .message.sent {
+        background-color: #3b82f6;
+        color: white;
         align-self: flex-end;
-        background-color: #dcf8c6;
     }
-    .message p {
-        margin-bottom: 5px;
+    .message-input {
+        border-top: 1px solid #e5e7eb;
+        padding: 1rem;
     }
-    .message small {
-        display: block;
-        text-align: right;
-        color: #999;
+    .input-container {
+        display: flex;
+        align-items: center;
+    }
+    .message-input input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 9999px;
+        margin-right: 0.5rem;
+    }
+    .send-button {
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 9999px;
+        padding: 0.5rem;
+        cursor: pointer;
     }
 </style>
-<!-- Modal de Términos y Condiciones -->
-<div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="terminosCondicionesModalLabel">Términos y Condiciones de Uso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Introducción</h6>
-                <p>1.1 Bienvenido a Elegans. Estos términos y condiciones rigen el uso de nuestra plataforma de solicitudes de música en tiempo real.</p>
-                <h6>Uso de la Plataforma</h6>
-                <p>2.1 Al acceder y utilizar Elegans, aceptas cumplir con estos términos y cualquier otra política que podamos publicar.</p>
-                <p>2.2 Solo puedes utilizar nuestra plataforma de acuerdo con todas las leyes y regulaciones aplicables.</p>
-                <h6>Solicitudes de Música</h6>
-                <p>3.1 Elegans permite a los usuarios enviar solicitudes de canciones a DJs en bares o discotecas participantes.</p>
-                <p>3.2 Nos reservamos el derecho de moderar y filtrar las solicitudes para mantener un ambiente adecuado y seguro.</p>
-                <h6>Propiedad Intelectual</h6>
-                <p>4.1 Todos los derechos de propiedad intelectual relacionados con Elegans, incluidos derechos de autor y marcas comerciales, pertenecen a nosotros o a nuestros licenciatarios.</p>
-                <h6>Privacidad</h6>
-                <p>5.1 La privacidad de los usuarios es importante para nosotros. Consulta nuestra Política de Privacidad para obtener información sobre cómo recopilamos, usamos y protegemos tus datos personales.</p>
-                <h6>Limitación de Responsabilidad</h6>
-                <p>6.1 No somos responsables de ningún daño directo, indirecto, incidental, especial, consecuente o punitivo derivado del uso de Elegans.</p>
-                <h6>Modificaciones</h6>
-                <p>7.1 Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor al ser publicadas en la plataforma.</p>
-                <h6>Legislación Aplicable</h6>
-                <p>8.1 Estos términos y condiciones se rigen por las leyes vigentes en [País o Estado].</p>
-                <h6>Contacto</h6>
-                <p>9.1 Para cualquier pregunta sobre estos términos y condiciones, por favor contáctanos a Admin@Elegans.com.</p>
-            </div>
-        </div>
-    </div>
-</div>

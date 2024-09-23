@@ -1,6 +1,10 @@
-show databases;
+show databases ;
 create schema db_Pruebita;
 use db_Pruebita;
+
+drop database bd_jj;
+
+use bd_guaviareya;
 
 drop database db_pruebaita3;
 drop table tb_usuarios;
@@ -9,6 +13,13 @@ CHANGE COLUMN usuario Apodo VARCHAR(100) DEFAULT NULL;
 
 ALTER TABLE tb_usuarios
 ADD COLUMN foto_perfil VARCHAR(255) DEFAULT NULL;
+
+INSERT INTO roles (nombre) VALUES ('usuario natural'), ('admin'), ('DJ');
+
+SELECT * FROM roles WHERE nombre = 'usuario natural';
+
+
+
 
 -- Tabla de usuarios (actualizada)
 CREATE TABLE `tb_usuarios` (
@@ -39,6 +50,10 @@ CREATE TABLE permisos (
     descripcion VARCHAR(255)
 );
 
+INSERT INTO permisos (id,nombre,descripcion) VALUES ('1','Canal_de_Dialogo','En este permiso se podra aseder al canal de dialogo');
+
+
+
 -- Tabla de relación role-permiso (existente)
 CREATE TABLE role_permiso (
     role_id INT,
@@ -57,6 +72,17 @@ CREATE TABLE tb_usuarios_role (
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
+SELECT r.nombre AS rol 
+            FROM roles r
+            JOIN tb_usuarios_role ur ON r.id = ur.role_id
+            WHERE ur.usuario_id = 14;
+
+SELECT p.nombre AS permission_name 
+                      FROM permisos p
+                      JOIN role_permiso rp ON p.id = rp.permiso_id
+                      JOIN tb_usuarios_role ur ON rp.role_id = ur.role_id
+                      WHERE ur.usuario_id;
+
 -- Nueva tabla para solicitudes de música
 CREATE TABLE solicitudes_musica (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -68,6 +94,21 @@ CREATE TABLE solicitudes_musica (
     fecha_solicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (usuario_id) REFERENCES tb_usuarios(id) ON DELETE CASCADE
 );
+
+-- Ejemplo de implementación de índices para la tabla de solicitudes de música 
+CREATE INDEX idx_usuario_id ON solicitudes_musica(usuario_id);
+CREATE INDEX idx_estado ON solicitudes_musica(estado);
+
+--  Integridad de los datos: Restringir spotify_track_id por usuario
+ALTER TABLE solicitudes_musica ADD CONSTRAINT unique_track_request_per_user UNIQUE (usuario_id, spotify_track_id);
+
+-- Integracion de la casilla de nombre de artista 
+ALTER TABLE solicitudes_musica 
+ADD COLUMN nombre_artista VARCHAR(255);
+
+select nombre_cancion,nombre_artista, imagen_url, estado from solicitudes_musica where usuario_id = 16;
+
+
 
 -- Nueva tabla para membresías
 CREATE TABLE membresias (

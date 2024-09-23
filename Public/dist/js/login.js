@@ -48,35 +48,35 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: `action=checkEmail&Gmail=${encodeURIComponent(email)}`
         })
-        .then(response => response.text()) // Cambia a .text() para ver la respuesta cruda
-        .then(data => {
-            console.log(data); // Verifica la respuesta cruda
-            const jsonData = JSON.parse(data); // Luego intenta parsear
-            if (jsonData.success) {
-                showPasswordStep();
-            } else {
+            .then(response => response.text()) // Cambia a .text() para ver la respuesta cruda
+            .then(data => {
+                console.log(data); // Verifica la respuesta cruda
+                const jsonData = JSON.parse(data); // Luego intenta parsear
+                if (jsonData.success) {
+                    showPasswordStep();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: jsonData.message
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: jsonData.message
+                    text: 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo.'
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un problema al procesar su solicitud. Por favor, inténtelo de nuevo.'
             });
-        });
     });
 
     submitBtn.addEventListener('click', function (e) {
         e.preventDefault();
         const email = emailInput.value.trim();
         const password = passwordInput.value;
-    
+
         if (!email || !password) {
             Swal.fire({
                 icon: 'error',
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-    
+
         if (!isValidEmail(email)) {
             Swal.fire({
                 icon: 'error',
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-    
+
         fetch('/login.php', {
             method: 'POST',
             headers: {
@@ -107,12 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            return response.text(); // Cambia a .text() para ver la respuesta cruda
+            return response.json(); // Change to .json() since we're expecting JSON
         })
-        .then(data => {
-            console.log(data); // Verifica la respuesta cruda
-            const jsonData = JSON.parse(data); // Luego intenta parsear
+        .then(jsonData => {
+            console.log('Server response:', jsonData);
             if (jsonData.success) {
+                console.log('Redirect URL:', jsonData.redirect);
                 Swal.fire({
                     icon: 'success',
                     title: '¡Bienvenido!',
@@ -120,7 +120,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    window.location.href = '/Index.php';
+                    console.log('Redirecting to:', jsonData.redirect || '/Index.php');
+                    window.location.href = jsonData.redirect || '/Index.php';
                 });
             } else {
                 Swal.fire({
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
-    
+
     function isValidEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);

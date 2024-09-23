@@ -13,7 +13,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="SeccionChatDialogos.html" class="sidebar-link">
+            <a href="CanalDialogo.php" class="sidebar-link">
                 <i class="fa-solid fa-comments"></i>
                 Canal de Dialogo
             </a>

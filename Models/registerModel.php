@@ -51,4 +51,30 @@ class RegisterModel {
         $count = $result->fetch_row()[0];
         return $count > 0;
     }
+     // Nueva función para asignar un rol a un usuario
+     public function asignarRolUsuario($usuarioId, $rolId) {
+        $sql = "INSERT INTO tb_usuarios_role (usuario_id, role_id) VALUES (?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("ii", $usuarioId, $rolId);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al asignar rol al usuario: " . $stmt->error);
+        }
+    }
+
+    // Obtener el ID del rol por nombre
+    public function obtenerRolPorNombre($nombreRol) {
+        $sql = "SELECT id FROM roles WHERE nombre = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $this->conexion->error);
+        }
+        $stmt->bind_param("s", $nombreRol);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+        }
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['id'] ?? null;
+    }
+    
 }

@@ -61,6 +61,15 @@ function onCaptchaSuccess(token) {
     document.getElementById('cf-turnstile-response').value = token;
 }
 
+// Asegúrate de que el Captcha esté correctamente inicializado y configurado
+window.onload = function() {
+    const captcha = document.querySelector('.cf-turnstile');
+    if (captcha) {
+        captcha.addEventListener('success', function(event) {
+            onCaptchaSuccess(event.detail.token);
+        });
+    }
+}
 // Función para validar el primer paso del formulario
 function validateStep1() {
     let errors = [];

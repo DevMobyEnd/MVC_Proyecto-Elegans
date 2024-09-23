@@ -1,20 +1,8 @@
-<?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Controller/AdminUsuarioController.php';
-$controller = new AdminUsuarioController();
-
-$controller = new AdminUsuarioController();
-$page = isset($_GET['page']) ? $_GET['page'] : 'N';
-
-switch ($page) {
-    case 'dashboard':
-        $controller->dashboard();
-        break;
-    case 'listaUsuarios':
-        $controller->listarUsuarios(isset($_GET['currentPage']) ? $_GET['currentPage'] : 1, 7);
-        break;
-    case 'admin_dashboard':
-        $controller->obtenerDatosUsuarios();
-        break;    
-    case 'RolesPermisos':
-        break;
-}
+<main class="content px-3 py-2">
+    <div class="row justify-content-center">
+        <div id="content-area" class="container mt-4">
+            <h2>Bienvenido al Panel de Administración</h2>
+            <p>Selecciona una opción del menú para comenzar.</p>
+        </div>
+    </div>
+</main>

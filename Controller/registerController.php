@@ -48,6 +48,7 @@ class RegisterController
             $userData = $this->sanitizeUserData();
             $this->validateUserData($userData);
 
+            
             $ruta_foto = $this->processProfilePicture();
 
             $this->modelo->iniciarTransaccion();
@@ -61,7 +62,17 @@ class RegisterController
                 password_hash($userData['password'], PASSWORD_DEFAULT)
             );
 
+            
             if ($userId) {
+                // Obtener el rol "usuario natural"
+                $rolId = $this->modelo->obtenerRolPorNombre('usuario natural');
+                if (!$rolId) {
+                    throw new Exception('El rol de "usuario natural" no existe');
+                }
+
+                // Asignar el rol al usuario
+                $this->modelo->asignarRolUsuario($userId, $rolId);
+
                 $this->modelo->finalizarTransaccion();
                 unset($_SESSION['csrf_token']);
 
@@ -101,12 +112,20 @@ class RegisterController
         }
     }
 
-    private function validateCSRFToken()
-    {
-        if (!isset($_POST['csrf_token']) || !$this->csrfTokenGenerator->validate($_POST['csrf_token'])) {
-            throw new Exception("CSRF token validation failed");
-        }
+   private function validateCSRFToken()
+{
+    $tokenRecibido = $_POST['csrf_token'] ?? '';
+    $tokenAlmacenado = $_SESSION['csrf_token'] ?? '';
+
+    // Depuración
+    error_log("Token recibido: " . $tokenRecibido);
+    error_log("Token almacenado: " . $tokenAlmacenado);
+
+    if (!isset($tokenRecibido) || !$this->csrfTokenGenerator->validate($tokenRecibido)) {
+        throw new Exception("CSRF token validation failed");
     }
+}
+
 
     private function verifyCaptcha()
     {
@@ -174,6 +193,26 @@ class RegisterController
         $_SESSION['profile_picture'] = $ruta_foto;
         return $ruta_foto; // Asegúrate de que siempre se retorne $ruta_foto
     }
+
+    // private function processProfilePicture()
+    // {
+    //     if (isset($_POST['croppedImageData'])) {
+    //         $ruta_foto = $this->imageProcessor->processCroppedImage($_POST['croppedImageData']);
+    //     } else {
+    //         $foto_perfil = $_FILES['profilePicture'] ?? null;
+    //         if (empty($foto_perfil) || $foto_perfil['error'] === UPLOAD_ERR_NO_FILE) {
+    //             throw new Exception('La foto de perfil es obligatoria');
+    //         }
+    //         $ruta_foto = $this->imageProcessor->process($foto_perfil);
+    //     }
+
+    //     if (!$ruta_foto) {
+    //         throw new Exception('Error al procesar la imagen de perfil');
+    //     }
+
+    //     $_SESSION['profile_picture'] = $ruta_foto;
+    //     return $ruta_foto;
+    // }
 
     public function generateCSRFToken()
     {

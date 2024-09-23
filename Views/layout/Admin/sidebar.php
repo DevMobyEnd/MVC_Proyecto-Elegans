@@ -16,7 +16,7 @@
             Panel de Administración
         </li>
         <li class="sidebar-item">
-            <a href="?page=dashboard" class="sidebar-link" data-page="dashboard">
+            <a href="#" class="sidebar-link" data-page="lista_usuarios">
                 <i class="fas fa-tachometer-alt"></i>
                 Dashboard
             </a>
@@ -27,9 +27,9 @@
                 Gestión de Usuarios
             </a>
             <ul class="collapse" id="usuariosSubmenu">
-                <li><a href="?page=listaUsuarios" class="sidebar-link">Lista de Usuarios</a></li>
-                <li><a href="?page=RolesPermisos" class="sidebar-link">Roles y Permisos</a></li>
-                <li><a href="#" class="sidebar-link">Solicitudes de DJs</a></li>
+                <li><a href="#" class="sidebar-link" data-page="lista_usuarios">Lista de Usuarios</a></li>
+                <li><a href="#" class="sidebar-link" data-page="RolesPermisos">Roles y Permisos</a></li>
+                <li><a href="#" class="sidebar-link" data-page="SolicitudesDJs">Solicitudes de DJs</a></li>
             </ul>
         </li>
         <li class="sidebar-item">
@@ -38,7 +38,7 @@
                 Gestión de Contenido
             </a>
             <ul class="collapse" id="contenidoSubmenu">
-                <li><a href="#" class="sidebar-link">Comentarios y Reseñas</a></li>
+                <li><a href="#" class="sidebar-link" data-page="ComentariosResenas">Comentarios y Reseñas</a></li>
             </ul>
         </li>
         <li class="sidebar-item">
@@ -47,8 +47,8 @@
                 Configuraciones
             </a>
             <ul class="collapse" id="configuracionSubmenu">
-                <li><a href="#" class="sidebar-link">Configuración del Sistema</a></li>
-                <li><a href="#" class="sidebar-link">Notificaciones</a></li>
+                <li><a href="#" class="sidebar-link" data-page="ConfiguracionSistema">Configuración del Sistema</a></li>
+                <li><a href="#" class="sidebar-link" data-page="Notificaciones">Notificaciones</a></li>
             </ul>
         </li>
     </ul>

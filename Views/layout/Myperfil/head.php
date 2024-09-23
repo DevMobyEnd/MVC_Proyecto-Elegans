@@ -32,7 +32,7 @@
     <div class="wrapper">
         <aside id="sidebar" class="js-sidebar">
             <!-- Contenido de la barra lateral -->
-            <?php include('sidebar.php'); ?>
+            <?php include('./Views/layout/home/sidebar.php'); ?>
         </aside>
         <div class="main">
             <?php include('./Views/layout/home/navbar.php'); ?>
