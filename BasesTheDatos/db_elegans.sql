@@ -19,7 +19,7 @@ INSERT INTO roles (nombre) VALUES ('usuario natural'), ('admin'), ('DJ');
 SELECT * FROM roles WHERE nombre = 'usuario natural';
 
 
-
+select * from tb_usuarios where id = 15;
 
 -- Tabla de usuarios (actualizada)
 CREATE TABLE `tb_usuarios` (
@@ -52,7 +52,29 @@ CREATE TABLE permisos (
 
 INSERT INTO permisos (id,nombre,descripcion) VALUES ('1','Canal_de_Dialogo','En este permiso se podra aseder al canal de dialogo');
 
-
+SELECT 
+    u.id AS usuario_id,
+    u.Gmail,
+    u.nombres,
+    u.apellidos,
+    u.numero_documento,
+    u.Apodo,
+    u.fecha_creacion,
+    u.fecha_actualizacion,
+    r.nombre AS rol
+FROM 
+    tb_usuarios u
+JOIN 
+    tb_usuarios_role ur ON u.id = ur.usuario_id
+JOIN 
+    roles r ON ur.role_id = r.id;
+    
+    
+    SELECT u.*, r.nombre AS rol
+                FROM tb_usuarios u
+                JOIN tb_usuarios_role ur ON u.id = ur.usuario_id
+                JOIN roles r ON ur.role_id = r.id
+                LIMIT 3;
 
 -- Tabla de relación role-permiso (existente)
 CREATE TABLE role_permiso (
@@ -72,6 +94,8 @@ CREATE TABLE tb_usuarios_role (
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
+UPDATE tb_usuarios_role SET role_id = 4  WHERE usuario_id = 17 ;
+
 SELECT r.nombre AS rol 
             FROM roles r
             JOIN tb_usuarios_role ur ON r.id = ur.role_id
@@ -82,6 +106,9 @@ SELECT p.nombre AS permission_name
                       JOIN role_permiso rp ON p.id = rp.permiso_id
                       JOIN tb_usuarios_role ur ON rp.role_id = ur.role_id
                       WHERE ur.usuario_id;
+
+
+UPDATE tb_usuarios SET role_id = 4 WHERE id = 14;
 
 -- Nueva tabla para solicitudes de música
 CREATE TABLE solicitudes_musica (
@@ -355,10 +382,14 @@ DESCRIBE estadisticas_usuario;
 DESCRIBE mensajes;
 DESCRIBE tb_usuarios;
 DESCRIBE membresias;
+DESCRIBE user_tokens;
 
 -- Y para ver los índices:
 SHOW INDEX FROM solicitudes_musica;
 SHOW INDEX FROM mensajes;
+SHOW INDEX FROM user_tokens;
+
+
 
 CREATE TABLE user_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -368,6 +399,11 @@ CREATE TABLE user_tokens (
     expires_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES tb_usuarios(id)
 );
+
+CREATE INDEX idx_user_id ON user_tokens (user_id);
+
+ALTER TABLE user_tokens ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+
 
 ALTER TABLE tb_usuarios
 ADD COLUMN login_attempts INT DEFAULT 0,
@@ -485,3 +521,22 @@ END //
 DELIMITER ;
 
 SELECT numero_mayor();
+
+
+SELECT DISTINCT 
+                    CASE 
+                        WHEN m.emisor_id = ? THEN m.receptor_id 
+                        ELSE m.emisor_id 
+                    END as otro_usuario_id,
+                    u.Apodo, u.foto_perfil, 
+                    MAX(m.fecha_envio) as ultima_fecha
+                FROM mensajes m
+                JOIN tb_usuarios u ON (
+                    CASE 
+                        WHEN m.emisor_id = ? THEN m.receptor_id 
+                        ELSE m.emisor_id 
+                    END = u.id
+                )
+                WHERE (m.emisor_id = ? OR m.receptor_id = ?) AND m.es_global = 0
+                GROUP BY otro_usuario_id
+                ORDER BY ultima_fecha DESC;
