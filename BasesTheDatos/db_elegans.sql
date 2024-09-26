@@ -540,3 +540,39 @@ SELECT DISTINCT
                 WHERE (m.emisor_id = ? OR m.receptor_id = ?) AND m.es_global = 0
                 GROUP BY otro_usuario_id
                 ORDER BY ultima_fecha DESC;
+
+-- Para la primera consulta (con otro_usuario_id)
+SET @usuario_id = 17;
+SET @otro_usuario_id = 16;
+
+SELECT m.id, m.contenido, m.fecha_envio, m.emisor_id, m.receptor_id,
+       u.Apodo as emisor_nombre, u.foto_perfil as emisor_foto
+FROM mensajes m
+JOIN tb_usuarios u ON m.emisor_id = u.id
+WHERE ((m.emisor_id = @usuario_id AND m.receptor_id = @otro_usuario_id) 
+       OR (m.emisor_id = @otro_usuario_id AND m.receptor_id = @usuario_id))
+      AND m.es_global = 0
+ORDER BY m.fecha_envio asc
+LIMIT 50;
+
+
+-- Para la segunda consulta (sin otro_usuario_id)
+SET @usuario_id = 1;
+
+SELECT DISTINCT 
+    CASE 
+        WHEN m.emisor_id = @usuario_id THEN m.receptor_id 
+        ELSE m.emisor_id 
+    END as otro_usuario_id,
+    u.Apodo, u.foto_perfil, 
+    MAX(m.fecha_envio) as ultima_fecha
+FROM mensajes m
+JOIN tb_usuarios u ON (
+    CASE 
+        WHEN m.emisor_id = @usuario_id THEN m.receptor_id 
+        ELSE m.emisor_id 
+    END = u.id
+)
+WHERE (m.emisor_id = @usuario_id OR m.receptor_id = @usuario_id) AND m.es_global = 0
+GROUP BY otro_usuario_id, u.Apodo, u.foto_perfil
+ORDER BY ultima_fecha DESC;
