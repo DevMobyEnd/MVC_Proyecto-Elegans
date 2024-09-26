@@ -269,19 +269,28 @@
         }
 
         // receptor de eventos para la entrada de búsqueda:
-        document.getElementById('user-search').addEventListener('input', debounce(searchUsers, 300));
+        document.getElementById('user-search').addEventListener('input', debounce(searchUsers, 500));
 
-        const debouncedSearchUsers = debounce(searchUsers, 300);
+        //función de rebote para evitar demasiadas peticiones:
+        function debounce(func, delay) {
+            let debounceTimer;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(context, args), delay);
+            }
+        }
 
         async function searchUsers() {
             const query = document.getElementById('user-search').value.trim();
-            if (query.length < 2) {
+            if (query.length === 0) { // Cambia esto a 0 para que se permitan búsquedas con cualquier número de caracteres
                 document.getElementById('search-results').innerHTML = '';
                 return;
             }
 
             try {
-                const response = await fetch(`/api/search_users.php?query=${encodeURIComponent(query)}`);
+                const response = await fetch(`/api/search-users.php?query=${encodeURIComponent(query)}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -298,17 +307,6 @@
             searchResults.innerHTML = users.map(user => `
         <div class="search-result" onclick="openPrivateChat(${user.id})">${user.Apodo}</div>
     `).join('');
-        }
-
-        //función de rebote para evitar demasiadas peticiones:
-        function debounce(func, delay) {
-            let debounceTimer;
-            return function() {
-                const context = this;
-                const args = arguments;
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => func.apply(context, args), delay);
-            }
         }
 
 
@@ -482,7 +480,7 @@
         // Abrir el chat global
         function openGlobalChat() {
             currentChatType = 'global';
-            selectedUserId = 16;
+            selectedUserId = 17;
             loadMessages();
         }
 
