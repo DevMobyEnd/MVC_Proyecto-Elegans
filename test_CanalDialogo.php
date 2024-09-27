@@ -220,7 +220,7 @@
     <script>
         let currentChatType = 'global';
         let currentUserId = 17; // Asegúrate de que este ID sea correcto
-        let selectedUserId;
+        let selectedUserId = 15; // Asegúrate de que este ID sea correcto
         let privateChats = [];
 
         // Función para manejar errores
@@ -311,6 +311,7 @@
 
 
         function startPrivateChat(userId) {
+            var_dump($result); // Agrega esto para depurar
             // Verificar si ya existe un chat privado con este usuario
             if (!privateChats.some(chat => chat.id === userId)) {
                 // Agregar el nuevo chat privado
@@ -326,25 +327,39 @@
         // Cargar los mensajes (chat global o privado)
         async function loadMessages() {
             try {
-                const response = await fetch(`/api/messages.php?chatType=${currentChatType}&userId=${selectedUserId || ''}`);
+                // Asegúrate de que currentChatType y selectedUserId estén definidos
+                if (!currentChatType) {
+                    throw new Error('Tipo de chat no especificado');
+                }
+
+                let url = `/api/messages.php?chatType=${currentChatType}`;
+                if (currentChatType === 'private' && selectedUserId) {
+                    url += `&userId=${selectedUserId}`;
+                }
+
+                const response = await fetch(url);
 
                 if (!response.ok) {
                     throw new Error('Network response was not ok: ' + response.statusText);
                 }
 
-                const messages = await response.json();
-                const chatMessages = document.getElementById('chat-messages');
+                const data = await response.json();
 
-                // Verifica si la respuesta es un arreglo
-                if (!Array.isArray(messages)) {
-                    throw new Error('La respuesta no es un arreglo');
+                // Verifica si la respuesta contiene un error
+                if (data.error) {
+                    throw new Error(data.error);
                 }
+
+                // Asegúrate de que data.messages sea un array
+                const messages = Array.isArray(data.messages) ? data.messages : [];
+
+                const chatMessages = document.getElementById('chat-messages');
 
                 if (messages.length === 0) {
                     chatMessages.innerHTML = '<p>No hay mensajes aún. ¡Sé el primero en escribir!</p>';
                 } else {
                     chatMessages.innerHTML = messages.map(msg => `
-                 <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
+                        <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
                             <strong>${msg.emisor_nombre || 'Usuario'}<br></strong> ${msg.contenido}
                             <div class="reactions">
                                 <button onclick="react(${msg.id}, 'like')" class="reaction-btn ${msg.user_reaction === 'like' ? 'active' : ''}" aria-label="Me gusta">
@@ -355,7 +370,7 @@
                                 </button>
                             </div>
                         </div>
-            `).join('');
+                    `).join('');
                 }
 
                 // Guardar la posición actual
@@ -365,7 +380,12 @@
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
             } catch (error) {
-                handleError(error, 'Error al cargar mensajes');
+                console.error('Error al cargar mensajes:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los mensajes: ' + error.message
+                });
             }
         }
 
@@ -486,13 +506,11 @@
 
         // Abrir un chat privado
         function openPrivateChat(userId) {
-            selectedUserId = userId;
+            selectedUserId = 15;
             currentChatType = 'private';
-            loadPrivateMessages(userId);
 
-            // If this user is not in privateChats, add them
             if (!privateChats.some(user => user.id === userId)) {
-                fetch(`/api/get_user.php?id=${userId}`)
+                fetch(`/api/messages.php?id=${userId}`)
                     .then(response => response.json())
                     .then(user => {
                         privateChats.push(user);
@@ -504,6 +522,7 @@
             // Clear search results and input
             document.getElementById('search-results').innerHTML = '';
             document.getElementById('user-search').value = '';
+            loadMessages(); // Agrega esto para cargar los mensajes
         }
 
         // Enviar mensaje

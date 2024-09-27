@@ -4,27 +4,24 @@ header('Content-Type: application/json');
 
 $model = new CanalDialogoModel();
 
-$chatType = $_GET['chatType'] ?? 'global';
-$userId = $_GET['userId'] ?? null;
+$chatType = $_GET['chatType'] ?? '';
+$userId = $_GET['userId'] ?? '';
 
-if ($chatType === 'global') {
-    $mensajes = $model->obtenerMensajesGlobales();
-} elseif ($chatType === 'private' && $userId) {
-    $mensajes = $model->obtenerConversacionesPrivadas($userId);
-} else {
+if (!$chatType || ($chatType === 'private' && !$userId)) {
     echo json_encode(['error' => 'Tipo de chat no válido o usuario no especificado']);
     exit;
 }
 
-// Después de obtener los mensajes
-if ($mensajes) {
-    echo json_encode($mensajes);
+if ($chatType === 'global') {
+    $messages = $model->obtenerMensajesGlobales();
+} elseif ($chatType === 'private' && $userId) {
+    $messages = $model->obtenerConversacionesPrivadas($userId);
 } else {
-    echo json_encode([]); // Asegúrate de que esta línea esté siempre activa
+    $messages = [];
 }
 
+// Asegúrate de devolver un array de mensajes, incluso si está vacío
+echo json_encode(['messages' => $messages]);
+
 // Agrega esto para depurar
-error_log(print_r($mensajes, true));
-
-
-
+error_log(print_r($messages, true));

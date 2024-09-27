@@ -15,13 +15,15 @@ class CanalDialogoModel
     {
         if ($otro_usuario_id) {
             $sql = "SELECT m.id, m.contenido, m.fecha_envio, m.emisor_id, m.receptor_id,
-                           u.Apodo as emisor_nombre, u.foto_perfil as emisor_foto
+                           u.Apodo as emisor_nombre, u.foto_perfil as emisor_foto,
+                           r.Apodo as receptor_nombre, r.foto_perfil as receptor_foto
                     FROM mensajes m
                     JOIN tb_usuarios u ON m.emisor_id = u.id
+                    JOIN tb_usuarios r ON m.receptor_id = r.id
                     WHERE ((m.emisor_id = ? AND m.receptor_id = ?) 
                            OR (m.emisor_id = ? AND m.receptor_id = ?))
                           AND m.es_global = 0
-                    ORDER BY m.fecha_envio DESC
+                    ORDER BY m.fecha_envio ASC
                     LIMIT 50";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bind_param("iiii", $usuario_id, $otro_usuario_id, $otro_usuario_id, $usuario_id);
@@ -46,9 +48,15 @@ class CanalDialogoModel
             $stmt = $this->conexion->prepare($sql);
             $stmt->bind_param("iiii", $usuario_id, $usuario_id, $usuario_id, $usuario_id);
         }
+
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            return []; // Devuelve un array vacío si no hay resultados
+        }
     }
 
     public function obtenerUsuarios()
@@ -96,7 +104,7 @@ class CanalDialogoModel
             return false;
         }
     }
-    
+
 
     public function obtenerMensajesRecientes($limit = 50)
     {
