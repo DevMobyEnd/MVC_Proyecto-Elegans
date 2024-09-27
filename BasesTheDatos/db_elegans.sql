@@ -557,7 +557,7 @@ LIMIT 50;
 
 
 -- Para la segunda consulta (sin otro_usuario_id)
-SET @usuario_id = 1;
+SET @usuario_id = 17;
 
 SELECT DISTINCT 
     CASE 
