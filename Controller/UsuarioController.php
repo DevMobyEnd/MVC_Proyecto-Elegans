@@ -118,15 +118,28 @@
 
         public function verSolicitudesConUsuarios()
         {
-            // Obtener todas las solicitudes con la información de los usuarios
-            $solicitudes = $this->modelo->obtenerSolicitudesConUsuarios();
+            $usuarioModel = new UsuarioModel();
+            $solicitudes = $usuarioModel->obtenerSolicitudesConUsuarios();
 
-            // Pasar las solicitudes a la vista
-            if (!empty($solicitudes)) {
-                return $solicitudes; // Devuelve las solicitudes para usarlas en la vista
-            } else {
-                return []; // No hay solicitudes
+            // Extraer los Spotify IDs
+            $spotifyIds = array_column($solicitudes, 'spotify_track_id');
+
+            // Obtener la información detallada de las canciones
+            $spotifyHelper = new SpotifyHelper();
+            $trackInfo = $spotifyHelper->getTracksInfo($spotifyIds);
+
+            // Combinar la información de las solicitudes con la información de las canciones
+            foreach ($solicitudes as &$solicitud) {
+                $trackData = array_filter($trackInfo, function ($track) use ($solicitud) {
+                    return $track['id'] === $solicitud['spotify_track_id'];
+                });
+
+                if (!empty($trackData)) {
+                    $solicitud['track_info'] = reset($trackData);
+                }
             }
+
+            return $solicitudes;
         }
 
 
@@ -237,12 +250,13 @@
             }
         }
 
-        public function reproducirListaSpotify() {
+        public function reproducirListaSpotify()
+        {
             // Usar un ID de lista de reproducción predeterminado si no hay sesión
             $playlistId = '37i9dQZF1DXcBWIGoYBM5M'; // Este es un ejemplo, usa el ID que prefieras
-        
+
             $script = '<iframe src="https://open.spotify.com/embed/playlist/' . $playlistId . '" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
-        
+
             return [
                 'success' => true,
                 'script' => $script

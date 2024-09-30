@@ -5,12 +5,14 @@ class SpotifyHelper
 {
     private $clientId;
     private $clientSecret;
+    private $accessToken;
 
     public function __construct()
     {
         // Accede a las constantes definidas en config.php
         $this->clientId = SP_CLIENT_ID;
         $this->clientSecret = SP_CLIENT_SECRET;
+        $this->accessToken = null;
 
         // Verificación de que las claves se están cargando correctamente
         if (empty($this->clientId) || empty($this->clientSecret)) {
@@ -58,6 +60,7 @@ class SpotifyHelper
         return $responseData['access_token'] ?? null;
     }
 
+    //Metodo para buscar un albun de spotify y reproducirlo en el reproductor
     public function searchSpotifyTrack($songName, $artistName = '')
     {
         $accessToken = $this->authenticateSpotify();
@@ -106,6 +109,8 @@ class SpotifyHelper
         return $tracks; // Devolver array con resultados
     }
 
+    //Metodo para obtener canciones individual mente y reproducirlas una a una 
+
     public function getPlaybackScript($songName, $artistName = '')
     {
         try {
@@ -127,5 +132,61 @@ class SpotifyHelper
         } catch (Exception $e) {
             return '<p>Error: ' . $e->getMessage() . '</p>';
         }
+    }
+
+    private function getAccessToken()
+    {
+        if ($this->accessToken === null) {
+            $this->accessToken = $this->authenticateSpotify();
+        }
+        return $this->accessToken;
+    }
+
+    public function getTracksInfo(array $trackIds)
+    {
+
+        $accessToken = $this->getAccessToken();
+        
+        $token = $this->authenticateSpotify();
+        $tracks = [];
+
+        // Spotify permite un máximo de 50 tracks por solicitud
+        $chunkedIds = array_chunk($trackIds, 50);
+
+        foreach ($chunkedIds as $chunk) {
+            $ids = implode(',', $chunk);
+            $url = "https://api.spotify.com/v1/tracks?ids=" . $ids;
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer ' . $token
+            ]);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode != 200) {
+                throw new Exception("Error al obtener información de las canciones: " . $response);
+            }
+
+            $responseData = json_decode($response, true);
+
+            if (isset($responseData['tracks'])) {
+                foreach ($responseData['tracks'] as $track) {
+                    $tracks[] = [
+                        'id' => $track['id'],
+                        'name' => $track['name'],
+                        'artist' => $track['artists'][0]['name'],
+                        'image' => $track['album']['images'][0]['url'] ?? '',
+                        'preview_url' => $track['preview_url'] ?? null // Usamos el operador de fusión de null aquí
+                    ];
+                }
+            }
+        }
+
+        return $tracks;
     }
 }

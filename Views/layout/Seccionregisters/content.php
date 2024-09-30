@@ -6,7 +6,6 @@
                     <!-- CSRF token -->
                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                         <!-- Resto de los campos del formulario -->
-                   
                     <!-- Step 1 -->
                     <div id="step1" class="register-step">
                         <section>
@@ -18,14 +17,12 @@
                                     <span>私たちと一緒に！</span>
                                 </span>
                             </h1>
-
                             <div class="form-group">
                                 <label for="Foto_PerfilInput">Foto de Perfil</label>
                                 <img id="profilePreview" src="/Public/dist/img/profile.jpg" alt="Vista Previa" style="width: 150px; height: 150px; margin-top: 10px; border-radius: 50%;" onclick="openCropperModal();">
                                 <input type="file" id="Foto_PerfilInput" class="form-control" accept="image/*" style="display: none;">
                                 <button type="button" id="selectImageBtn" class="btn btn-primary mt-2">Seleccionar Imagen</button>
                             </div>
-
                             <!-- Modal -->
                             <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -44,9 +41,7 @@
                                     </div>
                                 </div>
                             </div>
-
                             <input type="hidden" id="croppedImageData" name="croppedImageData">
-
                             <div class="form-container">
                                 <div class="form-group">
                                     <input type="text" placeholder="Nombres" class="form-control form-control-lg" name="Nombres" id="nombresInput" required>
@@ -54,7 +49,6 @@
                                         <ion-icon name="person-outline"></ion-icon> Nombres
                                     </label>
                                 </div>
-
                                 <div class="form-group">
                                     <input type="text" placeholder="Apellidos" class="form-control form-control-lg" name="Apellidos" id="apellidosInput" required>
                                     <label class="form-label long-label">
@@ -62,7 +56,6 @@
                                     </label>
                                 </div>
                             </div>
-
                             <div class="form-container">
                                 <div class="form-group">
                                     <input type="text" placeholder="Numero de Documento" class="form-control form-control-lg" name="NumerodeDocumento" id="NumerodeDocumentoInput" required>
@@ -70,7 +63,6 @@
                                         <ion-icon name="card-outline"></ion-icon> Numero de Documento
                                     </label>
                                 </div>
-
                                 <div class="form-group">
                                     <input type="text" placeholder="Apodo" class="form-control form-control-lg" name="Apodo" id="apodoInput" required>
                                     <label class="form-label long-label">
@@ -78,7 +70,6 @@
                                     </label>
                                 </div>
                             </div>
-
                             <button type="button" id="nextStepBtn" class="edit-profile-btn2 btn-lg fw-semibold mb-4" onclick="showStep(2)">Siguiente</button>                        </section>
                     </div>
                     <!-- Step 2 -->
@@ -90,7 +81,6 @@
                                     <ion-icon name="mail-outline"></ion-icon> Correo Electrónico
                                 </label>
                             </div>
-
                             <div class="form-group">
                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" id="passwordInput" required>
                                 <label class="form-label long-label">
@@ -101,18 +91,15 @@
                                 </div>
                                 <small id="passwordHelp" class="form-text text-muted">La contraseña debe tener al menos 8 caracteres.</small>
                             </div>
-
                             <div class="form-group">
                                 <input type="password" placeholder="Confirmar Contraseña" class="form-control form-control-lg" name="confirmPassword" id="confirmPasswordInput" required>
                                 <label class="form-label long-label">
                                     <ion-icon name="lock-closed-outline"></ion-icon> Confirmar Contraseña
                                 </label>
                             </div>
-
                             <div class="d-flex flex-column align-items-center mb-3">
                                 <div class="cf-turnstile" data-sitekey="0x4AAAAAAAg7dIijZcb4rb5v" data-callback="onCaptchaSuccess"></div>
                             </div>
-
                             <input type="hidden" id="cf-turnstile-response" name="cf-turnstile-response">
 
                             <div id="formErrors" class="alert alert-danger" style="display: none;"></div>
@@ -124,11 +111,7 @@
                 </form>
             </div>
         </div>
-    </div>
-
-
-
-
+    </div>  
     <!-- Modal de Términos y Condiciones -->
     <div class="modal fade" id="terminosCondicionesModal" tabindex="-1" aria-labelledby="terminosCondicionesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
