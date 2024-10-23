@@ -33,7 +33,7 @@
     <div class="wrapper">
         <aside id="sidebar" class="js-sidebar">
             <!-- Contenido de la barra lateral -->
-            <?php include('./Views/layout/home/sidebar.php'); ?>
+            <?php include('./Views/layout/seccionlogin/sidebar.php'); ?>
         </aside>
         <div class="main">
             <?php include('./Views/layout/Seccionlogin/navbar.php'); ?>
@@ -47,12 +47,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="../Public/dist/js/sidebar.js"></script>
     <script src="../Public/dist/js/Cropper.js"></script>
     <script src="../Public/dist/js/theme-toggle.js"></script>
     <script src="../Public/dist/js/register.js"></script>
-    <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </body>
 
 </html>

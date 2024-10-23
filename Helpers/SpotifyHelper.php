@@ -20,6 +20,14 @@ class SpotifyHelper
         }
     }
 
+    public function getAccessToken()
+    {
+        if ($this->accessToken === null) {
+            $this->accessToken = $this->authenticateSpotify();
+        }
+        return $this->accessToken;
+    }
+
     private function authenticateSpotify()
     {
         $ch = curl_init();
@@ -59,6 +67,7 @@ class SpotifyHelper
 
         return $responseData['access_token'] ?? null;
     }
+
 
     //Metodo para buscar un albun de spotify y reproducirlo en el reproductor
     public function searchSpotifyTrack($songName, $artistName = '')
@@ -110,7 +119,6 @@ class SpotifyHelper
     }
 
     //Metodo para obtener canciones individual mente y reproducirlas una a una 
-
     public function getPlaybackScript($songName, $artistName = '')
     {
         try {
@@ -134,28 +142,28 @@ class SpotifyHelper
         }
     }
 
-    private function getAccessToken()
-    {
-        if ($this->accessToken === null) {
-            $this->accessToken = $this->authenticateSpotify();
-        }
-        return $this->accessToken;
-    }
 
     public function getTracksInfo(array $trackIds)
     {
-
-        $accessToken = $this->getAccessToken();
-        
         $token = $this->authenticateSpotify();
         $tracks = [];
-
-        // Spotify permite un máximo de 50 tracks por solicitud
         $chunkedIds = array_chunk($trackIds, 50);
 
         foreach ($chunkedIds as $chunk) {
             $ids = implode(',', $chunk);
             $url = "https://api.spotify.com/v1/tracks?ids=" . $ids;
+
+            // Implementar un sistema de caché simple
+            $cacheKey = md5($url);
+            if ($cachedResult = $this->getFromCache($cacheKey)) {
+                if ($cachedResult !== null) {
+                    $tracks = array_merge($tracks, $cachedResult);
+                    continue;
+                }
+            }
+
+            // Implementar rate limiting
+            $this->rateLimit();
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -168,25 +176,70 @@ class SpotifyHelper
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
 
-            if ($httpCode != 200) {
-                throw new Exception("Error al obtener información de las canciones: " . $response);
+            if ($httpCode == 429) {
+                // Too Many Requests - esperar y reintentar
+                sleep(10);
+                return $this->getTracksInfo($trackIds);
+            } elseif ($httpCode != 200) {
+                // Manejar el error de manera más elegante
+                error_log("Error al obtener información de las canciones: " . $response);
+                continue;
             }
 
             $responseData = json_decode($response, true);
 
             if (isset($responseData['tracks'])) {
+                $chunkTracks = [];
                 foreach ($responseData['tracks'] as $track) {
-                    $tracks[] = [
+                    $chunkTracks[] = [
                         'id' => $track['id'],
                         'name' => $track['name'],
                         'artist' => $track['artists'][0]['name'],
                         'image' => $track['album']['images'][0]['url'] ?? '',
-                        'preview_url' => $track['preview_url'] ?? null // Usamos el operador de fusión de null aquí
+                        'preview_url' => $track['preview_url'] ?? null,
+                        'duration_ms' => $track['duration_ms'] ?? 0,
+                        'uri' => $track['uri'] ?? ('spotify:track:' . $track['id'])
                     ];
                 }
+                $this->saveToCache($cacheKey, $chunkTracks);
+                $tracks = array_merge($tracks, $chunkTracks);
             }
         }
 
         return $tracks;
+    }
+
+    private function getFromCache($key)
+    {
+        // Implementa la lógica para obtener datos de la caché
+        // Por ejemplo, usando un archivo:
+        $cacheFile = __DIR__ . '/../cache/' . $key . '.json';
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 3600)) { // Cache válida por 1 hora
+            $cachedData = file_get_contents($cacheFile);
+            return json_decode($cachedData, true);
+        }
+        return null; // Retorna null si no hay datos en caché o si la caché ha expirado
+    }
+
+    private function saveToCache($key, $data)
+    {
+        //lógica para guardar datos en la caché
+        $cacheFile = __DIR__ . '/../cache/' . $key . '.json';
+        file_put_contents($cacheFile, json_encode($data));
+    }
+
+    private function rateLimit()
+    {
+        static $lastRequestTime = 0;
+        $minTimeBetweenRequests = 1; // 1 segundo
+
+        $currentTime = microtime(true);
+        $timeToWait = $minTimeBetweenRequests - ($currentTime - $lastRequestTime);
+
+        if ($timeToWait > 0) {
+            usleep($timeToWait * 1000000);
+        }
+
+        $lastRequestTime = microtime(true);
     }
 }

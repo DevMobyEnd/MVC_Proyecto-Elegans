@@ -1,3 +1,14 @@
+<?php
+// Asegúrate de que la sesión esté iniciada y que tienes acceso al ID del usuario
+session_start();
+$emisorId = isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
+
+if (!$emisorId) {
+    // Redirigir al usuario a la página de inicio de sesión si no está autenticado
+    header('Location: /login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -190,13 +201,169 @@
         .search-result:hover {
             background-color: #3498db;
         }
+
+        /* Nuevos estilos para los indicadores de estado */
+        .message {
+            /* ... (estilos anteriores) ... */
+            position: relative;
+        }
+
+        .message-status {
+            position: absolute;
+            bottom: 4px;
+            right: 8px;
+            font-size: 12px;
+            color: #8696a0;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .message-time {
+            margin-right: 4px;
+            font-size: 11px;
+            color: #667781;
+            white-space: nowrap;
+            /* Evita que el tiempo se rompa en múltiples líneas */
+        }
+
+        .checkmark {
+            display: inline-block;
+            transform: scale(0.8);
+        }
+
+        .checkmark.single::after {
+            content: "✓";
+        }
+
+        .checkmark.double::after {
+            content: "✓✓";
+        }
+
+        .checkmark.delivered {
+            color: #53bdeb;
+        }
+
+        /* Ajuste para el contenedor de mensajes */
+        .message-content {
+            margin-right: 20px;
+            /* Espacio para los checkmarks */
+            margin-bottom: 15px;
+            /* Espacio para el tiempo */
+            word-wrap: break-word;
+        }
+
+
+        /* Botón de menú para móviles */
+        .menu-button {
+            display: none;
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            z-index: 1000;
+            background: #2c3e50;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background: #3498db;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        /* Botón de salida */
+        .exit-button {
+            display: flex;
+            align-items: center;
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .exit-button:hover {
+            background-color: #c0392b;
+        }
+
+        .exit-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* Modificaciones al sidebar */
+        #users-list {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        /* Media query para pantallas pequeñas */
+        @media screen and (max-width: 630px) {
+            .menu-button {
+                display: block;
+            }
+
+            #users-list {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+
+            #users-list.active {
+                transform: translateX(0);
+            }
+
+            #chat-area {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        /* Overlay para cuando el menú está abierto en móvil */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
     <div id="chat-container">
-        <!-- Columna de usuarios y chat global -->
-        <div id="users-list">
+        <!-- Botón de menú para móviles -->
+        <button id="menu-toggle" class="menu-button">
+            <span class="menu-icon">☰</span>
+        </button>
+
+        <!-- Sidebar modificado -->
+        <div id="users-list" class="sidebar">
+            <!-- Botón de salida en la parte superior -->
+            <div id="exit-button" onclick="window.location.href='Index.php'" class="exit-button">
+                <span class="exit-icon">🚪</span>
+                <span>Salir</span>
+            </div>
+
             <div id="search-container">
                 <input type="text" id="user-search" placeholder="Buscar usuario...">
                 <div id="search-results"></div>
@@ -219,9 +386,12 @@
 
     <script>
         let currentChatType = 'global';
-        let currentUserId = 17; // Asegúrate de que este ID sea correcto
-        let selectedUserId = 15; // Asegúrate de que este ID sea correcto
+        let currentUserId = <?php echo json_encode($emisorId); ?>; // ID del usuario actual (emisor)
+        let selectedUserId = null; // Inicialmente no hay usuario seleccionado
         let privateChats = [];
+
+        // Definir la base URL para las peticiones API
+        const baseUrl = '<?php echo rtrim(dirname($_SERVER['PHP_SELF']), '/\\'); ?>';
 
         // Función para manejar errores
         function handleError(error, message) {
@@ -236,7 +406,7 @@
         // Cargar la lista de usuarios con los que se ha tenido conversaciones privadas
         async function loadUsers() {
             try {
-                const response = await fetch('/api/users.php');
+                const response = await fetch(`${baseUrl}/api/users.php`);
                 if (!response.ok) {
                     throw new Error('Error en la respuesta del servidor');
                 }
@@ -290,7 +460,7 @@
             }
 
             try {
-                const response = await fetch(`/api/search-users.php?query=${encodeURIComponent(query)}`);
+                const response = await fetch(`api/search-users.php?query=${encodeURIComponent(query)}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -311,23 +481,73 @@
 
 
         function startPrivateChat(userId) {
-            var_dump($result); // Agrega esto para depurar
+            var_dump($result); // Agrego esto para depurar
             // Verificar si ya existe un chat privado con este usuario
             if (!privateChats.some(chat => chat.id === userId)) {
                 // Agregar el nuevo chat privado
                 privateChats.push({
                     id: userId,
                     Apodo: 'Usuario ' + userId
-                }); // Reemplaza 'Usuario ' con el apodo real
+                }); // Reemplazo 'Usuario ' con el apodo real
                 updatePrivateChats();
             }
             openPrivateChat(userId);
         }
 
-        // Cargar los mensajes (chat global o privado)
-        async function loadMessages() {
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return '';
+
             try {
-                // Asegúrate de que currentChatType y selectedUserId estén definidos
+                let date;
+
+                // Si el timestamp es una fecha MySQL (YYYY-MM-DD HH:MM:SS)
+                if (typeof timestamp === 'string' && timestamp.includes('-')) {
+                    date = new Date(timestamp);
+                }
+                // Si es un timestamp numérico
+                else if (typeof timestamp === 'number') {
+                    date = new Date(timestamp);
+                }
+                // Si ya es una hora formateada o es inválido
+                else {
+                    return timestamp;
+                }
+
+                // Verificar si la fecha es válida
+                if (isNaN(date.getTime())) {
+                    return '';
+                }
+
+                // Formatear la hora en español colombiano (12 horas)
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let ampm = hours >= 12 ? 'PM' : 'AM';
+
+                // Convertir a formato 12 horas
+                hours = hours % 12;
+                hours = hours ? hours : 12; // si es 0, convertir a 12
+
+                // Agregar cero inicial a los minutos si son menos de 10
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+
+                // Retornar el formato: "h:mm AM/PM"
+                return `${hours}:${minutes} ${ampm}`;
+
+            } catch (e) {
+                console.error('Error formateando timestamp:', e);
+                return '';
+            }
+        }
+
+        // Función auxiliar para el timestamp de mensajes nuevos
+        function getCurrentTime() {
+            const now = new Date();
+            return formatTimestamp(now);
+        }
+
+        // Cargar los mensajes (chat global o privado)
+        function loadMessages() {
+            try {
                 if (!currentChatType) {
                     throw new Error('Tipo de chat no especificado');
                 }
@@ -337,55 +557,60 @@
                     url += `&userId=${selectedUserId}`;
                 }
 
-                const response = await fetch(url);
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const messages = Array.isArray(data.messages) ? data.messages : [];
+                        const chatMessages = document.getElementById('chat-messages');
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
+                        if (messages.length === 0) {
+                            chatMessages.innerHTML = '<p>No hay mensajes aún. ¡Sé el primero en escribir!</p>';
+                        } else {
+                            chatMessages.innerHTML = messages.map(msg => `
+                                <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
+                                    <div class="message-content">
+                                        <strong>${msg.emisor_nombre || 'Usuario'}</strong><br>
+                                        ${msg.contenido}
+                                    </div>
+                                    ${msg.emisor_id === currentUserId ? `
+                                        <div class="message-status">
+                                            <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
+                                            <span class="checkmark double delivered"></span>
+                                        </div>
+                                    ` : `
+                                        <div class="message-status">
+                                            <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
+                                        </div>
+                                    `}
+                                    <div class="reactions">
+                                        <button onclick="react(${msg.id}, 'like')" class="reaction-btn ${msg.user_reaction === 'like' ? 'active' : ''}" aria-label="Me gusta">
+                                            👍 <span class="like-count">${msg.likes || 0}</span>
+                                        </button>
+                                        <button onclick="react(${msg.id}, 'dislike')" class="reaction-btn ${msg.user_reaction === 'dislike' ? 'active' : ''}" aria-label="No me gusta">
+                                            👎 <span class="dislike-count">${msg.dislikes || 0}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('');
+                        }
 
-                const data = await response.json();
-
-                // Verifica si la respuesta contiene un error
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                // Asegúrate de que data.messages sea un array
-                const messages = Array.isArray(data.messages) ? data.messages : [];
-
-                const chatMessages = document.getElementById('chat-messages');
-
-                if (messages.length === 0) {
-                    chatMessages.innerHTML = '<p>No hay mensajes aún. ¡Sé el primero en escribir!</p>';
-                } else {
-                    chatMessages.innerHTML = messages.map(msg => `
-                        <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
-                            <strong>${msg.emisor_nombre || 'Usuario'}<br></strong> ${msg.contenido}
-                            <div class="reactions">
-                                <button onclick="react(${msg.id}, 'like')" class="reaction-btn ${msg.user_reaction === 'like' ? 'active' : ''}" aria-label="Me gusta">
-                                    👍 <span class="like-count">${msg.likes}</span>
-                                </button>
-                                <button onclick="react(${msg.id}, 'dislike')" class="reaction-btn ${msg.user_reaction === 'dislike' ? 'active' : ''}" aria-label="No me gusta">
-                                    👎 <span class="dislike-count">${msg.dislikes}</span>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
-                // Guardar la posición actual
-                const wasAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 1;
-                // Desplazar hacia abajo solo si estaba al final
-                if (wasAtBottom) {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
+                        // Mantener el scroll en la posición correcta
+                        const wasAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 1;
+                        if (wasAtBottom) {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar mensajes:', error);
+                        document.getElementById('chat-messages').innerHTML = '<p>Error al cargar los mensajes. Por favor, intenta de nuevo.</p>';
+                    });
             } catch (error) {
-                console.error('Error al cargar mensajes:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron cargar los mensajes: ' + error.message
-                });
+                console.error('Error en loadMessages:', error);
             }
         }
 
@@ -500,7 +725,7 @@
         // Abrir el chat global
         function openGlobalChat() {
             currentChatType = 'global';
-            selectedUserId = 17;
+            selectedUserId = <?php echo json_encode($emisorId); ?>;
             loadMessages();
         }
 
@@ -510,7 +735,7 @@
             currentChatType = 'private';
 
             if (!privateChats.some(user => user.id === userId)) {
-                fetch(`/api/messages.php?id=${userId}`)
+                fetch(`api/messages.php?id=${userId}`)
                     .then(response => response.json())
                     .then(user => {
                         privateChats.push(user);
@@ -529,51 +754,99 @@
         async function sendMessage() {
             try {
                 const messageInput = document.getElementById('message-input');
-                const message = messageInput.value.trim(); // Elimina espacios en blanco
+                const message = messageInput.value.trim();
 
-                if (message) {
-                    const response = await fetch('/api/send-message.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            emisor_id: currentUserId, // Asegúrate de tener el ID del emisor
-                            receptor_id: selectedUserId,
-                            contenido: message,
-                            es_global: currentChatType === 'global' ? 1 : 0
-                        })
-                    });
+                if (!message) return;
 
-                    const result = await response.json();
+                // Crear y mostrar el mensaje inmediatamente con estado "enviando"
+                const tempId = 'msg-' + Date.now();
+                const currentTime = getCurrentTime(); // Usar la nueva función
 
-                    if (result.success) {
-                        messageInput.value = ''; // Limpiar el campo de entrada
-                        loadMessages(); // Recargar los mensajes
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: result.message,
-                        });
-                    } else {
-                        throw new Error(result.error);
-                    }
+                appendMessageToChat({
+                    id: tempId,
+                    emisor_id: currentUserId,
+                    contenido: message,
+                    estado: 'sending',
+                    fecha_envio: currentTime
+                });
+
+                messageInput.value = '';
+
+                const response = await fetch('/api/send-message.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        emisor_id: currentUserId,
+                        receptor_id: selectedUserId,
+                        contenido: message,
+                        es_global: currentChatType === 'global' ? 1 : 0
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    updateMessageStatus(tempId, 'sent');
+                    setTimeout(() => {
+                        updateMessageStatus(tempId, 'delivered');
+                    }, 1000);
                 } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Advertencia',
-                        text: 'El mensaje no puede estar vacío.',
-                    });
+                    updateMessageStatus(tempId, 'error');
                 }
             } catch (error) {
                 console.error('Error al enviar el mensaje:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al enviar el mensaje: ' + error.message,
-                });
+                const messageElement = document.getElementById(tempId);
+                if (messageElement) {
+                    updateMessageStatus(tempId, 'error');
+                }
             }
         }
+
+        function appendMessageToChat(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message emisor`;
+            messageElement.id = message.id;
+
+            messageElement.innerHTML = `
+                <div class="message-content">
+                    <strong>${message.emisor_nombre || 'Tú'}</strong><br>
+                    ${message.contenido}
+                </div>
+                <div class="message-status">
+                    <span class="message-time">${message.timestamp}</span>
+                    <span class="checkmark ${message.estado === 'sending' ? 'single' : ''}"></span>
+                </div>
+            `;
+
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function updateMessageStatus(messageId, status) {
+            const messageElement = document.getElementById(messageId);
+            if (!messageElement) return;
+
+            const checkmark = messageElement.querySelector('.checkmark');
+
+            switch (status) {
+                case 'sending':
+                    checkmark.className = 'checkmark single';
+                    break;
+                case 'sent':
+                    checkmark.className = 'checkmark double';
+                    break;
+                case 'delivered':
+                    checkmark.className = 'checkmark double delivered';
+                    break;
+                case 'error':
+                    messageElement.style.color = '#e74c3c';
+                    break;
+            }
+        }
+
 
 
 
@@ -599,6 +872,59 @@
 
         // Actualizar mensajes periódicamente
         setInterval(loadMessages, 3000);
+
+
+
+
+
+
+        // Crear el overlay para el sidebar
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        // Función para manejar el toggle del menú
+        function toggleSidebar() {
+            const sidebar = document.getElementById('users-list');
+            const menuButton = document.getElementById('menu-toggle');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Event listeners para el menú
+        document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
+
+        // Cerrar el sidebar cuando se hace clic en el overlay
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Cerrar el sidebar cuando la pantalla se hace más grande
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 630) {
+                const sidebar = document.getElementById('users-list');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Opcionalmente, cerrar el sidebar cuando se selecciona un chat en pantallas pequeñas
+        function openPrivateChat(userId) {
+            // Código existente de openPrivateChat...
+
+            // Añadir esta parte:
+            if (window.innerWidth <= 630) {
+                toggleSidebar();
+            }
+        }
+
+        // También modificar la función openGlobalChat
+        function openGlobalChat() {
+            // Código existente de openGlobalChat...
+
+            // Añadir esta parte:
+            if (window.innerWidth <= 630) {
+                toggleSidebar();
+            }
+        }
     </script>
 </body>
 

@@ -4,22 +4,7 @@
     </div>
     <ul class="sidebar-nav">
         <li class="sidebar-header">
-            Elementos de Usuario
-        </li>
-        <li class="sidebar-item">
-            <a href="index.php" class="sidebar-link">
-                <i class="fas fa-home"></i>
-                Inicio
-            </a>
-        </li>
-        <li class="sidebar-header">
             Panel de Administración
-        </li>
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link" data-page="lista_usuarios">
-                <i class="fas fa-tachometer-alt"></i>
-                Dashboard
-            </a>
         </li>
         <li class="sidebar-item">
             <a href="#usuariosSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
@@ -27,28 +12,9 @@
                 Gestión de Usuarios
             </a>
             <ul class="collapse" id="usuariosSubmenu">
-                <li><a href="#" class="sidebar-link" data-page="lista_usuarios">Lista de Usuarios</a></li>
-                <li><a href="#" class="sidebar-link" data-page="RolesPermisos">Roles y Permisos</a></li>
-                <li><a href="#" class="sidebar-link" data-page="SolicitudesDJs">Solicitudes de DJs</a></li>
-            </ul>
-        </li>
-        <li class="sidebar-item">
-            <a href="#contenidoSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
-                <i class="fas fa-headphones"></i>
-                Gestión de Contenido
-            </a>
-            <ul class="collapse" id="contenidoSubmenu">
-                <li><a href="#" class="sidebar-link" data-page="ComentariosResenas">Comentarios y Reseñas</a></li>
-            </ul>
-        </li>
-        <li class="sidebar-item">
-            <a href="#configuracionSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="sidebar-link dropdown-toggle">
-                <i class="fas fa-sliders-h"></i>
-                Configuraciones
-            </a>
-            <ul class="collapse" id="configuracionSubmenu">
-                <li><a href="#" class="sidebar-link" data-page="ConfiguracionSistema">Configuración del Sistema</a></li>
-                <li><a href="#" class="sidebar-link" data-page="Notificaciones">Notificaciones</a></li>
+                <li><a href="#" class="sidebar-link" data-page="ListUsuarios">Lista de Usuarios</a></li>
+                <li><a href="#" class="sidebar-link" data-page="buscarUsuariosResult">Busqueda de usarios</a></li>
+                <li><a href="#" class="sidebar-link" data-page="registrosPorMesChart">Estadisticas</a></li>
             </ul>
         </li>
     </ul>

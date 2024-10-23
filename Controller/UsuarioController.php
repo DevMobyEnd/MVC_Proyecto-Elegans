@@ -142,6 +142,12 @@
             return $solicitudes;
         }
 
+        public function actualizarEstadoSolicitud($solicitudId, $nuevoEstado)
+        {
+            $usuarioModel = new UsuarioModel();
+            return $usuarioModel->actualizarEstadoSolicitudMusica($solicitudId, $nuevoEstado);
+        }
+
 
         public function obtenerPermisos($usuarioId)
         {
@@ -216,9 +222,9 @@
         {
             switch ($rol) {
                 case 'admin':
-                    return '/Admin.php';
+                    return '/usuario_api.php';
                 case 'DJ':
-                    return '/DJs.php';
+                    return '/music_player.php';
                 case 'usuario natural':
                     return '/Index.php';
                 default:

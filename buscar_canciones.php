@@ -5,6 +5,7 @@ $spotifyHelper = new SpotifyHelper();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,9 +16,10 @@ $spotifyHelper = new SpotifyHelper();
         }
     </style>
 </head>
+
 <body>
     <h1>Buscar Canciones</h1>
-    
+
     <form id="searchForm">
         <input type="text" id="songName" name="songName" placeholder="Nombre de la canción" required>
         <input type="text" id="artistName" name="artistName" placeholder="Nombre del artista (opcional)">
@@ -31,13 +33,13 @@ $spotifyHelper = new SpotifyHelper();
             e.preventDefault();
             const songName = document.getElementById('songName').value;
             const artistName = document.getElementById('artistName').value;
-            
+
             fetch(`buscar_canciones_ajax.php?songName=${encodeURIComponent(songName)}&artistName=${encodeURIComponent(artistName)}`)
                 .then(response => response.json())
                 .then(data => {
                     const resultsDiv = document.getElementById('results');
                     resultsDiv.innerHTML = '';
-                    
+
                     if (data.error) {
                         resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
                     } else {
@@ -66,4 +68,5 @@ $spotifyHelper = new SpotifyHelper();
         });
     </script>
 </body>
+
 </html>

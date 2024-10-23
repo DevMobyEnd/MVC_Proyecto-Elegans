@@ -16,7 +16,7 @@ $userData = $homeController->index(); // Obtiene los datos del usuario desde el 
 //     die("Error: Usuario no autenticado.");
 // }
 
-// Verifica si se está haciendo una solicitud de búsqueda de canción
+// Verifica si se está haciendo una solicitud de búsqueda de canciónQ   
 if (isset($_GET['songName']) && !empty(trim($_GET['songName']))) {
     require_once 'test_spotify.php';
     exit(); // Asegúrate de que el script se detenga después de procesar la solicitud de búsqueda
@@ -25,13 +25,13 @@ if (isset($_GET['songName']) && !empty(trim($_GET['songName']))) {
 // Verifica si el archivo global.php existe
 if (file_exists('Config/global.php')) {
     require_once 'Config/global.php';
-    
+
     // Verifica si todas las variables necesarias están definidas y no están vacías
     if (
         defined('DB_HOST') && !empty(DB_HOST) &&
         defined('DB_NAME') && !empty(DB_NAME) &&
         defined('DB_USERNAME') && !empty(DB_USERNAME) &&
-        defined('DB_PASSWORD') && 
+        defined('DB_PASSWORD') &&
         defined('DB_ENCODE') && !empty(DB_ENCODE)
     ) {
         // Maneja la solicitud POST para agregar una solicitud de música
@@ -117,4 +117,3 @@ if (file_exists('Config/global.php')) {
 //     // Por ejemplo, enlaces para iniciar sesión o registrarse
 //     echo "<p>¿Eres nuevo aquí? <a href='../Views/register.php'>Regístrate ahora</a> o <a href='../Views/login.php'>inicia sesión</a>.</p>";
 // }
-

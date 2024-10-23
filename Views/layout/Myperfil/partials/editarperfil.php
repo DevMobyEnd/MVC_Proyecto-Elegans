@@ -1,10 +1,21 @@
 <?php
-// Iniciar la sesión
-session_start();
-// Inspeccionar la variable userData y session
-var_dump($userData); 
-var_dump($_SESSION); 
+// Iniciar la sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: /login.php');
+    exit;
+}
+
+// Separar el nombre completo en nombres y apellidos
+$nombreCompleto = explode(' ', $_SESSION['nombre_completo']);
+$nombres = $nombreCompleto[0] ?? '';
+$apellidos = $nombreCompleto[1] ?? '';
 ?>
+
 <main class="content px-3 py-2">
     <div class="container-fluid">
         <div class="card border-0 shadow-sm">
@@ -17,10 +28,12 @@ var_dump($_SESSION);
                         <div class="col-md-3 text-center mb-3 d-flex flex-column align-items-center">
                             <?php
                             $defaultImage = '/Public/dist/img/profile.jpg';
-                            $profileImage = $userData['foto_perfil'] ?? $defaultImage;
+                            $profileImage = isset($_SESSION['foto_perfil']) ? '/uploads/' . $_SESSION['foto_perfil'] : $defaultImage;
                             ?>
-                            <img id="profilePreview" src="<?php echo htmlspecialchars($profileImage); ?>" 
-                                 alt="Vista Previa" class="img-fluid rounded-circle mb-2" 
+                            <img id="profilePreview" 
+                                 src="<?php echo htmlspecialchars($profileImage); ?>" 
+                                 alt="Vista Previa" 
+                                 class="img-fluid rounded-circle mb-2" 
                                  style="width: 150px; height: 150px; cursor: pointer;" 
                                  onclick="openCropperModal();"
                                  onerror="this.onerror=null; this.src='<?php echo $defaultImage; ?>';">
@@ -33,33 +46,55 @@ var_dump($_SESSION);
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="nombresInput" class="form-label">Nombres</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        name="Nombres"
-                                        id="nombresInput"
-                                        value="<?php echo htmlspecialchars($userData['nombres'] ?? 'Error: Nombres no disponibles'); ?>"
-                                        required>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="Nombres" 
+                                           id="nombresInput" 
+                                           value="<?php echo htmlspecialchars($nombres); ?>" 
+                                           required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="apellidosInput" class="form-label">Apellidos</label>
-                                    <input type="text" class="form-control" name="Apellidos" id="apellidosInput" value="<?php echo htmlspecialchars($userData['apellidos'] ?? 'Error: Apellidos no disponibles'); ?>" required>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="Apellidos" 
+                                           id="apellidosInput" 
+                                           value="<?php echo htmlspecialchars($apellidos); ?>" 
+                                           required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="NumerodeDocumentoInput" class="form-label">Número de Documento</label>
-                                    <input type="text" class="form-control" name="NumerodeDocumento" id="NumerodeDocumentoInput" value="<?php echo htmlspecialchars($userData['numero_documento'] ?? 'Error: Número de documento no disponible'); ?>" required>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="NumerodeDocumento" 
+                                           id="NumerodeDocumentoInput" 
+                                           value="<?php echo htmlspecialchars($_SESSION['usuario_id'] ?? ''); ?>" 
+                                           required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="apodoInput" class="form-label">Apodo</label>
-                                    <input type="text" class="form-control" name="Apodo" id="apodoInput" value="<?php echo htmlspecialchars($userData['apodo'] ?? 'Error: Apodo no disponible'); ?>" required>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="Apodo" 
+                                           id="apodoInput" 
+                                           value="<?php echo htmlspecialchars($_SESSION['apodo'] ?? ''); ?>" 
+                                           required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="emailInput" class="form-label">Correo Electrónico</label>
-                                    <input type="email" class="form-control" name="CorreoElectronico" id="emailInput" value="<?php echo htmlspecialchars($userData['email'] ?? 'Error: Correo electrónico no disponible'); ?>" required>
+                                    <label for="rolInput" class="form-label">Rol</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="Rol" 
+                                           id="rolInput" 
+                                           value="<?php echo htmlspecialchars($_SESSION['rol'] ?? ''); ?>" 
+                                           readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="passwordInput" class="form-label">Nueva Contraseña (opcional)</label>
-                                    <input type="password" class="form-control" name="password" id="passwordInput">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           name="password" 
+                                           id="passwordInput">
                                 </div>
                             </div>
                         </div>
@@ -73,4 +108,3 @@ var_dump($_SESSION);
         </div>
     </div>
 </main>
-

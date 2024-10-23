@@ -23,18 +23,11 @@
 
 <body>
     <!-- Contenido de la página -->
-    <div class="wrapper">
-         <aside id="sidebar" class="js-sidebar">
-            <!-- Contenido de la barra lateral -->
-            <?php include('../Views/layout/home/sidebar.php'); ?>
-        </aside>
-        <div class="main">
-            <?php include('../Views/layout/Seccionlogin/navbar.php'); ?>
+    
             <?php include('../Views/layout/home/theme-toggle.php'); ?>
             <?php include('content.php'); ?>
-            <?php include('../Views/layout/home/footer.php'); ?>
-        </div>
-    </div>
+           
+  
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

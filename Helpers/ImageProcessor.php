@@ -4,7 +4,7 @@ class ImageProcessor
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
     private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
     private const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif'];
-    
+
     // Define la ruta de subida absoluta
     private $uploadDir;
 
@@ -12,28 +12,49 @@ class ImageProcessor
     {
         // Ajusta la ruta según la estructura de tu proyecto
         $this->uploadDir = __DIR__ . '/../uploads/';
-        $this->ensureUploadDirectoryExists($this->uploadDir);
+
+        // Asegúrate de que el directorio existe y tiene los permisos correctos
+        if (!file_exists($this->uploadDir)) {
+            mkdir($this->uploadDir, 0755, true);
+        }
+
+        if (!is_writable($this->uploadDir)) {
+            chmod($this->uploadDir, 0755);
+        }
+
+        if (!is_writable($this->uploadDir)) {
+            throw new Exception('El directorio de carga no tiene permisos de escritura: ' . $this->uploadDir);
+        }
+
+        error_log('Upload directory: ' . $this->uploadDir);
+        // o
+        // echo 'Upload directory: ' . $this->uploadDir;
     }
 
-    public function process($foto)
+    public function process($foto, $isBase64 = false)
     {
         try {
-            $this->validateUpload($foto);
-            $this->validateMimeType($foto);
-            $this->validateFileSize($foto);
-            $this->validateFileExtension($foto);
-            $this->validateImageIntegrity($foto['tmp_name']); // Validación adicional
-
-            $filename = $this->generateUniqueFilename($foto);
-            $uploadFile = $this->uploadDir . $filename;
-
-            if (!move_uploaded_file($foto['tmp_name'], $uploadFile)) {
-                throw new Exception('Error al mover el archivo subido.');
+            if ($isBase64) {
+                // Si es base64, procesa la imagen recortada
+                return $this->processCroppedImage($foto);
+            } else {
+                // Si no es base64, procesa la imagen normal
+                $this->validateUpload($foto);
+                $this->validateMimeType($foto);
+                $this->validateFileSize($foto);
+                $this->validateFileExtension($foto);
+                $this->validateImageIntegrity($foto['tmp_name']);
+    
+                $filename = $this->generateUniqueFilename($foto);
+                $uploadFile = $this->uploadDir . $filename;
+    
+                if (!move_uploaded_file($foto['tmp_name'], $uploadFile)) {
+                    throw new Exception('Error al mover el archivo subido.');
+                }
+    
+                return $filename;
             }
-
-            return $filename;
         } catch (Exception $e) {
-            // Log del error con más detalle
             error_log('Error procesando imagen: ' . $e->getMessage());
             return false;
         }

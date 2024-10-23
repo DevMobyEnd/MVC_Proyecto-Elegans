@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             showConfirmButton: true
         }).then((result) => {
             if (result.isConfirmed && $success) {
-                window.location.href = '/Views/Index.php';
+                window.location.href = '../Index.php';
             }
         });
     });
@@ -41,3 +41,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Si no es una solicitud POST, incluye el formulario HTML
 require_once './layout/InstallView/head.php';
 // ... (resto del código HTML)
+
+

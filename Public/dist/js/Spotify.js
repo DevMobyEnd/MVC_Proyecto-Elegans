@@ -1,232 +1,39 @@
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('searchButton').addEventListener('click', async () => {
-        const query = document.getElementById('searchSong').value.trim();
-
-        if (query === '') {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campo vacío',
-                text: 'Por favor, ingresa el nombre de una canción.'
-            });
-            return;
-        }
-
-        // Mostrar el loader
-        document.getElementById('loaderOverlay').style.display = 'flex';
-
-        try {
-            console.log('Buscando canción:', query);
-            const response = await fetch(`/test_spotify.php?songName=${encodeURIComponent(query)}`);
-            if (!response.ok) {
-                throw new Error(`Error de red: ${response.status}`);
-            }
-            const text = await response.text();
-            console.log('Respuesta del servidor:', text);
-
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (error) {
-                throw new Error('Error al analizar JSON: ' + error.message);
-            }
-
-            if (data.error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: `Error del servidor: ${data.error}`
-                });
-                return;
-            }
-
-            displaySearchResults(data);
-        } catch (error) {
-            console.error('Error al buscar la canción:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un problema al buscar la canción. Por favor, intenta de nuevo.'
-            });
-        } finally {
-            // Ocultar el loader
-            document.getElementById('loaderOverlay').style.display = 'none';
-        }
-    });
-
-    // Mostrar resultados de búsqueda
-    function displaySearchResults(tracks) {
-        const searchResults = document.getElementById('searchResults');
-        searchResults.innerHTML = '';
-
-        if (!Array.isArray(tracks) || tracks.length === 0) {
-            searchResults.innerHTML = '<p>No se encontraron resultados.</p>';
-            return;
-        }
-
-        tracks.forEach(track => {
-            // Utilizar valores por defecto si las propiedades no están disponibles
-            const imageUrl = track.imagen_url || 'ruta/por/defecto/a/imagen.png';
-            const trackName = track.nombre_cancion || 'Nombre desconocido';
-            const trackId = track.spotify_track_id || 'ID desconocido';
-            const trackNombreArtista = track.nombre_artista || 'Artista desconocido';
-
-            // Crear y agregar un nuevo elemento para el resultado
-            const resultDiv = document.createElement('div');
-            resultDiv.classList.add('result-item');
-            resultDiv.innerHTML = `
-                <div class="d-flex align-items-center mb-3">
-                    <img src="${imageUrl}" alt="${trackName}" class="img-thumbnail me-3" style="max-width: 100px;" aria-label="Imagen del álbum">
-                    <div>
-                        <p><strong>${trackName}</strong> - ${trackNombreArtista}</p>
-                        <button class="btn btn-info selectSongButton" data-track-id="${trackId}" data-track-name="${trackName}" data-artist-name="${trackNombreArtista}" data-image-url="${imageUrl}" aria-label="Seleccionar canción">Seleccionar</button>
-                    </div>
-                </div>
-            `;
-            searchResults.appendChild(resultDiv);
-        });
-
-        // Mostrar el modal
-        showModal();
-    }
-
-    // Manejar el clic en el botón de selección de canción
-    function handleSelectSong(event) {
-        const button = event.target;
-        const trackId = button.getAttribute('data-track-id');
-        const trackName = button.getAttribute('data-track-name');
-        const artistName = button.getAttribute('data-artist-name');
-        const imageUrl = button.getAttribute('data-image-url');
-
-        // Actualizar el formulario con la información de la canción seleccionada
-        document.getElementById('searchSong').value = trackName; // Mostrar el nombre de la canción en el campo de búsqueda
-
-        // Crear y mostrar una vista previa de la canción seleccionada
-        const songPreview = document.getElementById('selectedSongPreview');
-        songPreview.innerHTML = `
-            <div class="d-flex align-items-center mb-3">
-                <img src="${imageUrl}" alt="${trackName}" class="img-thumbnail me-3" style="max-width: 100px;">
-                <div>
-                    <p><strong>${trackName}</strong> - ${artistName}</p>
+document.addEventListener("DOMContentLoaded",function(){function e(e){let a=document.getElementById("searchResults");if(a.innerHTML="",!Array.isArray(e)||0===e.length){a.innerHTML="<p>No se encontraron resultados.</p>";return}e.forEach(e=>{let t=e.imagen_url||"ruta/por/defecto/a/imagen.png",n=e.nombre_cancion||"Nombre desconocido",r=e.spotify_track_id||"ID desconocido",l=e.nombre_artista||"Artista desconocido",i=document.createElement("div");i.classList.add("result-item"),i.innerHTML=`
+    <div class="d-flex align-items-center mb-3">
+        <img src="${t}" alt="${n}" class="img-thumbnail me-3" style="max-width: 100px;" aria-label="Imagen del \xe1lbum">
+        <div>
+            <p><strong>${n}</strong> - ${l}</p>
+            <button class="btn btn-info selectSongButton" data-track-id="${r}" data-track-name="${n}" data-artist-name="${l}" data-image-url="${t}" aria-label="Seleccionar canci\xf3n">Seleccionar</button>
+        </div>
+    </div>
+`,a.appendChild(i)}),t()}function t(){let e=new bootstrap.Modal(document.getElementById("searchModal"));e.show()}function a(){let e=bootstrap.Modal.getInstance(document.getElementById("searchModal"));e&&e.hide()}function e(e){let a=document.getElementById("searchResults");if(a.innerHTML="",!Array.isArray(e)||0===e.length){a.innerHTML='<div class="col-12"><p class="text-center">No se encontraron resultados.</p></div>';return}e.forEach(e=>{let t=e.imagen_url||"ruta/por/defecto/a/imagen.png",n=e.nombre_cancion||"Nombre desconocido",r=e.spotify_track_id||"ID desconocido",l=e.nombre_artista||"Artista desconocido",i=document.createElement("div");i.classList.add("col-md-6","col-lg-4"),i.innerHTML=`
+<div class="card h-100">
+    <img src="${t}" class="card-img-top" alt="${n}">
+    <div class="card-body">
+        <h5 class="card-title">${n}</h5>
+        <p class="card-text">${l}</p>
+        <button class="btn btn-primary selectSongButton" data-track-id="${r}" data-track-name="${n}" data-artist-name="${l}" data-image-url="${t}">Seleccionar</button>
+    </div>
+</div>
+`,a.appendChild(i)}),t()}document.getElementById("searchButton").addEventListener("click",async()=>{let t=document.getElementById("searchSong").value.trim();if(""===t){Swal.fire({icon:"warning",title:"Campo vac\xedo",text:"Por favor, ingresa el nombre de una canci\xf3n."});return}document.getElementById("loaderOverlay").style.display="flex";try{console.log("Buscando canci\xf3n:",t);let a=await fetch(`/test_spotify.php?songName=${encodeURIComponent(t)}`);if(!a.ok)throw Error(`Error de red: ${a.status}`);let n=await a.text();console.log("Respuesta del servidor:",n);let r;try{r=JSON.parse(n)}catch(l){throw Error("Error al analizar JSON: "+l.message)}if(r.error){Swal.fire({icon:"error",title:"Error",text:`Error del servidor: ${r.error}`});return}e(r)}catch(i){console.error("Error al buscar la canci\xf3n:",i),Swal.fire({icon:"error",title:"Error",text:"Hubo un problema al buscar la canci\xf3n. Por favor, intenta de nuevo."})}finally{document.getElementById("loaderOverlay").style.display="none"}}),document.addEventListener("click",function(e){e.target.classList.contains("selectSongButton")&&function e(t){let n=t.target,r=n.getAttribute("data-track-id"),l=n.getAttribute("data-track-name"),i=n.getAttribute("data-artist-name"),d=n.getAttribute("data-image-url");document.getElementById("searchSong").value=l;let s=document.getElementById("selectedSongPreview");s.innerHTML=`
+<div class="d-flex align-items-center mb-3">
+    <img src="${d}" alt="${l}" class="img-thumbnail me-3" style="max-width: 100px;">
+    <div>
+        <p><strong>${l}</strong> - ${i}</p>
+    </div>
+</div>
+`,document.getElementById("selectedTrackId").value=r,document.getElementById("selectedTrackName").value=l,document.getElementById("selectedArtistName").value=i,document.getElementById("selectedImageUrl").value=d,a()}(e)}),document.getElementById("songRequestForm").addEventListener("submit",async e=>{e.preventDefault();let t=document.getElementById("selectedTrackName").value,a=document.getElementById("selectedArtistName").value,n=document.getElementById("selectedTrackId").value,r=document.getElementById("selectedImageUrl").value;if(!t||!a||!n){Swal.fire({icon:"warning",title:"Campos incompletos",text:"Por favor, selecciona una canci\xf3n antes de enviar la solicitud."});return}document.getElementById("loaderOverlay").style.display="flex";try{console.log("Enviando solicitud de canci\xf3n:",{selectedSong:t,artistName:a,trackId:n});let l=await fetch("/Index.php",{method:"POST",body:new URLSearchParams({spotify_track_id:n,nombre_cancion:t,nombre_artista:a,imagen_url:r}),headers:{"Content-Type":"application/x-www-form-urlencoded"}});if(!l.ok)throw Error(`Error de red: ${l.status}`);let i=await l.text();console.log("Respuesta del servidor (texto):",i);let d;try{d=JSON.parse(i)}catch(s){throw Error("Error al analizar JSON: "+s.message)}d.success?(Swal.fire({icon:"success",title:"\xc9xito",text:"Solicitud enviada con \xe9xito."}),document.getElementById("songRequestForm").reset(),document.getElementById("selectedSongPreview").innerHTML=""):Swal.fire({icon:"error",title:"Error",text:`Hubo un problema al enviar la solicitud: ${d.message}`})}catch(o){console.error("Error al enviar la solicitud:",o),Swal.fire({icon:"error",title:"Error",text:"Hubo un problema al enviar la solicitud. Por favor, intenta de nuevo."})}finally{document.getElementById("loaderOverlay").style.display="none"}}),document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(e=>{e.addEventListener("click",a)}),document.addEventListener("DOMContentLoaded",function(){document.getElementById("searchButton"),document.getElementById("searchSong");let e=document.getElementById("selectedSongPreview"),t=document.getElementById("submitRequest"),a=document.getElementById("songRequestForm");function n(){let e=new bootstrap.Modal(document.getElementById("searchModal"));e.show()}function r(){let e=bootstrap.Modal.getInstance(document.getElementById("searchModal"));e&&e.hide()}window.selectSong=function(a,n,l,i){document.getElementById("selectedTrackId").value=a,document.getElementById("selectedTrackName").value=n,document.getElementById("selectedArtistName").value=l,document.getElementById("selectedImageUrl").value=i,e.innerHTML=`
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="${i}" class="img-fluid rounded-start" alt="${n}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">${n}</h5>
+                    <p class="card-text">${l}</p>
                 </div>
             </div>
-        `;
-
-        // Actualizar los campos ocultos en el formulario
-        document.getElementById('selectedTrackId').value = trackId;
-        document.getElementById('selectedTrackName').value = trackName;
-        document.getElementById('selectedArtistName').value = artistName;
-        document.getElementById('selectedImageUrl').value = imageUrl;
-
-        // Ocultar el modal después de seleccionar una canción
-        hideModal();
-    }
-
-    // Añadir evento a los botones de selección
-    document.addEventListener('click', function (event) {
-        if (event.target.classList.contains('selectSongButton')) {
-            handleSelectSong(event);
-        }
-    });
-
-    // Enviar solicitud de canción
-    document.getElementById('songRequestForm').addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const selectedSong = document.getElementById('selectedTrackName').value;
-        const artistName = document.getElementById('selectedArtistName').value;
-        const trackId = document.getElementById('selectedTrackId').value;
-        const imageUrl = document.getElementById('selectedImageUrl').value;
-
-
-        if (!selectedSong || !artistName || !trackId) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campos incompletos',
-                text: 'Por favor, selecciona una canción antes de enviar la solicitud.'
-            });
-            return;
-        }
-
-        // Mostrar el loader
-        document.getElementById('loaderOverlay').style.display = 'flex';
-
-        try {
-            console.log('Enviando solicitud de canción:', { selectedSong, artistName, trackId });
-            const response = await fetch('/Index.php', {
-                method: 'POST',
-                body: new URLSearchParams({
-                    'spotify_track_id': trackId,
-                    'nombre_cancion': selectedSong,
-                    'nombre_artista': artistName,
-                    'imagen_url': imageUrl
-                }),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
-            
-
-            // Verifica el estado de la respuesta
-            if (!response.ok) {
-                throw new Error(`Error de red: ${response.status}`);
-            }
-
-            // Lee la respuesta como texto
-            const text = await response.text();
-            console.log('Respuesta del servidor (texto):', text);
-
-            // Intenta analizar el texto como JSON
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (error) {
-                throw new Error('Error al analizar JSON: ' + error.message);
-            }
-
-            // Procesa la respuesta JSON
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Solicitud enviada con éxito.'
-                });
-                // Restablecer el formulario después de enviar la solicitud
-                document.getElementById('songRequestForm').reset();
-                document.getElementById('selectedSongPreview').innerHTML = '';
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: `Hubo un problema al enviar la solicitud: ${data.message}`
-                });
-            }
-        } catch (error) {
-            console.error('Error al enviar la solicitud:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un problema al enviar la solicitud. Por favor, intenta de nuevo.'
-            });
-        } finally {
-            // Ocultar el loader
-            document.getElementById('loaderOverlay').style.display = 'none';
-        }
-
-    });
-
-    // Función para mostrar el modal
-    function showModal() {
-        const modal = document.getElementById('searchModal');
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        modal.setAttribute('aria-modal', 'true');
-        modal.removeAttribute('aria-hidden');
-    }
-
-    // Función para ocultar el modal
-    function hideModal() {
-        const modal = document.getElementById('searchModal');
-        modal.style.display = 'none';
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-        modal.removeAttribute('aria-modal');
-    }
-});
+        </div>
+    </div>
+`,t.disabled=!1,r()},a.addEventListener("submit",function(e){""===document.getElementById("selectedTrackId").value&&(e.preventDefault(),alert("Por favor, selecciona una canci\xf3n antes de enviar la solicitud."))}),document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(e=>{e.addEventListener("click",r)}),t.disabled=!0,document.getElementById("selectedTrackId").addEventListener("input",function(){t.disabled=""===this.value})})});

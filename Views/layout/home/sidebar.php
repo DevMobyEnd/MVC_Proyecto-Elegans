@@ -32,7 +32,7 @@
                 </li>
             <?php endif; ?>
             <li class="sidebar-item"> 
-                <a href="/CanalDialogo.php" class="sidebar-link">
+                <a href="/test_CanalDialogo.php" class="sidebar-link">
                     <i class="fa-solid fa-user-shield"></i>
                     Canal de Dialogo
                 </a>

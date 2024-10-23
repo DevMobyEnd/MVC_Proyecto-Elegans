@@ -43,8 +43,12 @@
                                 <!-- Campo de búsqueda -->
                                 <div class="mb-3">
                                     <label for="searchSong" class="form-label">Buscar canción</label>
-                                    <input type="text" class="form-control" id="searchSong" placeholder="Buscar canción...">
-                                    <button type="button" class="btn btn-secondary mt-2" id="searchButton">Buscar</button>
+                                    <div class="d-flex gap-2"> <!-- Contenedor flex para input y botón -->
+                                        <input type="text" class="form-control" id="searchSong" placeholder="Buscar canción...">
+                                        <button type="button" class="btn btn-secondary" id="searchButton">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <!-- Vista previa de la canción seleccionada -->
@@ -56,7 +60,13 @@
                                 <input type="hidden" id="selectedArtistName" name="nombre_artista">
                                 <input type="hidden" id="selectedImageUrl" name="imagen_url">
 
-                                <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+                                <!-- Contenedor para los botones del formulario -->
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <button type="submit" class="edit-profile-btn2 btn-lg fw-semibold">
+                                        <i class="fas fa-paper-plane me-1"></i>
+                                        Enviar solicitud
+                                    </button>
+                                </div>
                             </form>
                         <?php else: ?>
                             <h4>¡Bienvenido a Elegans!</h4>
@@ -66,6 +76,82 @@
                 </div>
             </div>
 
+            <!-- Carrusel de generos musicales -->
+            <div class="col-12 mt-2">
+                <h5 class="text-center mb-4">Explora nuestros géneros musicales</h5> <!-- Título agregado -->
+                <div class="card border-0 mb-4">
+                    <div class="card-body p-4"> <!-- Aumentado el padding -->
+                        <div id="generosMusicalesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="row g-4"> <!-- Aumentado el espaciado entre cards -->
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #2c3e50, #3498db);">
+                                                <i class="fas fa-guitar text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Rock</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #8e44ad, #9b59b6);">
+                                                <i class="fas fa-music text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Pop</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #e67e22, #f39c12);">
+                                                <i class="fas fa-drum text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Latino</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #16a085, #1abc9c);">
+                                                <i class="fas fa-compact-disc text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Electrónica</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="row g-4"> <!-- Aumentado el espaciado entre cards -->
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #c0392b, #e74c3c);">
+                                                <i class="fas fa-microphone text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Reggae</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #27ae60, #2ecc71);">
+                                                <i class="fas fa-record-vinyl text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Jazz</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #2980b9, #3498db);">
+                                                <i class="fas fa-headphones text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Hip Hop</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="genre-card text-center p-3 rounded" style="background: linear-gradient(45deg, #8e44ad, #9b59b6);">
+                                                <i class="fas fa-heart text-white mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-white mb-0">Baladas</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#generosMusicalesCarousel" data-bs-slide="prev" style="width: 5%;">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#generosMusicalesCarousel" data-bs-slide="next" style="width: 5%;">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Loader Overlay -->
             <div id="loaderOverlay" style="display: none;">
@@ -76,20 +162,18 @@
 
 
             <!-- Modal para resultados de búsqueda -->
-            <div id="searchModal" class="modal" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
+            <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Resultados de búsqueda</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <h5 class="modal-title" id="searchModalLabel">Resultados de búsqueda</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div id="searchResults"></div>
+                            <div id="searchResults" class="row g-3"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -127,10 +211,68 @@
                 <h6>Modificaciones</h6>
                 <p>7.1 Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor al ser publicadas en la plataforma.</p>
                 <h6>Legislación Aplicable</h6>
-                <p>8.1 Estos términos y condiciones se rigen por las leyes vigentes en [País o Estado].</p>
+                <p>8.1 Estos términos y condiciones se rigen por las leyes vigentes en Colombia.</p>
                 <h6>Contacto</h6>
                 <p>9.1 Para cualquier pregunta sobre estos términos y condiciones, por favor contáctanos a Admin@Elegans.com.</p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .genre-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        height: 120px;
+        /* Altura fija para todas las tarjetas */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .genre-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .carousel-control-prev {
+        left: -20px;
+    }
+
+    .carousel-control-next {
+        right: -20px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn i {
+        font-size: 1rem;
+    }
+
+    .btn-secondary {
+        min-width: 45px;
+    }
+
+    /* Hover effects */
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+</style>

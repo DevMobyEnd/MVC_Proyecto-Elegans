@@ -235,30 +235,58 @@ class UsuarioModel
 
 
     public function obtenerSolicitudesConUsuarios()
-    {
-        // Consulta SQL para obtener las solicitudes de música junto con el apodo y la imagen de perfil del usuario
-        $sql = "SELECT sm.id, sm.nombre_cancion, sm.spotify_track_id, sm.imagen_url AS imagen_cancion, 
-                   sm.estado, sm.fecha_solicitud, 
-                   u.Apodo, u.foto_perfil 
-            FROM solicitudes_musica sm
-            JOIN tb_usuarios u ON sm.usuario_id = u.id
-            ORDER BY sm.fecha_solicitud DESC"; // Ordena por la fecha de solicitud, de más reciente a más antigua
+{
+    // Consulta SQL para obtener las solicitudes de música pendientes junto con el apodo y la imagen de perfil del usuario
+    $sql = "SELECT sm.id, sm.nombre_cancion, sm.spotify_track_id, sm.imagen_url AS imagen_cancion, 
+               sm.estado, sm.fecha_solicitud, 
+               u.Apodo, u.foto_perfil 
+        FROM solicitudes_musica sm
+        JOIN tb_usuarios u ON sm.usuario_id = u.id
+        WHERE sm.estado = 'pendiente'
+        ORDER BY sm.fecha_solicitud DESC"; // Ordena por la fecha de solicitud, de más reciente a más antigua
 
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    $stmt = $this->conexion->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        // Verificar si hay resultados
-        if ($result->num_rows > 0) {
-            $solicitudes = [];
-            while ($row = $result->fetch_assoc()) {
-                $solicitudes[] = $row;
-            }
-            return $solicitudes; // Devuelve las solicitudes con la información del usuario
-        } else {
-            return []; // Retorna un array vacío si no hay solicitudes
+    // Verificar si hay resultados
+    if ($result->num_rows > 0) {
+        $solicitudes = [];
+        while ($row = $result->fetch_assoc()) {
+            $solicitudes[] = $row;
         }
+        return $solicitudes; // Devuelve las solicitudes pendientes con la información del usuario
+    } else {
+        return []; // Retorna un array vacío si no hay solicitudes pendientes
     }
+}
+
+    public function actualizarEstadoSolicitudMusica($solicitudId, $nuevoEstado)
+{
+    // Verificar que el nuevo estado sea válido
+    $estadosValidos = ['pendiente', 'aceptada', 'rechazada'];
+    if (!in_array($nuevoEstado, $estadosValidos)) {
+        return false; // Estado no válido
+    }
+
+    $sql = "UPDATE solicitudes_musica SET estado = ? WHERE id = ?";
+    $stmt = $this->conexion->prepare($sql);
+
+    if ($stmt === false) {
+        error_log("Error preparando la consulta: " . $this->conexion->error);
+        return false;
+    }
+
+    $stmt->bind_param("si", $nuevoEstado, $solicitudId);
+    $resultado = $stmt->execute();
+
+    if ($resultado) {
+        return true; // Actualización exitosa
+    } else {
+        error_log("Error actualizando el estado de la solicitud: " . $stmt->error);
+        return false;
+    }
+}
 
     public function obtenerSolicitudesAprobadas($usuarioId)
     {
