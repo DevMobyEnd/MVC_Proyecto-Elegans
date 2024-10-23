@@ -32,10 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['email'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($tituloPagina) ? $tituloPagina : 'Elegans'; ?></title>
+    <title><?php echo isset($tituloPagina) ? $tituloPagina : 'Recuperación de Contraseña - Elegans'; ?></title>
     <link rel="website icon" type="png" href="Public/dist/img/Logo3.png">
     <link rel="stylesheet" href="Public/dist/css/test_recover_password.css">
-    <title>Prueba Recuperación de Contraseña</title>
     <!-- Incluir SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
