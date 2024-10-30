@@ -10,6 +10,7 @@ define('CF_SECRET_KEY', $_ENV['CF_SECRET_KEY'] ?? '');
 define('SP_CLIENT_ID', $_ENV['SP_CLIENT_ID'] ?? '');
 define('SP_CLIENT_SECRET', $_ENV['SP_CLIENT_SECRET'] ?? '');
 
+
 // Agrega esto solo para depuración temporalmente
 // if (defined('SP_CLIENT_ID') && defined('SP_CLIENT_SECRET')) {
 //     echo 'SP_CLIENT_ID: ' . SP_CLIENT_ID . '<br>';
