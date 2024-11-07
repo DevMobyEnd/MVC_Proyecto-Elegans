@@ -15,7 +15,7 @@ $userData = $homeController->index(); // Obtiene los datos del usuario desde el 
 //     // Redirige o lanza un error si no hay un usuario en sesión.
 //     die("Error: Usuario no autenticado.");
 // }
-
+    
 // Verifica si se está haciendo una solicitud de búsqueda de canciónQ   
 if (isset($_GET['songName']) && !empty(trim($_GET['songName']))) {
     require_once 'test_spotify.php';

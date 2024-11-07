@@ -1,62 +1,4 @@
-
-
-CREATE TABLE `estadisticas_usuario` (
-  `usuario_id` bigint NOT NULL,
-  `total_solicitudes` int DEFAULT '0',
-  `solicitudes_aceptadas` int DEFAULT '0',
-  `solicitudes_rechazadas` int DEFAULT '0',
-  `likes_recibidos` int DEFAULT '0',
-  `dislikes_recibidos` int DEFAULT '0',
-  `mensajes_enviados_global` int DEFAULT '0',
-  `mensajes_enviados_privado` int DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
-
---
--- Volcado de datos para la tabla `estadisticas_usuario`
---
-
-INSERT INTO `estadisticas_usuario` (`usuario_id`, `total_solicitudes`, `solicitudes_aceptadas`, `solicitudes_rechazadas`, `likes_recibidos`, `dislikes_recibidos`, `mensajes_enviados_global`, `mensajes_enviados_privado`) VALUES
-(3, 6, 2, 0, 4, 0, 4, 0),
-(15, 2, 2, 0, 2, 0, 2, 0),
-(16, 2, 2, 0, 0, 0, 7, 0),
-(28, 1, 0, 0, 0, 0, 0, 0),
-(36, 9, 7, 0, 2, 0, 6, 0),
-(37, 2, 0, 0, 0, 0, 0, 0),
-(38, 3, 1, 0, 0, 0, 2, 0);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `membresias`
---
-
-CREATE TABLE `membresias` (
-  `id` int NOT NULL,
-  `nombre` varchar(100) DEFAULT NULL,
-  `descripcion` text,
-  `duracion` int DEFAULT NULL,
-  `precio` decimal(10,2) DEFAULT NULL,
-  `activo` tinyint(1) DEFAULT '1'
-) ;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `mensajes`
---
-
-CREATE TABLE `mensajes` (
-  `id` bigint NOT NULL,
-  `emisor_id` bigint DEFAULT NULL,
-  `receptor_id` bigint DEFAULT NULL,
-  `contenido` text,
-  `fecha_envio` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `es_global` tinyint(1) DEFAULT '0',
-  `likes` int DEFAULT '0',
-  `dislikes` int DEFAULT '0'
-) ;
-
---
+-
 -- Volcado de datos para la tabla `mensajes`
 --
 
@@ -130,7 +72,7 @@ CREATE TABLE `permisos` (
   `id` int NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `permisos`
@@ -152,7 +94,7 @@ CREATE TABLE `reacciones_mensajes` (
   `usuario_id` bigint DEFAULT NULL,
   `tipo_reaccion` enum('like','dislike') DEFAULT NULL,
   `fecha_reaccion` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `reacciones_mensajes`
@@ -214,7 +156,7 @@ DELIMITER ;
 CREATE TABLE `roles` (
   `id` int NOT NULL,
   `nombre` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `roles`
@@ -234,7 +176,7 @@ INSERT INTO `roles` (`id`, `nombre`) VALUES
 CREATE TABLE `role_permiso` (
   `role_id` int NOT NULL,
   `permiso_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `role_permiso`
@@ -259,7 +201,7 @@ CREATE TABLE `solicitudes_musica` (
   `estado` enum('pendiente','aceptada','rechazada') DEFAULT 'pendiente',
   `fecha_solicitud` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `nombre_artista` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `solicitudes_musica`
@@ -340,7 +282,7 @@ CREATE TABLE `tb_usuarios` (
   `login_attempts` int DEFAULT '0',
   `last_login_attempt` timestamp NULL DEFAULT NULL,
   `foto_perfil` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `tb_usuarios`
@@ -391,7 +333,7 @@ INSERT INTO `tb_usuarios` (`id`, `Gmail`, `password`, `nombres`, `apellidos`, `n
 CREATE TABLE `tb_usuarios_role` (
   `usuario_id` bigint NOT NULL,
   `role_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `tb_usuarios_role`
@@ -446,7 +388,7 @@ CREATE TABLE `user_tokens` (
   `type` enum('login','password_reset') NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `user_tokens`
@@ -516,7 +458,7 @@ CREATE TABLE `usuario_membresia` (
   `membresia_id` int DEFAULT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Índices para tablas volcadas
@@ -726,4 +668,6 @@ ALTER TABLE `usuario_membresia`
   ADD CONSTRAINT `usuario_membresia_ibfk_2` FOREIGN KEY (`membresia_id`) REFERENCES `membresias` (`id`);
 COMMIT;
 
-
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

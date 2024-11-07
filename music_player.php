@@ -319,35 +319,42 @@ $spotifyToken = $spotifyHelper->getAccessToken();
                     const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
 
                     // Detectar cuando una canción termina
-                    if (data.type === 'playback_update' && data.payload && data.payload.isPaused) {
-                        handleSongEnd();
+                    if (data.type === 'playback_update') {
+                        const {
+                            isPlaying,
+                            isPaused,
+                            position
+                        } = data.payload;
+
+                        // Si la canción está en pausa, no hacemos nada
+                        if (isPaused) {
+                            console.log('La canción está en pausa.');
+                            return;
+                        }
+
+                        // Obtener la duración de la canción actual
+                        const currentTrack = playlist[currentIndex];
+                        const duration = currentTrack ? currentTrack.duration_ms : 0;
+
+                        // Si la canción está en reproducción y la posición es igual o mayor a la duración, la canción ha terminado
+                        if (isPlaying && position >= duration) {
+                            console.log('La canción ha terminado. Cambiando a la siguiente canción.');
+                            handleSongEnd();
+                        }
                     }
                 } catch (error) {
                     console.error('Error parsing Spotify message:', error);
                 }
-            }
+            }   
 
-            // Función para manejar el final de una canción
             function handleSongEnd() {
-                // Verificar si estábamos reproduciendo
-                if (!isPlaying) return;
-
-                // Marcar como no reproduciendo
-                isPlaying = false;
-
-                // Esperar un momento antes de reproducir la siguiente
-                setTimeout(() => {
-                    // Verificar si hay más canciones en la lista
-                    if (currentIndex < playlist.length - 1) {
-                        // Reproducir siguiente canción
-                        playSong(currentIndex + 1);
-                    } else {
-                        // Final de la lista
-                        console.log("Lista de reproducción terminada");
-                        // Limpiar la interfaz o mostrar un mensaje
-                        resetPlayer();
-                    }
-                }, 1000);
+                if (currentIndex < playlist.length - 1) {
+                    currentIndex++;
+                    playSong(playlist[currentIndex]);
+                } else {
+                    // Si es la última canción, puedes reiniciar o detener el reproductor
+                    resetPlayer(); // O simplemente no hacer nada
+                }
             }
 
             // Función para resetear el reproductor
@@ -489,17 +496,6 @@ $spotifyToken = $spotifyHelper->getAccessToken();
                     button.className = 'dropdown-toggle text-white px-4 py-2 rounded ' + getEstadoClass(estado);
                 });
             });
-
-            // Cerrar dropdowns cuando se hace clic fuera de ellos
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.dropdown')) {
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        menu.classList.add('hidden');
-                    });
-                }
-            });
-
-
             //funciones para el manejo del dropdown
             function toggleDropdown(button) {
                 event.stopPropagation();
@@ -612,6 +608,21 @@ $spotifyToken = $spotifyHelper->getAccessToken();
                     });
                 });
             }
+            // // cambiar entre canciones
+            // const prevButton = document.getElementById('prevButton');
+            // const nextButton = document.getElementById('nextButton');
+
+            // prevButton.addEventListener('click', () => {
+            //     if (currentIndex > 0) {
+            //         playSong(playlist[currentIndex - 1]);
+            //     }
+            // });
+
+            // nextButton.addEventListener('click', () => {
+            //     if (currentIndex < playlist.length - 1) {
+            //         playSong(playlist[currentIndex + 1]);
+            //     }
+            // });
         </script>
 </body>
 
