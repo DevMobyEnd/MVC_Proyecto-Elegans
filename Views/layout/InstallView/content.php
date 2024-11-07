@@ -34,6 +34,7 @@
                         <button type="submit" name="guardar" class="edit-profile-btn2 btn-lg fw-semibold">Guardar Configuración</button>
                         <a href="/Index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
                     </div>
+           
                 </section>
             </form>
         </div>
