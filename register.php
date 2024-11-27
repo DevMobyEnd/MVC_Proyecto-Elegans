@@ -11,7 +11,7 @@ ini_set('display_errors', 1);
 
 
 
-require_once 'Controller/RegisterController.php';
+require_once  'Controller/registerController.php';
 
 $controller = new RegisterController();
 $csrf_token = $controller->generateCSRFToken();

@@ -1,3 +1,23 @@
+Options +FollowSymLinks -MultiViews
 RewriteEngine On
-RewriteRule ^api/(.*)$ api.php [L]
 
+# Permitir el acceso a todos los archivos y directorios
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+</IfModule>
+
+# Reglas de reescritura básicas
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/Views/InstallView\.php$
+RewriteRule ^ index.php [L]
+
+# Permitir acceso a archivos estáticos
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Require all granted
+</FilesMatch>

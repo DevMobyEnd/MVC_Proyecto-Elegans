@@ -359,7 +359,7 @@ if (!$emisorId) {
         <!-- Sidebar modificado -->
         <div id="users-list" class="sidebar">
             <!-- Botón de salida en la parte superior -->
-            <div id="exit-button" onclick="window.location.href='Index.php'" class="exit-button">
+            <div id="exit-button" onclick="window.location.href='index.php'" class="exit-button">
                 <span class="exit-icon">🚪</span>
                 <span>Salir</span>
             </div>

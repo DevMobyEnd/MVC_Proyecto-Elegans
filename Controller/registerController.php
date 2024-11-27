@@ -1,13 +1,31 @@
 <?php
+// Obtenemos el directorio raíz del proyecto
+$root_directory = dirname(__DIR__);
 
-require_once './Helpers/Logger.php';
-require_once './Models/registerModel.php';
-require_once './Config/config.php';
-require_once './Helpers/CaptchaVerifier.php';
-require_once './Helpers/ImageProcessor.php';
-require_once './Helpers/PasswordValidator.php';
-require_once './Helpers/CSRFTokenGenerator.php';
-require_once './vendor/autoload.php'; // Para Guzzle y Respect\Validation
+$files_to_check = [
+    $root_directory . '/Helpers/Logger.php',
+    $root_directory . '/Models/registerModel.php',
+    $root_directory . '/Config/config.php',
+    $root_directory . '/Helpers/CaptchaVerifier.php',
+    $root_directory . '/Helpers/ImageProcessor.php',
+    $root_directory . '/Helpers/PasswordValidator.php',
+    $root_directory . '/Helpers/CSRFTokenGenerator.php',
+    $root_directory . '/vendor/autoload.php'
+];
+
+$missing_files = [];
+
+foreach ($files_to_check as $file) {
+    if (!file_exists($file)) {
+        $missing_files[] = $file;
+    } else {
+        require_once $file;
+    }
+}
+
+if (!empty($missing_files)) {
+    throw new Exception("Los siguientes archivos no existen: " . implode(", ", $missing_files));
+}
 
 use GuzzleHttp\Client;
 use Respect\Validation\Validator as v;
@@ -79,7 +97,7 @@ class RegisterController
                 return [
                     'status' => 'success',
                     'message' => 'Usuario registrado exitosamente',
-                    'redirect' => '/login.php',
+                    'redirect' => '/login',
                     'debug' => $output
                 ];
             } else {
@@ -116,6 +134,7 @@ class RegisterController
             throw new Exception("CSRF token validation failed");
         }
     }
+    
 
     private function verifyCaptcha()
     {
@@ -199,6 +218,10 @@ class RegisterController
         $_SESSION['foto_perfil'] = $ruta_foto;
         $_SESSION['nombres'] = $userData['nombres'];
         $_SESSION['apellidos'] = $userData['apellidos'];
+        $_SESSION['correoElectronico'] = $userData['correoElectronico'];
+        $_SESSION['rol'] = $userData['rol'];
+        $_SESSION['numeroDocumento'] = $userData['numeroDocumento'];
+        
     }
 
     public function generateCSRFToken()

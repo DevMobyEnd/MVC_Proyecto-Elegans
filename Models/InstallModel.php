@@ -9,42 +9,72 @@ class InstallModel {
         $this->conexion = new Conexion();
     }
 
-    public function verificarBaseDatos($db_host, $db_name, $db_username, $db_password) {
-        $conn = new mysqli($db_host, $db_username, $db_password);
-        if ($conn->connect_error) {
-            return false; // No se pudo conectar al servidor
+    public function verificarConexion($db_host, $db_username, $db_password) {
+        try {
+            $conexion = new mysqli($db_host, $db_username, $db_password);
+            if ($conexion->connect_error) {
+                throw new Exception("Error de conexión: " . $conexion->connect_error);
+            }
+            $conexion->close();
+            return true;
+        } catch (Exception $e) {
+            error_log("Error en verificarConexion: " . $e->getMessage());
+            return false;
         }
-        $result = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$db_name'");
-        $exists = ($result->num_rows > 0);
-        $conn->close();
-        return $exists;
     }
 
+    public function verificarBaseDatos($db_host, $db_name, $db_username, $db_password) {
+        try {
+            error_log("Intentando verificar base de datos con:");
+            error_log("Host: $db_host");
+            error_log("DB: $db_name");
+            error_log("Usuario: $db_username");
+            
+            // Primero intentamos conectar sin seleccionar base de datos
+            $mysqli = @new mysqli($db_host, $db_username, $db_password);
+            
+            if ($mysqli->connect_error) {
+                error_log("Error de conexión MySQL: " . $mysqli->connect_error);
+                throw new Exception("Error en la conexión: " . $mysqli->connect_error);
+            }
+            
+            // Verificar si la base de datos existe
+            $result = $mysqli->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" . 
+                $mysqli->real_escape_string($db_name) . "'");
+                
+            $exists = $result && $result->num_rows > 0;
+            $mysqli->close();
+            
+            return $exists;
+            
+        } catch (Exception $e) {
+            error_log("Excepción en verificarBaseDatos: " . $e->getMessage());
+            error_log("Trace: " . $e->getTraceAsString());
+            throw $e;
+        }
+    }
+    
     public function crearBaseDatos($db_name) {
         try {
-            $sql = "CREATE DATABASE IF NOT EXISTS `$db_name`";
-            $this->conexion->obtenerConexion()->query($sql);
+            $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD);
+            
+            if ($mysqli->connect_error) {
+                error_log("Error al conectar para crear DB: " . $mysqli->connect_error);
+                throw new Exception($mysqli->connect_error);
+            }
+            
+            $query = "CREATE DATABASE IF NOT EXISTS " . $mysqli->real_escape_string($db_name);
+            $result = $mysqli->query($query);
+            
+            if (!$result) {
+                error_log("Error al crear base de datos: " . $mysqli->error);
+                throw new Exception("No se pudo crear la base de datos: " . $mysqli->error);
+            }
+            
             return true;
         } catch (Exception $e) {
-            $this->error = "Error al crear la base de datos: " . $e->getMessage();
-            return false;
-        }
-    }
-
-    public function crearTablas($db_name) {
-        try {
-            $this->conexion->obtenerConexion()->select_db($db_name);
-            $sql = "CREATE TABLE IF NOT EXISTS usuarios (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                nombre VARCHAR(100) NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL
-            )";
-            $this->conexion->obtenerConexion()->query($sql);
-            return true;
-        } catch (Exception $e) {
-            $this->error = "Error al crear las tablas: " . $e->getMessage();
-            return false;
+            error_log("Error en crearBaseDatos: " . $e->getMessage());
+            throw $e;
         }
     }
 

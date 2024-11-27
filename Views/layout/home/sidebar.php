@@ -1,6 +1,6 @@
 <div class="sidebar h-100">
     <div class="sidebar-logo" style="padding: 10px 0; text-align: center;">
-        <a href="#"><img class="img-fluid" src="/Public/dist/img/Logo.png" alt="" style="width: 200px; height: 200px; margin-top: -30px; margin-left: -25px;"></a>
+        <a href="#"><img class="img-fluid" src="./Public/dist/img/Logo.png" alt="" style="width: 200px; height: 200px; margin-top: -30px; margin-left: -25px;"></a>
     </div>
     <ul class="sidebar-nav">
         <li class="sidebar-header">
@@ -23,9 +23,9 @@
         </li>
 
         <?php if (isset($userData['role']) && $userData['role'] === 'usuario natural'): ?>
-            <?php if (basename($_SERVER['PHP_SELF']) !== 'Index.php'): ?>
+            <?php if (basename($_SERVER['PHP_SELF']) !== 'index.php'): ?>
                 <li class="sidebar-item">
-                    <a href="/Index.php" class="sidebar-link">
+                    <a href="/index.php" class="sidebar-link">
                         <i class="fas fa-home"></i>
                         Inicio
                     </a>

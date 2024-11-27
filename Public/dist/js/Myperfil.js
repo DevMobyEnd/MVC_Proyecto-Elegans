@@ -1,1 +1,229 @@
-document.addEventListener("DOMContentLoaded",function(){var e;function t(e){let t=document.createElement("div");return t.textContent=e,t.innerHTML}function n(e){console.log("Cargando contenido desde:",e),fetch(e).then(e=>{if(!e.ok)throw Error("Network response was not ok");return e.text()}).then(t=>{console.log("Contenido cargado correctamente");let n=document.getElementById("profileContent");"/Myperfil.php"===e?window.location.reload():(n.innerHTML="",n.insertAdjacentHTML("beforeend",t),console.log("Contenido de perfil actualizado"),r(),e.includes("editarperfil.php")&&o())}).catch(e=>console.error("Error al cargar el contenido:",e))}function r(){console.log("Agregando eventos en profileContent");let e=document.getElementById("editProfileBtn");e?(console.log("editProfileBtn encontrado"),e.addEventListener("click",function(){console.log("Bot\xf3n de editar perfil clickeado"),n("../Views/layout/Myperfil/partials/editarperfil.php")})):console.log("editProfileBtn no encontrado");let t=document.getElementById("backToProfile");t&&t.addEventListener("click",function(){console.log("Bot\xf3n de volver al perfil clickeado"),n("/Myperfil.php")})}function o(){let e=1;function t(e){document.querySelectorAll(".register-step").forEach(e=>e.style.display="none"),document.getElementById(`step${e}`).style.display="block";let t=document.getElementById("prevBtn"),n=document.getElementById("nextBtn"),r=document.getElementById("updateButton");t&&(t.style.display=e>1?"inline-block":"none"),n&&(n.style.display=e<2?"inline-block":"none"),r&&(r.style.display=2===e?"inline-block":"none")}let r=document.getElementById("nextBtn"),o=document.getElementById("prevBtn");r&&r.addEventListener("click",function n(){e<2&&t(++e)}),o&&o.addEventListener("click",function n(){e>1&&t(--e)}),t(1);let l=document.getElementById("editProfileForm");l&&l.addEventListener("submit",function(e){e.preventDefault();let t=new FormData(l),r={},o=!1;t.forEach((e,t)=>{let n=l.elements[t];"file"===n.type?n.files.length>0&&(r[t]=e,o=!0):n.value!==n.defaultValue&&(r[t]=e,o=!0)}),o?fetch("/Myperfil.php",{method:"POST",headers:{"Content-Type":"application/json","X-Requested-With":"XMLHttpRequest"},body:JSON.stringify(r)}).then(e=>e.json()).then(e=>{e.success?(alert("Perfil actualizado con \xe9xito"),n("/Myperfil.php")):alert("Error al actualizar el perfil: "+e.message)}).catch(e=>{console.error("Error:",e),alert("Ocurri\xf3 un error al procesar la solicitud")}):alert("No se han realizado cambios en el perfil")})}console.log("Script cargado correctamente"),document.cookie="name=value; SameSite=None; Secure",window.location.pathname.includes("/Views/layout/Myperfil/partials/editarperfil.php")&&o(),r();let l=e=>{let t=e.target.value,n=0,r=document.getElementById("password-strength"),o=document.getElementById("passwordHelp");t.length>=8&&(n+=20),t.match(/[a-z]+/)&&(n+=20),t.match(/[A-Z]+/)&&(n+=20),t.match(/[0-9]+/)&&(n+=20),t.match(/[$@#&!]+/)&&(n+=20),r?(r.style.width=n+"%",r.setAttribute("aria-valuenow",n),n<40?(r.className="progress-bar bg-danger",o.textContent="Contrase\xf1a d\xe9bil"):n<60?(r.className="progress-bar bg-warning",o.textContent="Contrase\xf1a moderada"):n<80?(r.className="progress-bar bg-info",o.textContent="Contrase\xf1a fuerte"):(r.className="progress-bar bg-success",o.textContent="Contrase\xf1a muy fuerte")):console.error("Elemento progress-bar no encontrado")},a,i=(e=l,(...t)=>{clearTimeout(a),a=setTimeout(()=>e.apply(null,t),300)}),d=document.getElementById("passwordInput");d?d.addEventListener("input",i):console.error("Elemento passwordInput no encontrado")});
+document.addEventListener("DOMContentLoaded", () => {
+    // Utility Functions
+    const sanitizeHTML = (html) => {
+      const tempDiv = document.createElement('div');
+      tempDiv.textContent = html;
+      return tempDiv.innerHTML;
+    };
+  
+    // Content Loading Function
+    const loadContent = (url) => {
+      console.log("Cargando contenido desde:", url);
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.text();
+        })
+        .then(content => {
+          console.log("Contenido cargado correctamente");
+          const profileContent = document.getElementById("profileContent");
+          
+          if (url === "/Myperfil.php") {
+            window.location.reload();
+          } else {
+            profileContent.innerHTML = "";
+            profileContent.insertAdjacentHTML("beforeend", content);
+            console.log("Contenido de perfil actualizado");
+            
+            setupProfileEvents();
+            
+            if (url.includes("editarperfil.php")) {
+              setupEditProfileForm();
+            }
+          }
+        })
+        .catch(error => console.error("Error al cargar el contenido:", error));
+    };
+  
+    // Profile Event Setup
+    const setupProfileEvents = () => {
+      console.log("Agregando eventos en profileContent");
+      
+      const editProfileBtn = document.getElementById("editProfileBtn");
+      if (editProfileBtn) {
+        console.log("editProfileBtn encontrado");
+        editProfileBtn.addEventListener("click", () => {
+          console.log("Botón de editar perfil clickeado");
+          loadContent("../Views/layout/Myperfil/partials/editarperfil.php");
+        });
+      } else {
+        console.log("editProfileBtn no encontrado");
+      }
+  
+      const backToProfileBtn = document.getElementById("backToProfile");
+      if (backToProfileBtn) {
+        backToProfileBtn.addEventListener("click", () => {
+          console.log("Botón de volver al perfil clickeado");
+          loadContent("/Myperfil.php");
+        });
+      }
+    };
+  
+    // Edit Profile Form Setup
+    const setupEditProfileForm = () => {
+      let currentStep = 1;
+  
+      const updateStepDisplay = (step) => {
+        // Hide all steps
+        document.querySelectorAll(".register-step").forEach(stepEl => {
+          stepEl.style.display = "none";
+        });
+  
+        // Show current step
+        document.getElementById(`step${step}`).style.display = "block";
+  
+        // Manage navigation buttons
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const updateButton = document.getElementById("updateButton");
+  
+        if (prevBtn) prevBtn.style.display = step > 1 ? "inline-block" : "none";
+        if (nextBtn) nextBtn.style.display = step < 2 ? "inline-block" : "none";
+        if (updateButton) updateButton.style.display = step === 2 ? "inline-block" : "none";
+      };
+  
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+  
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (currentStep < 2) {
+            currentStep++;
+            updateStepDisplay(currentStep);
+          }
+        });
+      }
+  
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          if (currentStep > 1) {
+            currentStep--;
+            updateStepDisplay(currentStep);
+          }
+        });
+      }
+  
+      // Initial step setup
+      updateStepDisplay(1);
+  
+      // Form Submission
+      const editProfileForm = document.getElementById("editProfileForm");
+      if (editProfileForm) {
+        editProfileForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(editProfileForm);
+          const updatedData = {};
+          let hasChanges = false;
+  
+          formData.forEach((value, key) => {
+            const input = editProfileForm.elements[key];
+            
+            if (input.type === "file") {
+              if (input.files.length > 0) {
+                updatedData[key] = value;
+                hasChanges = true;
+              }
+            } else if (input.value !== input.defaultValue) {
+              updatedData[key] = value;
+              hasChanges = true;
+            }
+          });
+  
+          if (hasChanges) {
+            fetch("/Myperfil.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+              },
+              body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(result => {
+              if (result.success) {
+                alert("Perfil actualizado con éxito");
+                loadContent("/Myperfil.php");
+              } else {
+                alert("Error al actualizar el perfil: " + result.message);
+              }
+            })
+            .catch(error => {
+              console.error("Error:", error);
+              alert("Ocurrió un error al procesar la solicitud");
+            });
+          } else {
+            alert("No se han realizado cambios en el perfil");
+          }
+        });
+      }
+    };
+  
+    // Password Strength Checker
+    const checkPasswordStrength = (event) => {
+      const password = event.target.value;
+      let strength = 0;
+      const strengthBar = document.getElementById("password-strength");
+      const passwordHelp = document.getElementById("passwordHelp");
+  
+      // Strength criteria
+      if (password.length >= 8) strength += 20;
+      if (password.match(/[a-z]+/)) strength += 20;
+      if (password.match(/[A-Z]+/)) strength += 20;
+      if (password.match(/[0-9]+/)) strength += 20;
+      if (password.match(/[$@#&!]+/)) strength += 20;
+  
+      if (strengthBar) {
+        strengthBar.style.width = `${strength}%`;
+        strengthBar.setAttribute("aria-valuenow", strength);
+  
+        // Update bar and help text based on strength
+        if (strength < 40) {
+          strengthBar.className = "progress-bar bg-danger";
+          passwordHelp.textContent = "Contraseña débil";
+        } else if (strength < 60) {
+          strengthBar.className = "progress-bar bg-warning";
+          passwordHelp.textContent = "Contraseña moderada";
+        } else if (strength < 80) {
+          strengthBar.className = "progress-bar bg-info";
+          passwordHelp.textContent = "Contraseña fuerte";
+        } else {
+          strengthBar.className = "progress-bar bg-success";
+          passwordHelp.textContent = "Contraseña muy fuerte";
+        }
+      } else {
+        console.error("Elemento progress-bar no encontrado");
+      }
+    };
+  
+    // Debounce function for password strength
+    const debounce = (func, delay = 300) => {
+      let timeoutId;
+      return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(null, args), delay);
+      };
+    };
+  
+    // Initial Setup
+    console.log("Script cargado correctamente");
+    
+    // Set secure cookie
+    document.cookie = "name=value; SameSite=None; Secure";
+  
+    // Conditional initializations
+    if (window.location.pathname.includes("/Views/layout/Myperfil/partials/editarperfil.php")) {
+      setupEditProfileForm();
+    }
+  
+    setupProfileEvents();
+  
+    // Password input event
+    const passwordInput = document.getElementById("passwordInput");
+    if (passwordInput) {
+      const debouncedPasswordCheck = debounce(checkPasswordStrength);
+      passwordInput.addEventListener("input", debouncedPasswordCheck);
+    } else {
+      console.error("Elemento passwordInput no encontrado");
+    }
+  });

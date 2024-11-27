@@ -68,7 +68,7 @@ $apellidos = $nombreCompleto[1] ?? '';
                                            class="form-control" 
                                            name="NumerodeDocumento" 
                                            id="NumerodeDocumentoInput" 
-                                           value="<?php echo htmlspecialchars($_SESSION['usuario_id'] ?? ''); ?>" 
+                                           value="<?php echo htmlspecialchars($_SESSION['numeroDocumento'] ?? ''); ?>" 
                                            required>
                                 </div>
                                 <div class="col-md-6">

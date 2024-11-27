@@ -165,9 +165,9 @@
                     $loginAttempts = isset($usuario['login_attempts']) ? $usuario['login_attempts'] : 0;
                     $lastLoginAttempt = isset($usuario['last_login_attempt']) ? strtotime($usuario['last_login_attempt']) : 0;
 
-                    if ($loginAttempts >= 3 && time() - $lastLoginAttempt < 900) {
-                        return ['success' => false, 'message' => 'Cuenta bloqueada. Intente de nuevo en 15 minutos.'];
-                    }
+                    // if ($loginAttempts >= 3 && time() - $lastLoginAttempt < 900) {
+                    //     return ['success' => false, 'message' => 'Cuenta bloqueada. Intente de nuevo en 15 minutos.'];
+                    // }
 
                     if (password_verify($password, $usuario['password'])) {
                         $this->modelo->resetearIntentos($usuario['id']);
@@ -226,9 +226,9 @@
                 case 'DJ':
                     return '/music_player.php';
                 case 'usuario natural':
-                    return '/Index.php';
+                    return '/index.php';
                 default:
-                    return '/Index.php';
+                    return '/index.php';
             }
         }
 

@@ -1,6 +1,15 @@
 <?php
-require_once 'Controller/UsuarioController.php';
-require_once 'Helpers/SpotifyHelper.php';
+// echo "Versión de PHP: " . phpversion();
+// echo "<br>cURL habilitado: " . (function_exists('curl_version') ? 'Sí' : 'No');
+// echo "<br>Información de cURL: ";
+// print_r(curl_version());
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+require_once __DIR__ . '/Controller/UsuarioController.php';
+require_once __DIR__ . '/Helpers/SpotifyHelper.php';
 
 // Crear una instancia del controlador
 $homeController = new UsuarioController();
@@ -10,10 +19,19 @@ $solicitudes = $homeController->verSolicitudesConUsuarios();
 
 // Obtener el token de Spotify
 $spotifyHelper = new SpotifyHelper();
-$spotifyToken = $spotifyHelper->getAccessToken();
+try {
+    $spotifyToken = $spotifyHelper->getAccessToken();
+    $mensajeSpotify = "Token de Spotify obtenido correctamente.";
+    $tipoMensaje = "success";
+} catch (Exception $e) {
+    $mensajeSpotify = "Error al obtener el token de Spotify: " . $e->getMessage();
+    $tipoMensaje = "error";
+}
 
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -30,6 +48,24 @@ $spotifyToken = $spotifyHelper->getAccessToken();
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </head>
 <style>
+    .mensaje {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
     #app {
         padding-bottom: 100px;
         /* Aumenta este valor para dejar más espacio en la parte inferior */
@@ -165,6 +201,13 @@ $spotifyToken = $spotifyHelper->getAccessToken();
 
 
 <body class="bg-gray-900 text-white">
+    <h1>Music Player</h1>
+
+    <?php if (isset($mensajeSpotify)): ?>
+        <div class="mensaje <?php echo $tipoMensaje; ?>">
+            <?php echo $mensajeSpotify; ?>
+        </div>
+    <?php endif; ?>
 
     <div id="app" class="flex flex-col h-screen">
         <div class="flex-grow overflow-auto p-6">

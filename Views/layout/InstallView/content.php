@@ -32,7 +32,7 @@
                     </div>
                     <div class="d-flex justify-content-center gap-3">
                         <button type="submit" name="guardar" class="edit-profile-btn2 btn-lg fw-semibold">Guardar Configuración</button>
-                        <a href="/Index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
+                        <a href="/index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
                     </div>
            
                 </section>

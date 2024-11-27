@@ -5,10 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($tituloPagina) ? $tituloPagina : 'Elegans'; ?></title>
-    <link rel="website icon" type="png" href="/Public/dist/img/Logo3.png">
+    <link rel="website icon" type="png" href="./Public/dist/img/Logo3.png">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="/Public/dist/css/styles.css">
+    <link rel="stylesheet" href="./Public/dist/css/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,7 +33,7 @@
     <div class="wrapper">
         <aside id="sidebar" class="js-sidebar">
             <!-- Contenido de la barra lateral -->
-            <?php include('./Views/layout/seccionlogin/sidebar.php'); ?>
+            <?php include('./Views/layout/Seccionlogin/sidebar.php'); ?>
         </aside>
         <div class="main">
             <?php include('./Views/layout/Seccionlogin/navbar.php'); ?>
@@ -48,10 +48,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    <script src="../Public/dist/js/sidebar.js"></script>
-    <script src="../Public/dist/js/Cropper.js"></script>
-    <script src="../Public/dist/js/theme-toggle.js"></script>
-    <script src="../Public/dist/js/register.js"></script>
+    <script src="./Public/dist/js/sidebar.js"></script>
+    <script src="./Public/dist/js/Cropper.js"></script>
+    <script src="./Public/dist/js/theme-toggle.js"></script>
+    <script src="./Public/dist/js/register.js"></script>
 </body>
 
 </html>

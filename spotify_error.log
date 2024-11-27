@@ -1,0 +1,105 @@
+[13-Nov-2024 14:13:37 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 14:13:37 UTC] Nombre de canción recibido: MAMACITA
+[13-Nov-2024 14:13:37 UTC] Buscando canción: MAMACITA
+[13-Nov-2024 14:13:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function curl_init() in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php:166
+Stack trace:
+#0 /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php(28): SpotifyHelper->searchSpotifyTrack()
+#1 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 166
+[13-Nov-2024 14:20:38 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 14:20:38 UTC] Nombre de canción recibido: drunk text
+[13-Nov-2024 14:20:38 UTC] Buscando canción: drunk text
+[13-Nov-2024 14:20:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function curl_init() in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php:166
+Stack trace:
+#0 /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php(28): SpotifyHelper->searchSpotifyTrack()
+#1 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 166
+[13-Nov-2024 14:57:09 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 14:57:09 UTC] Nombre de canción recibido: drunk text
+[13-Nov-2024 14:57:09 UTC] Buscando canción: drunk text
+[13-Nov-2024 14:57:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function curl_init() in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php:166
+Stack trace:
+#0 /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php(28): SpotifyHelper->searchSpotifyTrack()
+#1 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 166
+[13-Nov-2024 14:58:13 UTC] PHP Warning:  require_once(/opt/lampp/htdocs/MVC_Proyecto-ElegansHelpers/SpotifyHelper.php): Failed to open stream: No such file or directory in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php on line 10
+[13-Nov-2024 14:58:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/opt/lampp/htdocs/MVC_Proyecto-ElegansHelpers/SpotifyHelper.php' (include_path='.:/usr/share/php') in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php:10
+Stack trace:
+#0 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php on line 10
+[13-Nov-2024 15:02:19 UTC] PHP Warning:  require_once(/opt/lampp/htdocs/MVC_Proyecto-ElegansHelpers/SpotifyHelper.php): Failed to open stream: No such file or directory in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php on line 10
+[13-Nov-2024 15:02:19 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/opt/lampp/htdocs/MVC_Proyecto-ElegansHelpers/SpotifyHelper.php' (include_path='.:/usr/share/php') in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php:10
+Stack trace:
+#0 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php on line 10
+[13-Nov-2024 15:06:18 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 15:06:18 UTC] Nombre de canción recibido: MAMACITA
+[13-Nov-2024 15:06:18 UTC] Buscando canción: MAMACITA
+[13-Nov-2024 15:06:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function curl_init() in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php:166
+Stack trace:
+#0 /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php(28): SpotifyHelper->searchSpotifyTrack()
+#1 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 166
+[13-Nov-2024 15:19:16 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 15:19:16 UTC] Nombre de canción recibido: MAMACITA
+[13-Nov-2024 15:19:16 UTC] Buscando canción: MAMACITA
+[13-Nov-2024 15:19:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function curl_init() in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php:166
+Stack trace:
+#0 /opt/lampp/htdocs/MVC_Proyecto-Elegans/test_spotify.php(28): SpotifyHelper->searchSpotifyTrack()
+#1 {main}
+  thrown in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 166
+[13-Nov-2024 15:30:43 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 15:30:43 UTC] Nombre de canción recibido: 
+[13-Nov-2024 15:30:43 UTC] Error en test_spotify.php: El nombre de la canción es requerido.
+[13-Nov-2024 15:31:05 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 15:31:05 UTC] Nombre de canción recibido: 
+[13-Nov-2024 15:31:05 UTC] Error en test_spotify.php: El nombre de la canción es requerido.
+[13-Nov-2024 15:31:06 UTC] Iniciando búsqueda de canción en Spotify
+[13-Nov-2024 15:31:06 UTC] Nombre de canción recibido: 
+[13-Nov-2024 15:31:06 UTC] Error en test_spotify.php: El nombre de la canción es requerido.
+[18-Nov-2024 21:27:53 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[18-Nov-2024 21:27:53 Europe/Berlin] Nombre de canción recibido: MAMACITA
+[18-Nov-2024 21:27:53 Europe/Berlin] Buscando canción: MAMACITA
+[18-Nov-2024 21:27:53 Europe/Berlin] Resultados encontrados: 10
+[18-Nov-2024 21:37:26 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[18-Nov-2024 21:37:26 Europe/Berlin] Nombre de canción recibido: GOOGLE ME
+[18-Nov-2024 21:37:26 Europe/Berlin] Buscando canción: GOOGLE ME
+[18-Nov-2024 21:37:27 Europe/Berlin] Resultados encontrados: 10
+[18-Nov-2024 22:21:45 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[18-Nov-2024 22:21:45 Europe/Berlin] Nombre de canción recibido: Into It
+[18-Nov-2024 22:21:45 Europe/Berlin] Buscando canción: Into It
+[18-Nov-2024 22:21:46 Europe/Berlin] Resultados encontrados: 10
+[21-Nov-2024 21:09:46 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[21-Nov-2024 21:09:46 Europe/Berlin] Nombre de canción recibido: MAMACITA
+[21-Nov-2024 21:09:46 Europe/Berlin] Buscando canción: MAMACITA
+[21-Nov-2024 21:09:48 Europe/Berlin] Resultados encontrados: 10
+[25-Nov-2024 17:27:58 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 235
+[25-Nov-2024 17:27:58 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 238
+[25-Nov-2024 17:27:58 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[25-Nov-2024 17:27:58 Europe/Berlin] Nombre de canción recibido: Thousand Foot Krutch: Fly On The Wall
+[25-Nov-2024 17:27:58 Europe/Berlin] Buscando canción: Thousand Foot Krutch: Fly On The Wall
+[25-Nov-2024 17:28:04 Europe/Berlin] Resultados encontrados: 10
+[25-Nov-2024 17:28:09 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 235
+[25-Nov-2024 17:28:09 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 238
+[25-Nov-2024 17:28:09 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[25-Nov-2024 17:28:09 Europe/Berlin] Nombre de canción recibido: Fly On The Wall
+[25-Nov-2024 17:28:09 Europe/Berlin] Buscando canción: Fly On The Wall
+[25-Nov-2024 17:28:10 Europe/Berlin] Resultados encontrados: 10
+[25-Nov-2024 17:28:17 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 235
+[25-Nov-2024 17:28:17 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 238
+[25-Nov-2024 17:28:17 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[25-Nov-2024 17:28:17 Europe/Berlin] Nombre de canción recibido: Fly On The Wall
+[25-Nov-2024 17:28:17 Europe/Berlin] Buscando canción: Fly On The Wall
+[25-Nov-2024 17:28:17 Europe/Berlin] Resultados encontrados: 10
+[25-Nov-2024 17:28:19 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 235
+[25-Nov-2024 17:28:19 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 238
+[25-Nov-2024 17:28:19 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[25-Nov-2024 17:28:19 Europe/Berlin] Nombre de canción recibido: Fly On The Wall
+[25-Nov-2024 17:28:19 Europe/Berlin] Buscando canción: Fly On The Wall
+[25-Nov-2024 17:28:19 Europe/Berlin] Resultados encontrados: 10
+[25-Nov-2024 17:28:31 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 235
+[25-Nov-2024 17:28:31 Europe/Berlin] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in /opt/lampp/htdocs/MVC_Proyecto-Elegans/Helpers/SpotifyHelper.php on line 238
+[25-Nov-2024 17:28:31 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[25-Nov-2024 17:28:31 Europe/Berlin] Nombre de canción recibido: Fly On The Wall
+[25-Nov-2024 17:28:31 Europe/Berlin] Buscando canción: Fly On The Wall
+[25-Nov-2024 17:28:31 Europe/Berlin] Resultados encontrados: 10

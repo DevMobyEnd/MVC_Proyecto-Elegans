@@ -26,7 +26,7 @@
                                             </div>
                                         </section>
                                     </div>
-                                    <div id="passwordStep" class="mb-3" style="display: none;">
+                                    <!-- <div id="passwordStep" class="mb-3" style="display: none;">
                                         <section>
                                             <div class="form-group d-flex flex-column align-items-center">
                                                 <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" style="width: 100%; max-width: 400px;" required>
@@ -38,13 +38,49 @@
                                         <p class="text-center">
                                             <a href="/test_recover_password.php" id="forgotPassword">¿Olvidó su contraseña?</a>
                                         </p>
+                                    </div> -->
+                                    <div id="passwordStep" class="mb-3" style="display: none;">
+                                        <section>
+                                            <div class="form-group d-flex flex-column align-items-center">
+                                                <input type="password" placeholder="Contraseña" class="form-control form-control-lg" name="password" style="width: 100%; max-width: 400px;" required>
+                                                <label class="form-label long-label">
+                                                    <ion-icon name="lock-closed-outline"></ion-icon> Contraseña
+                                                </label>
+                                                <div class="position-relative w-100" style="max-width: 400px;">
+                                                    <!-- Indicador de intentos restantes -->
+                                                    <div id="loginAttemptsInfo" class="text-danger small mt-1" style="display: none;">
+                                                        Intentos restantes: <span id="remainingAttempts">3</span>
+                                                    </div>
+                                                    <!-- Indicador de bloqueo -->
+                                                    <div id="lockoutInfo" class="text-danger small mt-1" style="display: none;">
+                                                        Cuenta bloqueada. Tiempo restante: <span id="lockoutTimer">15:00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                        <p class="text-center">
+                                            <a href="/test_recover_password.php" id="forgotPassword">¿Olvidó su contraseña?</a>
+                                        </p>
                                     </div>
                                     <div class="text-center">
                                         <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
                                             <button type="submit" id="continueBtn" class="edit-profile-btn2 btn-lg fw-semibold">Continuar</button>
                                         </div>
                                         <div class="d-flex justify-content-center edit-profile-btn-wrapper btn-wrapper-adjusted">
-                                            <button type="submit" id="submitBtn" name="btningresar" class="edit-profile-btn2 btn-lg fw-semibold" style="display: none;">Ingresar</button>
+                                            <button
+                                                type="submit"
+                                                id="submitBtn"
+                                                name="btningresar"
+                                                class="edit-profile-btn2 btn-lg fw-semibold"
+                                                style="display: none;">
+                                                <span class="button-text">Ingresar</span>
+                                                <!-- Spinner para estado de bloqueo -->
+                                                <div class="spinner-border spinner-border-sm ms-2"
+                                                    role="status"
+                                                    style="display: none;">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </button>
                                         </div>
                                     </div>
                                     <p class="text-center mt-3">
@@ -174,3 +210,47 @@
         }
     });
 </script>
+
+<!-- Añadir estilos CSS -->
+<style>
+    .button-disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    #loginAttemptsInfo {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        text-align: right;
+    }
+
+    #lockoutInfo {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        text-align: center;
+        padding: 0.5rem;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+    }
+
+    .error-shake {
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-10px);
+        }
+
+        75% {
+            transform: translateX(10px);
+        }
+    }
+</style>

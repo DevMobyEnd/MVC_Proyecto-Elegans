@@ -4,7 +4,7 @@
             <div class="card">
                 <form id="registerForm" class="register-form" method="POST" action="/register.php" enctype="multipart/form-data">
                     <!-- CSRF token -->
-                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <input type="hidden" name="csrf_token"  value="<?php echo $csrf_token; ?>">
                     <!-- Resto de los campos del formulario -->
                     <!-- Step 1 -->
                     <div id="step1" class="register-step">
