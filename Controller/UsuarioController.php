@@ -18,58 +18,6 @@
             $this->modelo = new UsuarioModel();
         }
 
-        public function actualizarPerfil($postData = null)
-        {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Use $postData if provided, otherwise use $_POST
-                $data = $postData ?? $_POST;
-
-                // Verificar el token CSRF
-                // if (!$this->verificarCSRFToken($data['csrf_token'])) {
-                //     return ['success' => false, 'message' => 'Error de token CSRF'];
-                // }
-
-                // Recoger los datos del formulario
-                $datosUsuario = [
-                    'nombres' => $data['Nombres'],
-                    'apellidos' => $data['Apellidos'],
-                    'numero_documento' => $data['NumerodeDocumento'],
-                    'apodo' => $data['Apodo'],
-                    'correo_electronico' => $data['CorreoElectronico'],
-                    // Otros campos...
-                ];
-
-                // Si se proporcionó una nueva contraseña, hashearla
-                if (!empty($data['password'])) {
-                    $datosUsuario['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-                }
-
-                // Manejar la imagen de perfil si se subió una nueva
-                if (!empty($data['croppedImageData'])) {
-                    $nombreArchivo = $this->procesarImagenPerfil($data['croppedImageData']);
-                    if ($nombreArchivo) {
-                        $datosUsuario['foto_perfil'] = $nombreArchivo;
-                    }
-                }
-
-                // Actualizar el usuario en la base de datos
-                $resultado = $this->modelo->actualizarUsuario($_SESSION['usuario_id'], $datosUsuario);
-
-                if ($resultado) {
-                    // Actualización exitosa
-                    $_SESSION['nombre_completo'] = $datosUsuario['nombres'] . ' ' . $datosUsuario['apellidos'];
-                    $_SESSION['apodo'] = $datosUsuario['apodo'];
-                    // ... actualizar otros datos de sesión según sea necesario
-                    return ['success' => true, 'message' => 'Perfil actualizado con éxito'];
-                } else {
-                    // Error en la actualización
-                    return ['success' => false, 'message' => 'Hubo un problema al actualizar el perfil'];
-                }
-            }
-
-            // Si no es una solicitud POST, devolver un error
-            return ['success' => false, 'message' => 'Método de solicitud inválido'];
-        }
 
         public function procesarImagenPerfil($croppedImageData)
         {

@@ -90,9 +90,12 @@ if (!$emisorId) {
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
+            scroll-behavior: smooth;
+            /* Para un scroll suave */
         }
 
         .message {
+            position: relative;
             max-width: 70%;
             padding: 10px 15px;
             margin: 5px 0;
@@ -149,9 +152,16 @@ if (!$emisorId) {
 
         /* Estilos para las reacciones */
         .reactions {
-            margin-top: 5px;
+            position: absolute;
+            bottom: -2px;
+            /* Ajusta este valor según necesites */
+            left: 4px;
+            /* Alinea a la izquierda con un pequeño margen */
             display: flex;
-            justify-content: flex-end;
+            gap: 5px;
+            /* Espacio entre los botones */
+            z-index: 1;
+            /* Asegura que esté por encima de otros mensajes */
         }
 
         .reaction-btn {
@@ -159,7 +169,7 @@ if (!$emisorId) {
             border: none;
             border-radius: 50%;
             padding: 5px;
-            margin-left: 5px;
+            margin-left: -3px;
             cursor: pointer;
             transition: background-color 0.3s;
             font-size: 14px;
@@ -251,6 +261,8 @@ if (!$emisorId) {
             margin-bottom: 15px;
             /* Espacio para el tiempo */
             word-wrap: break-word;
+            min-width: 100px;
+            /* Anchura mínima para mensajes cortos */
         }
 
 
@@ -346,6 +358,17 @@ if (!$emisorId) {
         .sidebar-overlay.active {
             display: block;
         }
+
+        .date-separator {
+            text-align: center;
+            padding: 10px;
+            margin: 15px 0;
+            background-color: rgba(225, 245, 254, 0.5);
+            border-radius: 15px;
+            font-size: 0.9em;
+            color: #666;
+            text-transform: capitalize;
+        }
     </style>
 </head>
 
@@ -369,7 +392,7 @@ if (!$emisorId) {
                 <div id="search-results"></div>
             </div>
             <div id="global-chat">Canal Global</div>
-            <div id="private-chats"></div>
+            <div id="private-chats">Canal Privado</div>
         </div>
 
         <!-- Área de mensajes -->
@@ -402,6 +425,14 @@ if (!$emisorId) {
                 text: message,
             });
         }
+
+        // Función para seleccionar un usuario y cargar el chat privado
+        function selectUser(userId) {
+            currentChatType = 'private';
+            selectedUserId = userId;
+            loadMessages();
+        }
+
 
         // Cargar la lista de usuarios con los que se ha tenido conversaciones privadas
         async function loadUsers() {
@@ -438,8 +469,6 @@ if (!$emisorId) {
             };
         }
 
-        // receptor de eventos para la entrada de búsqueda:
-        document.getElementById('user-search').addEventListener('input', debounce(searchUsers, 500));
 
         //función de rebote para evitar demasiadas peticiones:
         function debounce(func, delay) {
@@ -475,10 +504,12 @@ if (!$emisorId) {
         function displaySearchResults(users) {
             const searchResults = document.getElementById('search-results');
             searchResults.innerHTML = users.map(user => `
-        <div class="search-result" onclick="openPrivateChat(${user.id})">${user.Apodo}</div>
+        <div class="search-result" data-user-id="${user.id}" onclick="openPrivateChat(${user.id})">${user.Apodo}</div>
     `).join('');
         }
 
+        // receptor de eventos para la entrada de búsqueda:
+        document.getElementById('user-search').addEventListener('input', debounce(searchUsers, 500));
 
         function startPrivateChat(userId) {
             var_dump($result); // Agrego esto para depurar
@@ -570,37 +601,59 @@ if (!$emisorId) {
 
                         if (messages.length === 0) {
                             chatMessages.innerHTML = '<p>No hay mensajes aún. ¡Sé el primero en escribir!</p>';
-                        } else {
-                            chatMessages.innerHTML = messages.map(msg => `
-                                <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
-                                    <div class="message-content">
-                                        <strong>${msg.emisor_nombre || 'Usuario'}</strong><br>
-                                        ${msg.contenido}
-                                    </div>
-                                    ${msg.emisor_id === currentUserId ? `
-                                        <div class="message-status">
-                                            <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
-                                            <span class="checkmark double delivered"></span>
-                                        </div>
-                                    ` : `
-                                        <div class="message-status">
-                                            <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
-                                        </div>
-                                    `}
-                                    <div class="reactions">
-                                        <button onclick="react(${msg.id}, 'like')" class="reaction-btn ${msg.user_reaction === 'like' ? 'active' : ''}" aria-label="Me gusta">
-                                            👍 <span class="like-count">${msg.likes || 0}</span>
-                                        </button>
-                                        <button onclick="react(${msg.id}, 'dislike')" class="reaction-btn ${msg.user_reaction === 'dislike' ? 'active' : ''}" aria-label="No me gusta">
-                                            👎 <span class="dislike-count">${msg.dislikes || 0}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('');
+                            return;
                         }
 
-                        // Mantener el scroll en la posición correcta
-                        const wasAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 1;
+                        // Agrupar mensajes por fecha
+                        const messagesByDate = {};
+                        messages.forEach(msg => {
+                            const date = new Date(msg.fecha_envio);
+                            const dateStr = formatMessageDate(date);
+                            if (!messagesByDate[dateStr]) {
+                                messagesByDate[dateStr] = [];
+                            }
+                            messagesByDate[dateStr].push(msg);
+                        });
+
+                        let html = '';
+
+                        // Generar HTML con separadores de fecha
+                        Object.keys(messagesByDate).forEach(date => {
+                            html += `<div class="date-separator">${date}</div>`;
+                            html += messagesByDate[date].map(msg => `
+                        <div class="message ${msg.emisor_id === currentUserId ? 'emisor' : 'receptor'}" data-id="${msg.id}">
+                            <div class="message-content">
+                                <strong>${msg.emisor_nombre || 'Usuario'}</strong><br>
+                                ${msg.contenido}
+                            </div>
+                            ${msg.emisor_id === currentUserId ? `
+                                <div class="message-status">
+                                    <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
+                                    <span class="checkmark double delivered"></span>
+                                </div>
+                            ` : `
+                                <div class="message-status">
+                                    <span class="message-time">${formatTimestamp(msg.fecha_envio)}</span>
+                                </div>
+                            `}
+                            <div class="reactions">
+                                <button onclick="react(${msg.id}, 'like')" class="reaction-btn ${msg.user_reaction === 'like' ? 'active' : ''}" aria-label="Me gusta">
+                                    👍 <span class="like-count">${msg.likes || 0}</span>
+                                </button>
+                                <button onclick="react(${msg.id}, 'dislike')" class="reaction-btn ${msg.user_reaction === 'dislike' ? 'active' : ''}" aria-label="No me gusta">
+                                    👎 <span class="dislike-count">${msg.dislikes || 0}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                        });
+
+                        // Verificar si estamos cerca del final antes de actualizar
+                        const wasAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 100;
+
+                        chatMessages.innerHTML = html;
+
+                        // Si estábamos cerca del final, scroll hasta abajo
                         if (wasAtBottom) {
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }
@@ -611,6 +664,38 @@ if (!$emisorId) {
                     });
             } catch (error) {
                 console.error('Error en loadMessages:', error);
+            }
+        }
+
+
+        // Añadir evento de clic a los resultados de búsqueda
+        document.getElementById('search-results').addEventListener('click', function(event) {
+            const target = event.target;
+            if (target.classList.contains('search-result')) {
+                const userId = target.dataset.userId;
+                selectUser(userId);
+            }
+        });
+
+        // función para formatear fechas
+        function formatMessageDate(date) {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            // Formatear fecha en español
+            if (date.toDateString() === today.toDateString()) {
+                return 'Hoy';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Ayer';
+            } else {
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                return date.toLocaleDateString('es-CO', options);
             }
         }
 
@@ -731,11 +816,14 @@ if (!$emisorId) {
 
         // Abrir un chat privado
         function openPrivateChat(userId) {
-            selectedUserId = 15;
+            // Establecer el ID del usuario seleccionado correctamente
+            selectedUserId = userId;
             currentChatType = 'private';
 
+            // Comprobar si ya existe en la lista de chats privados
             if (!privateChats.some(user => user.id === userId)) {
-                fetch(`api/messages.php?id=${userId}`)
+                // Obtener información del usuario
+                fetch(`${baseUrl}/api/users.php?id=${userId}`)
                     .then(response => response.json())
                     .then(user => {
                         privateChats.push(user);
@@ -744,10 +832,12 @@ if (!$emisorId) {
                     .catch(error => handleError(error, 'Error al obtener información del usuario'));
             }
 
-            // Clear search results and input
+            // Limpiar búsqueda
             document.getElementById('search-results').innerHTML = '';
             document.getElementById('user-search').value = '';
-            loadMessages(); // Agrega esto para cargar los mensajes
+
+            // Cargar mensajes
+            loadMessages();
         }
 
         // Enviar mensaje
@@ -756,12 +846,20 @@ if (!$emisorId) {
                 const messageInput = document.getElementById('message-input');
                 const message = messageInput.value.trim();
 
-                if (!message) return;
+                if (!message) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: 'El mensaje no puede estar vacío'
+                    });
+                    return;
+                }
 
-                // Crear y mostrar el mensaje inmediatamente con estado "enviando"
+                // Crear id temporal para el mensaje
                 const tempId = 'msg-' + Date.now();
-                const currentTime = getCurrentTime(); // Usar la nueva función
+                const currentTime = getCurrentTime();
 
+                // Mostrar mensaje inmediatamente
                 appendMessageToChat({
                     id: tempId,
                     emisor_id: currentUserId,
@@ -772,35 +870,44 @@ if (!$emisorId) {
 
                 messageInput.value = '';
 
-                const response = await fetch('/api/send-message.php', {
+                // Preparar datos del mensaje
+                const messageData = {
+                    emisor_id: currentUserId,
+                    receptor_id: currentChatType === 'private' ? selectedUserId : null,
+                    contenido: message,
+                    es_global: currentChatType === 'global' ? 1 : 0
+                };
+
+                // Enviar mensaje
+                const response = await fetch(`${baseUrl}/api/send-message.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        emisor_id: currentUserId,
-                        receptor_id: selectedUserId,
-                        contenido: message,
-                        es_global: currentChatType === 'global' ? 1 : 0
-                    })
+                    body: JSON.stringify(messageData)
                 });
+
+                if (!response.ok) {
+                    throw new Error(`Error en la respuesta del servidor: ${response.statusText}`);
+                }
 
                 const result = await response.json();
 
                 if (result.success) {
                     updateMessageStatus(tempId, 'sent');
-                    setTimeout(() => {
-                        updateMessageStatus(tempId, 'delivered');
-                    }, 1000);
+                    setTimeout(() => updateMessageStatus(tempId, 'delivered'), 1000);
+                    loadMessages(); // Recargar mensajes para asegurar sincronización
                 } else {
                     updateMessageStatus(tempId, 'error');
+                    throw new Error(result.error || 'Error al enviar mensaje');
                 }
             } catch (error) {
-                console.error('Error al enviar el mensaje:', error);
-                const messageElement = document.getElementById(tempId);
-                if (messageElement) {
-                    updateMessageStatus(tempId, 'error');
-                }
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `No se pudo enviar el mensaje: ${error.message}`
+                });
             }
         }
 
@@ -907,14 +1014,14 @@ if (!$emisorId) {
         });
 
         // Opcionalmente, cerrar el sidebar cuando se selecciona un chat en pantallas pequeñas
-        function openPrivateChat(userId) {
-            // Código existente de openPrivateChat...
+        // function openPrivateChat(userId) {
+        //     // Código existente de openPrivateChat...
 
-            // Añadir esta parte:
-            if (window.innerWidth <= 630) {
-                toggleSidebar();
-            }
-        }
+        //     // Añadir esta parte:
+        //     if (window.innerWidth <= 630) {
+        //         toggleSidebar();
+        //     }
+        // }
 
         // También modificar la función openGlobalChat
         function openGlobalChat() {

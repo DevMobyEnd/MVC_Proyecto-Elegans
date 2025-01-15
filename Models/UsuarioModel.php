@@ -181,31 +181,7 @@ class UsuarioModel
             return 'rol_no_disponible';
         }
     }
-
-
-
-
-
-
-    public function actualizarUsuario($userId, $datosUsuario)
-    {
-        $sql = "UPDATE tb_usuarios SET nombres = ?, apellidos = ?, numero_documento = ?, apodo = ?, correo_electronico = ?, foto_perfil = ? WHERE id = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param(
-            'ssssssi',
-            $datosUsuario['nombres'],
-            $datosUsuario['apellidos'],
-            $datosUsuario['numero_documento'],
-            $datosUsuario['apodo'],
-            $datosUsuario['correo_electronico'],
-            $datosUsuario['foto_perfil'],
-            $userId
-        );
-        return $stmt->execute();
-    }
-
-    // Métodos existentes
-
+    
     public function obtenerInformacionSolicitudesMusica($usuarioId)
     {
         // Registrar el ID del usuario en el log para depuración

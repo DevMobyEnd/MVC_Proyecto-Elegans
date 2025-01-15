@@ -120,13 +120,45 @@ class CanalDialogoModel
     }
 
     public function guardarMensaje($emisor_id, $receptor_id, $contenido, $es_global)
-    {
-        $sql = "INSERT INTO mensajes (emisor_id, receptor_id, contenido, es_global) 
-                VALUES (?, ?, ?, ?)";
+{
+    try {
+        // Validación de parámetros
+        if (empty($emisor_id) || empty($contenido)) {
+            return false;
+        }
+
+        // Si es mensaje global, receptor_id debe ser null
+        if ($es_global == 1) {
+            $receptor_id = null;
+        }
+
+        $sql = "INSERT INTO mensajes (emisor_id, receptor_id, contenido, es_global, fecha_envio) 
+                VALUES (?, ?, ?, ?, NOW())";
+        
         $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error en preparación de la consulta: " . $this->conexion->error);
+            return false;
+        }
+
         $stmt->bind_param("iisi", $emisor_id, $receptor_id, $contenido, $es_global);
-        return $stmt->execute();
+        
+        $result = $stmt->execute();
+        if (!$result) {
+            error_log("Error al ejecutar la consulta: " . $stmt->error);
+            return false;
+        }
+
+        return true;
+    } catch (Exception $e) {
+        error_log("Error en guardarMensaje: " . $e->getMessage());
+        return false;
+    } finally {
+        if (isset($stmt)) {
+            $stmt->close();
+        }
     }
+}
 
     public function obtenerLikes($mensaje_id)
     {

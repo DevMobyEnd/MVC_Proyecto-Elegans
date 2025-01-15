@@ -8,6 +8,27 @@
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 
+session_start();
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['spotify_access_token'])) {
+    // Redirigir al usuario a la página de autenticación si no está autenticado
+    header('Location: spotify_auth.php');
+    exit();
+}
+
+// Recuperar la información de la sesión
+$scopes = $_SESSION['spotify_scopes'] ?? [];
+$accessToken = $_SESSION['spotify_access_token'] ?? '';
+$refreshToken = $_SESSION['spotify_refresh_token'] ?? '';
+
+// Depuración
+echo "<pre>";
+echo "Access Token: " . substr($accessToken, 0, 10) . "...\n";
+echo "Refresh Token: " . substr($refreshToken, 0, 10) . "...\n";
+echo "Scopes: " . implode(", ", $scopes) . "\n";
+echo "</pre>";
+
 require_once __DIR__ . '/Controller/UsuarioController.php';
 require_once __DIR__ . '/Helpers/SpotifyHelper.php';
 
@@ -16,6 +37,8 @@ $homeController = new UsuarioController();
 
 // Obtener las solicitudes con la información de los usuarios
 $solicitudes = $homeController->verSolicitudesConUsuarios();
+
+// Inicializar el SpotifyHelper con el token de acceso de la sesión
 
 // Obtener el token de Spotify
 $spotifyHelper = new SpotifyHelper();
@@ -29,8 +52,33 @@ try {
 }
 
 
-?>
 
+// Inicializar el array de scopes disponibles
+$availableScopes = [];
+
+// Verificar qué scopes están disponibles
+$requiredScopes = [
+    'user-read-private',
+    'user-read-email',
+    'user-modify-playback-state',
+    'user-read-playback-state',
+    'user-read-currently-playing',
+    'streaming'
+];
+
+foreach ($requiredScopes as $scope) {
+    $availableScopes[$scope] = in_array($scope, $scopes);
+}
+
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'access_token' => $accessToken,
+        'scopes' => $availableScopes
+    ]);
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -209,6 +257,19 @@ try {
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($availableScopes)): ?>
+        <div class="bg-gray-800 p-4 rounded-lg mb-4">
+            <h2 class="text-xl font-bold mb-2">Permisos de Spotify disponibles:</h2>
+            <ul>
+                <?php foreach ($availableScopes as $scope => $available): ?>
+                    <li class="<?php echo $available ? 'text-green-500' : 'text-red-500'; ?>">
+                        <?php echo $scope; ?>: <?php echo $available ? 'Disponible' : 'No disponible'; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
     <div id="app" class="flex flex-col h-screen">
         <div class="flex-grow overflow-auto p-6">
             <div class="flex justify-between items-center mb-4">
@@ -282,20 +343,94 @@ try {
                             <p id="currentSongArtist" class="text-gray-400"></p>
                         </div>
                     </div>
-                    <div id="spotifyEmbedContainer" class="flex-grow mx-4"></div>
+                    <div id="spotifyEmbedContainer" class="flex-grow mx-4">
+                        <div id="playerControls">
+                            <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                            <div id="progressBar">
+                                <div id="progress"></div>
+                            </div>
+                            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- <div class="flex justify-center space-x-4">
-                <button id="prevButton" class="px-4 py-2 bg-gray-700 rounded">Anterior</button>
-                <button id="nextButton" class="px-4 py-2 bg-gray-700 rounded">Siguiente</button>
-            </div> -->
-            <!-- <button id="manualPlayButton">Reproducir</button> -->
         </div>
+        <!-- <div class="flex justify-center space-x-4">
+            <button id="prevButton" class="px-4 py-2 bg-gray-700 rounded">Anterior</button>
+            <button id="nextButton" class="px-4 py-2 bg-gray-700 rounded">Siguiente</button>
+        </div> -->
+        <!-- <button id="manualPlayButton">Reproducir</button> -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            //depuracion para ver si el sdk esta listo para usarse
+            // player.addListener('ready', ({
+            //     device_id
+            // }) => {
+            //     console.log('Ready with Device ID', device_id);
+            //     deviceId = device_id;
+            // });
+
+            const spotifyAccessToken = <?php echo json_encode($accessToken); ?>;
+            const spotifyScopes = <?php echo json_encode($availableScopes); ?>;
+
+            // Función para mostrar la información de depuración
+            function debugSpotifyInfo() {
+                console.group('Información de Spotify');
+                console.log('%cAccess Token:', 'color: #3498db; font-weight: bold;');
+                console.log(spotifyAccessToken ? `${spotifyAccessToken.substr(0, 10)}...${spotifyAccessToken.substr(-10)}` : 'No disponible');
+
+                console.log('%cScopes:', 'color: #2ecc71; font-weight: bold;');
+                console.table(spotifyScopes);
+                console.groupEnd();
+            }
+
+            // Ejecutar la función de depuración
+            debugSpotifyInfo();
+            //Manejo del token de acceso
+            let tokenRefreshInterval;
+
+            function refreshToken() {
+                fetch('/refresh_token.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.access_token) {
+                            spotifyAccessToken = data.access_token;
+                            console.log('Token refreshed successfully');
+                        } else {
+                            console.error('Failed to refresh token');
+                        }
+                    })
+                    .catch(error => console.error('Error refreshing token:', error));
+            }
+
+            // Refrescar el token cada 50 minutos (3000000 ms)
+            tokenRefreshInterval = setInterval(refreshToken, 3000000);
+
+            // Limpiar el intervalo cuando la página se cierre
+            window.addEventListener('beforeunload', () => {
+                clearInterval(tokenRefreshInterval);
+            });
+
+            fetch('https://api.spotify.com/v1/me', {
+                headers: {
+                    'Authorization': 'Bearer ' + spotifyAccessToken
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP status ' + response.status);
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Token is valid', data);
+            }).catch(error => {
+                console.error('Error verifying token', error);
+            });
+        </script>
         <script>
             let playlist = [];
             let currentIndex = 0;
             let isPlaying = false;
+            let player;
 
             // Al cargar la página
             document.addEventListener('DOMContentLoaded', () => {
@@ -324,20 +459,65 @@ try {
                         playerContainer.style.display = 'block';
                     }
 
-                    // Crear el iframe de Spotify
-                    const embedContainer = document.getElementById('spotifyEmbedContainer');
-                    if (embedContainer) {
-                        embedContainer.innerHTML = `
-                <iframe
-                    src="https://open.spotify.com/embed/track/${song.spotify_track_id}?autoplay=1"
-                    width="100%"
-                    height="80"
-                    frameborder="0"
-                    allowtransparency="true"
-                    allow="encrypted-media"
-                    id="spotifyPlayer"
-                ></iframe>
-            `;
+                    // Inicializar el reproductor de Spotify si aún no existe
+                    if (!player) {
+                        player = new Spotify.Player({
+                            name: 'Web Playback SDK Quick Start Player',
+                            getOAuthToken: cb => {
+                                cb(spotifyAccessToken);
+                            }
+                        });
+
+                        // Error handling
+                        player.addListener('initialization_error', ({
+                            message
+                        }) => {
+                            console.error(message);
+                        });
+                        player.addListener('authentication_error', ({
+                            message
+                        }) => {
+                            console.error(message);
+                        });
+                        player.addListener('account_error', ({
+                            message
+                        }) => {
+                            console.error(message);
+                        });
+                        player.addListener('playback_error', ({
+                            message
+                        }) => {
+                            console.error(message);
+                        });
+
+                        // Playback status updates
+                        player.addListener('player_state_changed', state => {
+                            console.log(state);
+                            if (state.track_window.previous_tracks.find(x => x.id === state.track_window.current_track.id)) {
+                                console.log('La canción ha terminado, reproduciendo la siguiente');
+                                playNextSong();
+                            }
+                        });
+
+                        // Ready
+                        player.addListener('ready', ({
+                            device_id
+                        }) => {
+                            console.log('Ready with Device ID', device_id);
+                            playTrack(song.spotify_track_id, device_id);
+                        });
+
+                        // Connect to the player!
+                        player.connect();
+                    } else {
+                        // Si el reproductor ya existe, solo reproducimos la nueva canción
+                        player.getCurrentState().then(state => {
+                            if (!state) {
+                                console.error('User is not playing music through the Web Playback SDK');
+                                return;
+                            }
+                            playTrack(song.spotify_track_id, state.device_id);
+                        });
                     }
 
                     // Actualizar el índice actual
@@ -353,6 +533,34 @@ try {
                     });
                 }
             }
+
+            function playTrack(spotify_track_id, device_id) {
+                fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        uris: [`spotify:track:${spotify_track_id}`]
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${spotifyAccessToken}`
+                    },
+                });
+            }
+
+            function playNextSong() {
+                if (currentIndex < playlist.length - 1) {
+                    playSong(playlist[currentIndex + 1]);
+                } else {
+                    console.log('Fin de la lista de reproducción');
+                    // Aquí puedes decidir qué hacer cuando se acaba la lista
+                    // Por ejemplo, volver al principio o detener la reproducción
+                }
+            }
+
+            window.onSpotifyWebPlaybackSDKReady = () => {
+                // El SDK está listo para ser usado
+                console.log('Spotify Web Playback SDK is ready');
+            };
 
             // Función para manejar los mensajes del reproductor de Spotify
             function handleSpotifyMessage(event) {
@@ -388,7 +596,7 @@ try {
                 } catch (error) {
                     console.error('Error parsing Spotify message:', error);
                 }
-            }   
+            }
 
             function handleSongEnd() {
                 if (currentIndex < playlist.length - 1) {
@@ -666,6 +874,108 @@ try {
             //         playSong(playlist[currentIndex + 1]);
             //     }
             // });
+
+            //Controles de volumen y progreso
+            const volumeSlider = document.getElementById('volumeSlider');
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+            const currentTimeSpan = document.getElementById('currentTime');
+            const totalTimeSpan = document.getElementById('totalTime');
+
+            volumeSlider.addEventListener('input', () => {
+                player.setVolume(volumeSlider.value / 100);
+            });
+
+            function updateProgress(state) {
+                if (state) {
+                    const {
+                        position,
+                        duration
+                    } = state;
+                    const progressPercent = (position / duration) * 100;
+                    progress.style.width = `${progressPercent}%`;
+                    currentTimeSpan.textContent = formatTime(position);
+                    totalTimeSpan.textContent = formatTime(duration);
+                }
+            }
+
+            function formatTime(ms) {
+                const seconds = Math.floor(ms / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+
+            player.addListener('player_state_changed', state => {
+                updateProgress(state);
+            });
+
+            //Manejo de pérdida de conexión:
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+
+            function handleDisconnection() {
+                console.log('Disconnected from Spotify. Attempting to reconnect...');
+                reconnectAttempts++;
+
+                if (reconnectAttempts <= maxReconnectAttempts) {
+                    setTimeout(() => {
+                        player.connect().then(success => {
+                            if (success) {
+                                console.log('Reconnected successfully');
+                                reconnectAttempts = 0;
+                            } else {
+                                console.log('Reconnection attempt failed');
+                                handleDisconnection();
+                            }
+                        });
+                    }, 5000 * reconnectAttempts); // Incrementar el tiempo de espera en cada intento
+                } else {
+                    console.error('Max reconnection attempts reached');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo reconectar con Spotify. Por favor, recarga la página.',
+                        confirmButtonText: 'Recargar',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload();
+                        }
+                    });
+                }
+            }
+
+            player.addListener('initialization_error', ({
+                message
+            }) => {
+                console.error(message);
+                handleDisconnection();
+            });
+
+            player.addListener('authentication_error', ({
+                message
+            }) => {
+                console.error('Authentication error:', message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de autenticación',
+                    text: 'Por favor, vuelva a iniciar sesión en Spotify.',
+                    confirmButtonText: 'Reiniciar sesión',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'spotify_auth.php';
+                    }
+                });
+            });
+
+            player.addListener('account_error', ({
+                message
+            }) => {
+                console.error(message);
+                handleDisconnection();
+            });
         </script>
 </body>
 

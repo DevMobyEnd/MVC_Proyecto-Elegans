@@ -91,5 +91,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     // Para solicitudes no-POST
     require_once './layout/InstallView/head.php';
-    // Aquí va tu HTML con el formulario
+
 }
