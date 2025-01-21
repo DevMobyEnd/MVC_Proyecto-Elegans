@@ -396,13 +396,41 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                                 <span id="currentTime">0:00</span>
                                 <span id="totalTime">0:00</span>
                             </div>
+
+                            <!-- Controles de reproducción -->
+                            <div class="flex items-center justify-center space-x-6 ">
+                                <button id="previousButton" class="text-gray-400 hover:text-green-500 focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                                        <line x1="5" y1="19" x2="5" y2="5"></line>
+                                    </svg>
+                                </button>
+
+                                <button id="playPauseButton" class="text-gray-400 hover:text-green-500 focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+
+                                <button id="nextButton" class="text-gray-400 hover:text-green-500 focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                                        <line x1="19" y1="5" x2="19" y2="19"></line>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Control de volumen -->
-                    <div class="w-32">
-                        <input type="range" id="volumeSlider" min="0" max="100" value="50"
-                            class="w-full h-2 bg-gray-700 rounded-full">
+                    <div class="flex items-center space-x-2 ">
+                        <i id="volumeIcon" class="text-gray-400 hover:text-green-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-volume-2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            </svg>
+                        </i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50" class="w-24 h-2 bg-gray-700 rounded-full appearance-none cursor-pointer">
                     </div>
                 </div>
             </div>
@@ -413,6 +441,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         </div> -->
         <!-- <button id="manualPlayButton">Reproducir</button> -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="Public/dist/js/volumeControl.js"></script>
         <script>
             //depuracion para ver si el sdk esta listo para usarse
             // player.addListener('ready', ({
@@ -1205,15 +1234,12 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             // });
 
             //Controles de volumen y progreso
-            const volumeSlider = document.getElementById('volumeSlider');
             const progressBar = document.getElementById('progressBar');
             const progress = document.getElementById('progress');
             const currentTimeSpan = document.getElementById('currentTime');
             const totalTimeSpan = document.getElementById('totalTime');
 
-            volumeSlider.addEventListener('input', () => {
-                player.setVolume(volumeSlider.value / 100);
-            });
+
 
             function updateProgress(state) {
                 if (state) {
