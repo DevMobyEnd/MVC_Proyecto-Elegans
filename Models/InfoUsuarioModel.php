@@ -1,6 +1,6 @@
 <?php
-require_once '../Config/conexion.php';
 
+include_once('../Config/conexion.php');
 class InfoUsuarioModel // Implementar la lógica de actualización de perfil de usuario
 {
     private $conexion;

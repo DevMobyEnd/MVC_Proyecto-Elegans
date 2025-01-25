@@ -1,6 +1,6 @@
 <?php
 
-require_once './Models/InfoUsuarioModel.php';
+require_once '../../../../Models/InfoUsuarioModel.php';
 
 // Crear instancia del modelo
 $infoUsuarioModel = new InfoUsuarioModel();

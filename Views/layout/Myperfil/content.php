@@ -43,12 +43,6 @@
                     <div class="card-body py-4">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
-                                <h4 class="mb-2">
-                                    <?php echo htmlspecialchars($_SESSION['nombre_completo']); ?>
-                                </h4>
-                                <p class="mb-2">
-                                    <?php echo isset($_SESSION['apodo']) ? htmlspecialchars($_SESSION['apodo']) : ''; ?>
-                                </p>
                                 <div class="user-stats-container">
                                     <div class="user-stats mb-0">
                                         <span class="user-stats__item me-2">
