@@ -1,7 +1,8 @@
 <?php
 
-include_once('../Config/conexion.php');
-class InfoUsuarioModel // Implementar la lógica de actualización de perfil de usuario
+include_once(__DIR__ . '../../Config/conexion.php');
+
+class InfoUsuarioModel
 {
     private $conexion;
 
@@ -16,10 +17,14 @@ class InfoUsuarioModel // Implementar la lógica de actualización de perfil de 
         try {
             $sql = "SELECT id, Gmail, nombres, apellidos, numero_documento, 
                        Apodo, fecha_creacion, activo, foto_perfil 
-                FROM tb_usuarios 
-                WHERE id = ? AND activo = 1";
+                    FROM tb_usuarios 
+                    WHERE id = ? AND activo = 1";
 
             $stmt = $this->conexion->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conexion->error);
+            }
+
             $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -41,28 +46,26 @@ class InfoUsuarioModel // Implementar la lógica de actualización de perfil de 
 
             return false;
         } catch (Exception $e) {
-            // Aquí podrías agregar un log del error
+            // Log del error
+            error_log("Error en obtenerInformacionUsuario: " . $e->getMessage());
             return false;
         }
     }
 
-    // Método para obtener la información de sesión
     public function obtenerUsuarioSesion()
     {
         if (!isset($_SESSION)) {
             session_start();
         }
 
-        return isset($_SESSION['usuario_data']) ? $_SESSION['usuario_data'] : false;
+        return $_SESSION['usuario_data'] ?? false;
     }
 
-    // Método para actualizar la información en sesión
     public function actualizarSesionUsuario($userId)
     {
         return $this->obtenerInformacionUsuario($userId);
     }
 
-    // Método para limpiar la sesión
     public function limpiarSesionUsuario()
     {
         if (!isset($_SESSION)) {

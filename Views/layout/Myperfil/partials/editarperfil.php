@@ -1,6 +1,23 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
+// Iniciar la sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+echo "<pre>";
+print_r($_SESSION['usuario_data']);
+echo "</pre>";
 
 require_once '../../../../Models/InfoUsuarioModel.php';
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: /login.php');
+    exit;
+}
 
 // Crear instancia del modelo
 $infoUsuarioModel = new InfoUsuarioModel();
@@ -9,23 +26,12 @@ $infoUsuarioModel = new InfoUsuarioModel();
 $infoUsuarioModel->obtenerInformacionUsuario($_SESSION['usuario_id']);
 
 // Para obtener y guardar en sesión
-$usuario = $modelo->obtenerInformacionUsuario($userId);
-
-// Iniciar la sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: /login.php');
-    exit;
-}
+$usuario = $infoUsuarioModel->obtenerInformacionUsuario($_SESSION['usuario_id']);
 
 // Separar el nombre completo en nombres y apellidos
-$nombreCompleto = explode(' ', $_SESSION['nombre_completo']);
-$nombres = $nombreCompleto[0] ?? '';
-$apellidos = $nombreCompleto[1] ?? '';
+$nombreCompleto = isset($_SESSION['nombre_completo']) ? explode(' ', $_SESSION['nombre_completo']) : ['', ''];
+$nombres = $nombreCompleto[0];
+$apellidos = $nombreCompleto[1];
 ?>
 
 <main class="content px-3 py-2">
@@ -73,7 +79,7 @@ $apellidos = $nombreCompleto[1] ?? '';
                                 <div class="col-md-6">
                                     <label for="NumerodeDocumentoInput" class="form-label">Número de Documento</label>
                                     <input type="text" class="form-control" name="NumerodeDocumento" id="NumerodeDocumentoInput"
-                                        value="<?php echo htmlspecialchars($_SESSION['numeroDocumento'] ?? ''); ?>" required>
+                                    value="<?php echo htmlspecialchars($_SESSION['usuario_data']['numero_documento'] ?? 'Undefined'); ?>" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="apodoInput" class="form-label">Apodo</label>
@@ -151,6 +157,3 @@ $apellidos = $nombreCompleto[1] ?? '';
         </div>
     </div>
 </main>
-
-<!-- <script src="/Public/dist/js/profile.js"></script> -->
-
