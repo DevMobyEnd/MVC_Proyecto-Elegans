@@ -7,9 +7,6 @@ ini_set('display_errors', 1);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-echo "<pre>";
-print_r($_SESSION['usuario_data']);
-echo "</pre>";
 
 require_once '../../../../Models/InfoUsuarioModel.php';
 
@@ -19,6 +16,9 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
+echo "<pre>";
+print_r($_SESSION['usuario_data']);
+echo "</pre>";
 // Crear instancia del modelo
 $infoUsuarioModel = new InfoUsuarioModel();
 

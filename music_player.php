@@ -532,11 +532,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             });
         </script>
         <script>
-            let playlist = [];
-            let currentIndex = 0;
             let player;
+            let playlist = <?php echo json_encode($solicitudes); ?>;
+            let currentIndex = 0;
             let deviceId;
             let isPlayerReady = false;
+            let currentTrackId = null;
+            let isPlaying = false;
 
             // Al cargar la página
             document.addEventListener('DOMContentLoaded', () => {
@@ -545,45 +547,97 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
             // Función principal para reproducir una canción
             // Función para reproducir una canción
-            async function playSong(song) {
-                if (!isPlayerReady || !deviceId) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    if (!isPlayerReady || !deviceId) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'El reproductor no está listo. Por favor, espere un momento.',
-                        });
-                        return;
-                    }
-                }
-
+            async function playSong(song, index) {
                 try {
-                    const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+                    // Validar dispositivo listo
+                    if (!deviceId) {
+                        throw new Error('Dispositivo no listo');
+                    }
+
+                    // Actualizar índice actual
+                    if (typeof index !== 'undefined') {
+                        currentTrackIndex = index;
+                    } else {
+                        currentTrackIndex = playlist.findIndex(t => t.spotify_track_id === song.spotify_track_id);
+                    }
+
+                    // Iniciar reproducción
+                    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
                         method: 'PUT',
-                        body: JSON.stringify({
-                            uris: [`spotify:track:${song.spotify_track_id}`]
-                        }),
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${spotifyAccessToken}`
-                        }
+                        },
+                        body: JSON.stringify({
+                            uris: [`spotify:track:${song.spotify_track_id}`]
+                        })
                     });
 
-                    if (!response.ok && response.status !== 204) {
-                        throw new Error('Error al reproducir');
-                    }
-
                     // Actualizar UI
-                    document.getElementById('currentSongImage').src = song.imagen_cancion;
-                    document.getElementById('currentSongImage').classList.remove('hidden');
-                    document.getElementById('currentSongTitle').textContent = song.nombre_cancion;
-                    document.getElementById('currentSongArtist').textContent = song.Apodo;
-                    document.getElementById('spotifyPlayerContainer').style.display = 'block';
+                    updateTrackInfo(song);
+                    currentTrackId = song.spotify_track_id;
+                    isPlaying = true;
+                    updatePlayButton();
 
                 } catch (error) {
-                    console.error('Error playing song:', error);
+                    console.error('Error al reproducir:', error);
+                    Swal.fire('Error', 'No se pudo reproducir la canción', 'error');
                 }
+            }
+
+            // Función para actualizar botón de play/pause
+            function updatePlayButton() {
+                const button = document.getElementById('playPauseButton');
+                if (button) {
+                    button.innerHTML = isPlaying ?
+                        '<i data-feather="pause"></i>' :
+                        '<i data-feather="play"></i>';
+                    feather.replace();
+                }
+            }
+            if (!window.nextButtonListenerAdded) {
+                // Controladores de eventos mejorados
+                document.getElementById('playPauseButton').addEventListener('click', async () => {
+                    try {
+                        if (!deviceId) return;
+
+                        if (isPlaying) {
+                            await player.pause();
+                        } else {
+                            await player.resume();
+                        }
+                        isPlaying = !isPlaying;
+                        updatePlayButton();
+
+                    } catch (error) {
+                        console.error('Error al pausar/reanudar:', error);
+                    }
+                });
+                window.nextButtonListenerAdded = true; //marca como agregado
+            }
+
+            if (!window.nextButtonListenerAdded) {
+                document.getElementById('nextButton').addEventListener('click', async () => {
+                    // Verifica que haya una siguiente canción
+                    if (currentTrackIndex < playlist.length - 1) {
+                        const nextIndex = currentTrackIndex + 1; // Calcula el índice de la siguiente canción
+                        await playSong(playlist[nextIndex], nextIndex); // Reproduce la siguiente canción
+                    } else {
+                        console.log('No hay más canciones en la lista'); // Mensaje de depuración
+                    }
+                });
+                window.nextButtonListenerAdded = true; //marca como agregado
+            }
+
+
+            if (!window.nextButtonListenerAdded) {
+                document.getElementById('previousButton').addEventListener('click', async () => {
+                    if (currentTrackIndex > 0) {
+                        const prevIndex = currentTrackIndex - 1;
+                        await playSong(playlist[prevIndex], prevIndex);
+                    }
+                });
+                window.nextButtonListenerAdded = true; //marca como agregado
             }
 
 
@@ -685,23 +739,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 setupPlayerEventListeners();
             }
 
-            // Configurar los event listeners del reproductor
-            function setupPlayerEventListeners() {
-                const playPauseButton = document.getElementById('playPauseButton');
-                const prevButton = document.getElementById('prevButton');
-                const nextButton = document.getElementById('nextButton');
-                const volumeSlider = document.getElementById('volumeSlider');
-                const progressBar = document.querySelector('#progress').parentElement;
 
-                playPauseButton?.addEventListener('click', togglePlayPause);
-                prevButton?.addEventListener('click', playPreviousSong);
-                nextButton?.addEventListener('click', playNextSong);
-                volumeSlider?.addEventListener('input', handleVolumeChange);
-                progressBar?.addEventListener('click', handleProgressBarClick);
-
-                // Actualizar el estado del reproductor cada segundo
-                setInterval(updatePlayerState, 1000);
-            }
 
             // Función para actualizar el estado del reproductor
             function updatePlayerState() {
@@ -773,72 +811,43 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
 
 
-            function playNextSong() {
-                if (currentIndex < playlist.length - 1) {
-                    playSong(playlist[currentIndex + 1]);
-                } else {
-                    console.log('Fin de la lista de reproducción');
-                    // Aquí puedes decidir qué hacer cuando se acaba la lista
-                    // Por ejemplo, volver al principio o detener la reproducción
-                }
-            }
+
 
             // Inicialización del SDK de Spotify
+            // Configuración mejorada del SDK
             window.onSpotifyWebPlaybackSDKReady = () => {
                 player = new Spotify.Player({
-                    name: 'Web Playback SDK Player',
-                    getOAuthToken: cb => {
-                        cb(spotifyAccessToken);
-                    },
+                    name: 'Elegans Player',
+                    getOAuthToken: cb => cb(spotifyAccessToken),
                     volume: 0.5
                 });
 
-                // Event listeners del player
+                // Manejo de eventos del reproductor
                 player.addListener('ready', ({
                     device_id
                 }) => {
-                    console.log('Ready with Device ID', device_id);
                     deviceId = device_id;
-                    isPlayerReady = true;
-
-                    // Establecer este dispositivo como el activo
-                    fetch('https://api.spotify.com/v1/me/player', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${spotifyAccessToken}`
-                        },
-                        body: JSON.stringify({
-                            device_ids: [device_id],
-                            play: false
-                        })
-                    });
+                    console.log('Dispositivo listo:', device_id);
                 });
 
-                player.addListener('player_state_changed', state => {
+                player.addListener('player_state_changed', async state => {
                     if (!state) return;
 
-                    updatePlayerUI(state);
-                });
+                    // Actualizar estado de reproducción
+                    isPlaying = !state.paused;
+                    updatePlayButton();
 
-                // Manejo de errores
-                player.addListener('initialization_error', ({
-                    message
-                }) => {
-                    console.error('Failed to initialize', message);
-                });
+                    // Manejar fin de canción
+                    if (state.position === 0 && !state.paused && currentTrackId !== state.track_window.current_track.id) {
+                        // Canción terminada, avanzar a la siguiente
+                        if (currentTrackIndex < playlist.length - 1) {
+                            currentTrackIndex++;
+                            await playSong(playlist[currentTrackIndex], currentTrackIndex);
+                        }
+                    }
 
-                player.addListener('authentication_error', ({
-                    message
-                }) => {
-                    console.error('Failed to authenticate', message);
-                    refreshToken();
-                });
-
-                player.addListener('account_error', ({
-                    message
-                }) => {
-                    console.error('Failed to validate Spotify account', message);
+                    // Actualizar progreso
+                    updateProgress(state);
                 });
 
                 player.connect();
@@ -868,13 +877,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 document.getElementById('currentTime').textContent = formatTime(position);
                 document.getElementById('totalTime').textContent = formatTime(duration);
 
-                // Actualizar control de volumen
-                player.getVolume().then(volume => {
-                    const volumeSlider = document.getElementById('volumeSlider');
-                    if (volumeSlider) {
-                        volumeSlider.value = Math.round(volume * 100);
-                    }
-                });
             }
 
             // Event listeners para los controles
@@ -980,30 +982,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             window.addEventListener('message', handleSpotifyMessage);
 
             // Función para inicializar el reproductor
-            function initializePlayer(initialPlaylist) {
-                playlist = initialPlaylist;
-                addSongClickListeners();
 
-                // Agregar listeners para los botones de control si existen
-                const prevButton = document.getElementById('prevButton');
-                const nextButton = document.getElementById('nextButton');
-
-                if (prevButton) {
-                    prevButton.addEventListener('click', () => {
-                        if (currentIndex > 0) {
-                            playSong(playlist[currentIndex - 1]);
-                        }
-                    });
-                }
-
-                if (nextButton) {
-                    nextButton.addEventListener('click', () => {
-                        if (currentIndex < playlist.length - 1) {
-                            playSong(playlist[currentIndex + 1]);
-                        }
-                    });
-                }
-            }
 
             //Funciones para el atualizado del estado de las canciones 
             function actualizarEstado(solicitudId, nuevoEstado, event) {
@@ -1241,24 +1220,33 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
 
 
+            // Función para actualizar progreso
             function updateProgress(state) {
-                if (state) {
-                    const {
-                        position,
-                        duration
-                    } = state;
-                    const progressPercent = (position / duration) * 100;
-                    progress.style.width = `${progressPercent}%`;
-                    currentTimeSpan.textContent = formatTime(position);
-                    totalTimeSpan.textContent = formatTime(duration);
-                }
+                const progress = (state.position / state.duration) * 100;
+                document.getElementById('progress').style.width = `${progress}%`;
+                document.getElementById('currentTime').textContent = formatTime(state.position);
+                document.getElementById('totalTime').textContent = formatTime(state.duration);
             }
 
+            // Función auxiliar para formatear tiempo
             function formatTime(ms) {
-                const seconds = Math.floor(ms / 1000);
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                const minutes = Math.floor(ms / 60000);
+                const seconds = ((ms % 60000) / 1000).toFixed(0);
+                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            // Función para actualizar información de la canción
+            function updateTrackInfo(song) {
+                const imgElement = document.getElementById('currentSongImage');
+                imgElement.src = song.imagen_cancion;
+                imgElement.classList.remove('hidden'); // Asegurar que la imagen sea visible
+                imgElement.style.display = 'block'; // Forzar display block
+
+                document.getElementById('currentSongTitle').textContent = song.nombre_cancion;
+                document.getElementById('currentSongArtist').textContent = song.Apodo;
+
+                // Asegurar que el contenedor del reproductor sea visible
+                document.getElementById('spotifyPlayerContainer').style.display = 'flex';
             }
 
             player.addListener('player_state_changed', state => {
