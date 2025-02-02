@@ -442,6 +442,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         <!-- <button id="manualPlayButton">Reproducir</button> -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="Public/dist/js/volumeControl.js"></script>
+        <script src="Public/dist/js/playerControls.js"></script>
         <script>
             //depuracion para ver si el sdk esta listo para usarse
             // player.addListener('ready', ({

@@ -6,19 +6,19 @@ ini_set('display_errors', 1);
 // Iniciar la sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
+    
+    require_once '../../../../Models/InfoUsuarioModel.php';
+    
+    // Verificar si el usuario está logueado
+    if (!isset($_SESSION['usuario_id'])) {
+        header('Location: /login.php');
+        exit;
+    }
 }
 echo "<pre>";
 print_r($_SESSION['usuario_data']);
 echo "</pre>";
-
-require_once '../../../../Models/InfoUsuarioModel.php';
-
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: /login.php');
-    exit;
-}
-
+    
 // Crear instancia del modelo
 $infoUsuarioModel = new InfoUsuarioModel();
 
