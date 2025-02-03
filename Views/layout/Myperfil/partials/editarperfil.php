@@ -15,10 +15,25 @@ if (session_status() === PHP_SESSION_NONE) {
         exit;
     }
 }
+<<<<<<< HEAD
 echo "<pre>";
 print_r($_SESSION['usuario_data']);
 echo "</pre>";
     
+=======
+
+require_once '../../../../Models/InfoUsuarioModel.php';
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: /login.php');
+    exit;
+}
+
+echo "<pre>";
+print_r($_SESSION['usuario_data']);
+echo "</pre>";
+>>>>>>> 441203fb011668ba996b408146ee190f6030cb18
 // Crear instancia del modelo
 $infoUsuarioModel = new InfoUsuarioModel();
 

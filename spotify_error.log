@@ -151,6 +151,7 @@ Stack trace:
 [22-Jan-2025 21:45:39 Europe/Berlin] Nombre de canción recibido: el bombillo rojo
 [22-Jan-2025 21:45:39 Europe/Berlin] Buscando canción: el bombillo rojo
 [22-Jan-2025 21:45:41 Europe/Berlin] Resultados encontrados: 10
+<<<<<<< HEAD
 [29-Jan-2025 11:01:45 UTC] Iniciando búsqueda de canción en Spotify
 [29-Jan-2025 11:01:45 UTC] Nombre de canción recibido: Re:Re:
 [29-Jan-2025 11:01:45 UTC] Buscando canción: Re:Re:
@@ -167,3 +168,13 @@ Stack trace:
 [29-Jan-2025 11:04:41 UTC] Nombre de canción recibido: CLOSER
 [29-Jan-2025 11:04:41 UTC] Buscando canción: CLOSER
 [29-Jan-2025 11:04:42 UTC] Resultados encontrados: 10
+=======
+[27-Jan-2025 00:10:48 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[27-Jan-2025 00:10:48 Europe/Berlin] Nombre de canción recibido: Re:Re:
+[27-Jan-2025 00:10:48 Europe/Berlin] Buscando canción: Re:Re:
+[27-Jan-2025 00:10:50 Europe/Berlin] Resultados encontrados: 10
+[30-Jan-2025 03:53:20 Europe/Berlin] Iniciando búsqueda de canción en Spotify
+[30-Jan-2025 03:53:20 Europe/Berlin] Nombre de canción recibido: Beanie
+[30-Jan-2025 03:53:20 Europe/Berlin] Buscando canción: Beanie
+[30-Jan-2025 03:53:23 Europe/Berlin] Resultados encontrados: 10
+>>>>>>> 441203fb011668ba996b408146ee190f6030cb18
