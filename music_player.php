@@ -23,11 +23,11 @@ $accessToken = $_SESSION['spotify_access_token'] ?? '';
 $refreshToken = $_SESSION['spotify_refresh_token'] ?? '';
 
 // Depuración
-echo "<pre>";
-echo "Access Token: " . substr($accessToken, 0, 10) . "...\n";
-echo "Refresh Token: " . substr($refreshToken, 0, 10) . "...\n";
-echo "Scopes: " . implode(", ", $scopes) . "\n";
-echo "</pre>";
+// echo "<pre>";
+// echo "Access Token: " . substr($accessToken, 0, 10) . "...\n";
+// echo "Refresh Token: " . substr($refreshToken, 0, 10) . "...\n";
+// echo "Scopes: " . implode(", ", $scopes) . "\n";
+// echo "</pre>";
 
 require_once __DIR__ . '/Controller/UsuarioController.php';
 require_once __DIR__ . '/Helpers/SpotifyHelper.php';
@@ -287,9 +287,9 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
 
 <body class="bg-gray-900 text-white">
-    <h1>Music Player</h1>
+    <!-- <h1>Music Player</h1> -->
 
-    <?php if (isset($mensajeSpotify)): ?>
+    <!-- <?php if (isset($mensajeSpotify)): ?>
         <div class="mensaje <?php echo $tipoMensaje; ?>">
             <?php echo $mensajeSpotify; ?>
         </div>
@@ -306,7 +306,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 <?php endforeach; ?>
             </ul>
         </div>
-    <?php endif; ?>
+    <?php endif; ?> -->
 
     <div id="app" class="flex flex-col h-screen">
         <div class="flex-grow overflow-auto p-6">
@@ -535,7 +535,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
         <script>
             let player;
             let playlist = <?php echo json_encode($solicitudes); ?>;
-            let currentIndex = 0;
+            let currentTrackIndex = 0;
             let deviceId;
             let isPlayerReady = false;
             let currentTrackId = null;
@@ -596,50 +596,52 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                     feather.replace();
                 }
             }
-            if (!window.nextButtonListenerAdded) {
-                // Controladores de eventos mejorados
-                document.getElementById('playPauseButton').addEventListener('click', async () => {
-                    try {
-                        if (!deviceId) return;
 
-                        if (isPlaying) {
-                            await player.pause();
-                        } else {
-                            await player.resume();
-                        }
-                        isPlaying = !isPlaying;
-                        updatePlayButton();
+            // Controladores de eventos mejorados
+            document.getElementById('playPauseButton').addEventListener('click', async () => {
+                try {
+                    if (!deviceId) return;
 
-                    } catch (error) {
-                        console.error('Error al pausar/reanudar:', error);
-                    }
-                });
-                window.nextButtonListenerAdded = true; //marca como agregado
-            }
-
-            if (!window.nextButtonListenerAdded) {
-                document.getElementById('nextButton').addEventListener('click', async () => {
-                    // Verifica que haya una siguiente canción
-                    if (currentTrackIndex < playlist.length - 1) {
-                        const nextIndex = currentTrackIndex + 1; // Calcula el índice de la siguiente canción
-                        await playSong(playlist[nextIndex], nextIndex); // Reproduce la siguiente canción
+                    if (isPlaying) {
+                        await player.pause();
                     } else {
-                        console.log('No hay más canciones en la lista'); // Mensaje de depuración
+                        await player.resume();
                     }
-                });
-                window.nextButtonListenerAdded = true; //marca como agregado
-            }
+                    isPlaying = !isPlaying;
+                    updatePlayButton();
+
+                } catch (error) {
+                    console.error('Error al pausar/reanudar:', error);
+                }
+            });
+
+            document.getElementById('nextButton').addEventListener('click', async () => {
+                console.log('Índice actual:', currentTrackIndex); // Depuración
+                if (currentTrackIndex < playlist.length - 1) {
+                    currentTrackIndex++; // Incrementar el índice
+                    console.log('Nuevo índice:', currentTrackIndex); // Depuración
+                    await playSong(playlist[currentTrackIndex], currentTrackIndex); // Reproducir la siguiente canción
+                } else {
+                    console.log('No hay más canciones en la lista');
+                    // Opcional: Reiniciar la lista o mostrar un mensaje
+                    currentTrackIndex = 0; // Reiniciar al principio de la lista
+                    await playSong(playlist[currentTrackIndex], currentTrackIndex);
+                }
+            });
 
 
-            if (!window.nextButtonListenerAdded) {
-                document.getElementById('previousButton').addEventListener('click', async () => {
-                    if (currentTrackIndex > 0) {
-                        const prevIndex = currentTrackIndex - 1;
-                        await playSong(playlist[prevIndex], prevIndex);
-                    }
-                });
-                window.nextButtonListenerAdded = true; //marca como agregado
-            }
+
+            document.getElementById('previousButton').addEventListener('click', async () => {
+                if (currentTrackIndex > 0) {
+                    currentTrackIndex--; // Decrementar el índice
+                    await playSong(playlist[currentTrackIndex], currentTrackIndex);
+                } else {
+                    console.log('No hay canciones anteriores en la lista');
+                    // Opcional: Ir al final de la lista o mostrar un mensaje
+                    currentTrackIndex = playlist.length - 1; // Ir al final de la lista
+                    await playSong(playlist[currentTrackIndex], currentTrackIndex);
+                }
+            });
 
 
 
@@ -823,7 +825,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                     volume: 0.5
                 });
 
-                // Manejo de eventos del reproductor
                 player.addListener('ready', ({
                     device_id
                 }) => {
@@ -834,20 +835,16 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                 player.addListener('player_state_changed', async state => {
                     if (!state) return;
 
-                    // Actualizar estado de reproducción
                     isPlaying = !state.paused;
                     updatePlayButton();
 
-                    // Manejar fin de canción
                     if (state.position === 0 && !state.paused && currentTrackId !== state.track_window.current_track.id) {
-                        // Canción terminada, avanzar a la siguiente
                         if (currentTrackIndex < playlist.length - 1) {
                             currentTrackIndex++;
                             await playSong(playlist[currentTrackIndex], currentTrackIndex);
                         }
                     }
 
-                    // Actualizar progreso
                     updateProgress(state);
                 });
 
@@ -880,23 +877,27 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
             }
 
-            // Event listeners para los controles
-            document.getElementById('volumeSlider').addEventListener('input', (e) => {
-                const volume = Number(e.target.value) / 100;
-                player.setVolume(volume);
-            });
 
+            // Función para actualizar la barra de progreso dandole el click donde se
             document.addEventListener('click', (e) => {
-                if (e.target.closest('#progress')) {
-                    const progressBar = e.target.closest('#progress');
+                const progressBar = e.target.closest('#progress');
+                if (progressBar) {
                     const rect = progressBar.getBoundingClientRect();
                     const clickPosition = (e.clientX - rect.left) / rect.width;
 
                     player.getCurrentState().then(state => {
-                        if (state) {
+                        if (state && state.duration) {
                             const seekPosition = state.duration * clickPosition;
-                            player.seek(seekPosition);
+                            player.seek(seekPosition).then(() => {
+                                console.log(`Seeked to position: ${seekPosition}`);
+                            }).catch(error => {
+                                console.error('Error seeking to position:', error);
+                            });
+                        } else {
+                            console.warn('Player state or duration is invalid');
                         }
+                    }).catch(error => {
+                        console.error('Error getting player state:', error);
                     });
                 }
             });
@@ -945,7 +946,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                         }
 
                         // Obtener la duración de la canción actual
-                        const currentTrack = playlist[currentIndex];
+                        const currentTrack = playlist[currentTrackIndex];
                         const duration = currentTrack ? currentTrack.duration_ms : 0;
 
                         // Si la canción está en reproducción y la posición es igual o mayor a la duración, la canción ha terminado
@@ -960,9 +961,9 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             }
 
             function handleSongEnd() {
-                if (currentIndex < playlist.length - 1) {
-                    currentIndex++;
-                    playSong(playlist[currentIndex]);
+                if (currentTrackIndex < playlist.length - 1) {
+                    currentTrackIndex++;
+                    playSong(playlist[currentTrackIndex]);
                 } else {
                     // Si es la última canción, puedes reiniciar o detener el reproductor
                     resetPlayer(); // O simplemente no hacer nada
@@ -1124,50 +1125,53 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 
                         if (solicitudes.length > 0) {
                             solicitudes.forEach((solicitud, index) => {
-                                // Almacena la solicitud en un data attribute en lugar de en el onclick
                                 newHtml += `
-                    <tr class="hover:bg-gray-800" data-song-index="${index}">
-                        <td class="py-2 cursor-pointer">${solicitud.Apodo}</td>
-                        <td class="py-2 cursor-pointer">${solicitud.nombre_cancion}</td>
-                        <td class="py-2 cursor-pointer flex justify-center items-center">
-                            <img src="${solicitud.imagen_cancion}" alt="Imagen de la canción" class="w-10 h-10 rounded">
-                         </td>
-                        <td class="py-2">
-                            <div class="dropdown" onclick="event.stopPropagation()">
-                                <button class="dropdown-toggle text-white px-4 py-2 rounded ${getEstadoClass(solicitud.estado)}" 
-                                        data-solicitud-id="${solicitud.id}" 
-                                        onclick="toggleDropdown(this)">
-                                    ${solicitud.estado}
-                                </button>
-                                <div class="dropdown-menu hidden bg-white text-gray-800 rounded shadow-lg">
-                                    <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
-                                       onclick="actualizarEstado(${solicitud.id}, 'pendiente', event)">Pendiente</a>
-                                    <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
-                                       onclick="actualizarEstado(${solicitud.id}, 'aceptada', event)">Aceptada</a>
-                                    <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
-                                       onclick="actualizarEstado(${solicitud.id}, 'rechazada', event)">Rechazada</a>
+                        <tr class="hover:bg-gray-800" data-song-index="${index}">
+                            <td class="py-2 cursor-pointer">${solicitud.Apodo}</td>
+                            <td class="py-2 cursor-pointer">${solicitud.nombre_cancion}</td>
+                            <td class="py-2 cursor-pointer flex justify-center items-center">
+                                <img src="${solicitud.imagen_cancion}" alt="Imagen de la canción" class="w-10 h-10 rounded">
+                            </td>
+                            <td class="py-2">
+                                <div class="dropdown" onclick="event.stopPropagation()">
+                                    <button class="dropdown-toggle text-white px-4 py-2 rounded ${getEstadoClass(solicitud.estado)}" 
+                                            data-solicitud-id="${solicitud.id}" 
+                                            onclick="toggleDropdown(this)">
+                                        ${solicitud.estado}
+                                    </button>
+                                    <div class="dropdown-menu hidden bg-white text-gray-800 rounded shadow-lg">
+                                        <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
+                                           onclick="actualizarEstado(${solicitud.id}, 'pendiente', event)">Pendiente</a>
+                                        <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
+                                           onclick="actualizarEstado(${solicitud.id}, 'aceptada', event)">Aceptada</a>
+                                        <a class="block px-4 py-2 hover:bg-gray-200" href="#" 
+                                           onclick="actualizarEstado(${solicitud.id}, 'rechazada', event)">Rechazada</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="py-2 cursor-pointer">${solicitud.fecha_solicitud}</td>
-                    </tr>
-                `;
+                            </td>
+                            <td class="py-2 cursor-pointer">${solicitud.fecha_solicitud}</td>
+                        </tr>
+                    `;
                             });
                         } else {
                             newHtml = `
-                <tr>
-                    <td colspan="6" class="py-4 text-center">No hay solicitudes.</td>
-                </tr>
-            `;
+                    <tr>
+                        <td colspan="6" class="py-4 text-center">No hay solicitudes.</td>
+                    </tr>
+                `;
                         }
 
                         tbody.innerHTML = newHtml;
-
-                        // Actualizar la playlist global
                         playlist = solicitudes;
 
-                        // Agregar los event listeners después de actualizar el contenido
-                        addSongClickListeners();
+                        if (currentTrackId) {
+                            const newIndex = playlist.findIndex(t => t.spotify_track_id === currentTrackId);
+                            currentTrackIndex = newIndex !== -1 ? newIndex : 0;
+                        } else {
+                            currentTrackIndex = 0;
+                        }
+
+                        addSongClickListeners(); // Asegúrate de que esta línea esté presente
                     })
                     .catch(error => console.error('Error al actualizar las solicitudes:', error));
             }
@@ -1197,21 +1201,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                     });
                 });
             }
-            // // cambiar entre canciones
-            // const prevButton = document.getElementById('prevButton');
-            // const nextButton = document.getElementById('nextButton');
 
-            // prevButton.addEventListener('click', () => {
-            //     if (currentIndex > 0) {
-            //         playSong(playlist[currentIndex - 1]);
-            //     }
-            // });
-
-            // nextButton.addEventListener('click', () => {
-            //     if (currentIndex < playlist.length - 1) {
-            //         playSong(playlist[currentIndex + 1]);
-            //     }
-            // });
 
             //Controles de volumen y progreso
             const progressBar = document.getElementById('progressBar');
