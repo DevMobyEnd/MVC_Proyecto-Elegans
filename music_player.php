@@ -595,7 +595,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                     feather.replace();
                 }
             }
-            if (!window.nextButtonListenerAdded) {
+         
                 // Controladores de eventos mejorados
                 document.getElementById('playPauseButton').addEventListener('click', async () => {
                     try {
@@ -613,8 +613,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
                         console.error('Error al pausar/reanudar:', error);
                     }
                 });
-                window.nextButtonListenerAdded = true; //marca como agregado
-            }
+               
 
             if (!window.nextButtonListenerAdded) {
                 document.getElementById('nextButton').addEventListener('click', async () => {
@@ -630,15 +629,14 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             }
 
 
-            if (!window.nextButtonListenerAdded) {
+       
                 document.getElementById('previousButton').addEventListener('click', async () => {
                     if (currentTrackIndex > 0) {
                         const prevIndex = currentTrackIndex - 1;
                         await playSong(playlist[prevIndex], prevIndex);
                     }
                 });
-                window.nextButtonListenerAdded = true; //marca como agregado
-            }
+                
 
 
 
