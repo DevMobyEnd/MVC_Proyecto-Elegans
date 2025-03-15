@@ -52,6 +52,7 @@
     <script src="./Public/dist/js/Cropper.js"></script>
     <script src="./Public/dist/js/theme-toggle.js"></script>
     <script src="./Public/dist/js/register.js"></script>
+    <script src="./Public/dist/js/dynamictext.js"></script>
 </body>
 
 </html>

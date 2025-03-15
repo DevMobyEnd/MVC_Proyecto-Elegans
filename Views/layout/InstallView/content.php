@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '../../Config/config.php';
+
+if (isset($_GET['error'])) {
+    echo '<div class="alert alert-danger">' . htmlspecialchars($_GET['error']) . '</div>';
+}
+?>
 <div class="vertical-center">
     <div class="card">
         <div class="card-body">
@@ -32,7 +39,7 @@
                     </div>
                     <div class="d-flex justify-content-center gap-3">
                         <button type="submit" name="guardar" class="edit-profile-btn2 btn-lg fw-semibold">Guardar Configuración</button>
-                        <a href="/index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
+                        <a href="<?php echo $base_url; ?>index.php" class="btn btn-secondary btn-lg fw-semibold">Omitir</a>
                     </div>
            
                 </section>
@@ -54,9 +61,3 @@
         max-width: 800px;
     }
 </style>
-
-<?php
-if (isset($_GET['error'])) {
-    echo '<div class="alert alert-danger">' . htmlspecialchars($_GET['error']) . '</div>';
-}
-?>

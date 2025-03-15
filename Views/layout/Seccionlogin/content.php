@@ -11,11 +11,7 @@
                                         <section>
                                             <h1 class="welcome-title">
                                                 <span class="static-text">Bienvenidos</span>
-                                                <span class="dynamic-text">
-                                                    <span>Welcome!</span>
-                                                    <span>Bienvenue!</span>
-                                                    <span>ようこそ!</span>
-                                                </span>
+                                                <span class="dynamic-text"></span>
                                             </h1>
                                             <div class="form-group d-flex flex-column align-items-center position-relative">
                                                 <input type="email" placeholder="Correo Electrónico" class="form-control form-control-lg" name="Gmail" id="emailInput" required>
@@ -84,7 +80,7 @@
                                         </div>
                                     </div>
                                     <p class="text-center mt-3">
-                                        ¿No tiene una cuenta? <a href="/register.php">Regístrese</a>
+                                        ¿No tiene una cuenta? <a href="register.php">Regístrese</a>
                                     </p>
                                     <div class="hr-with-text">
                                         <hr>

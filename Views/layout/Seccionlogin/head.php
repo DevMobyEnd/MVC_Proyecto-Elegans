@@ -50,6 +50,7 @@
     <script src="./Public/dist/js/sidebar.js"></script>
     <script src="./Public/dist/js/theme-toggle.js"></script>
     <script src="./Public/dist/js/login.js"></script>
+    <script src="./Public/dist/js/dynamictext.js"></script>
     <!-- <script>
         // Use Bootstrap's native JavaScript for alerts if needed
         // document.querySelectorAll('.alert').forEach(alert => new bootstrap.Alert(alert));
